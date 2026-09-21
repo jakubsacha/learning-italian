@@ -29,6 +29,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);
 }
 *,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none !important}
 html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
 body{
   margin:0;background:var(--bg);color:var(--ink);
@@ -81,21 +82,50 @@ details.filters[open] summary::before{transform:rotate(90deg)}
 .bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:14px 0 4px}
 .bar > i{display:block;height:100%;background:var(--accent);transition:width .25s}
 
-/* --- kolejka powtórek --- */
-.queue{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.q-pill{font-size:.78rem;padding:4px 10px;border-radius:99px;border:1px solid var(--line);
-  color:var(--muted);background:var(--card)}
-.q-pill b{color:var(--ink);font-variant-numeric:tabular-nums}
-.q-pill.due b{color:var(--accent-ink)}
-.q-pill.due{background:var(--accent-soft);border-color:transparent}
-.q-lim{margin-left:auto;font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px}
-.q-lim select{font:inherit;font-size:.78rem;padding:3px 6px;border-radius:8px;
-  border:1px solid var(--line);background:var(--card);color:var(--ink)}
+/* --- sesja nauki --- */
+.sess{margin-bottom:16px}
+.sess-top{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.sess-left{font-weight:600}
+.sess-of{margin-left:auto;color:var(--muted);font-size:.84rem;font-variant-numeric:tabular-nums}
+.sess .bar{margin:0}
+.sess-mix{color:var(--muted);font-size:.8rem;margin-top:6px}
+.sess-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-top:14px;color:var(--muted);font-size:.82rem}
+.opts{margin-left:auto}
+.opts summary{cursor:pointer;color:var(--muted);font-size:.82rem;list-style:none}
+.opts summary::-webkit-details-marker{display:none}
+.opts summary::before{content:"⚙ "}
+.opts-in{display:flex;flex-direction:column;gap:10px;align-items:flex-start;
+  margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.opts-in label{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink)}
+.opts-in select{font:inherit;font-size:.85rem;padding:4px 8px;border-radius:8px;
+  border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.opts-in .chk input{width:17px;height:17px;accent-color:var(--accent)}
+.flash{position:relative}
+.say{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;
+  font-size:1.05rem;line-height:1;color:var(--muted);border:1px solid var(--line);background:var(--bg)}
+.say:hover{color:var(--accent-ink);border-color:var(--accent)}
+.say.on{color:var(--accent-ink);background:var(--accent-soft);border-color:transparent}
 .flash .sched{font-size:.72rem;color:var(--muted);margin-top:auto;padding-top:10px}
-.grades{margin-top:14px;gap:8px}
-.grades .btn{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 6px}
-.grades .btn small{font-size:.68rem;opacity:.75;font-weight:400}
+.btn.reveal{width:100%;margin-top:12px;background:var(--card);color:var(--ink);
+  border:1px solid var(--line);font-weight:600;padding:13px}
+.btn.reveal small{color:var(--muted);font-weight:400;margin-left:6px}
+.grades{margin-top:12px;gap:8px}
+.grades .btn{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:12px 6px;min-height:58px}
+.grades .btn span{font-weight:600}
+.grades .btn small{font-size:.7rem;opacity:.8;font-weight:400}
 .btn.easy{background:var(--accent-soft);color:var(--accent-ink)}
+.card.ask{min-height:150px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;gap:8px}
+.ask-lead{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.ask-main{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.ask-main b{color:var(--accent-ink);border-bottom:2px solid var(--accent);padding:0 14px}
+.ask-sub{color:var(--muted);font-size:.95rem;font-style:italic}
+.btn.nextq{width:100%;margin-top:10px}
+.btn.nextq small{opacity:.7;font-weight:400;margin-left:6px}
+.kbd{display:inline-block;min-width:16px;margin-right:7px;padding:0 4px;border-radius:5px;
+  background:var(--line);color:var(--muted);font-size:.72rem;font-weight:600}
 .done-box{text-align:center;padding:22px 16px;border:1px dashed var(--line);border-radius:14px;margin-top:14px}
 .done-box b{display:block;font-size:1.05rem;margin-bottom:4px}
 .done-box p{margin:0 0 14px}
@@ -163,6 +193,13 @@ footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.78rem}
 .board-row .track{flex:1 1 auto;height:7px;background:var(--accent-soft);border-radius:99px;overflow:hidden}
 .board-row .track i{display:block;height:100%;background:var(--accent);border-radius:99px}
 .board-row .num{flex:none;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.8rem}
+.goal{margin-bottom:12px}
+.goal-label{font-size:.9rem;font-weight:600;margin-bottom:5px}
+.goal.hit .goal-label{color:var(--good)}
+.goal-track{height:10px;border-radius:99px;background:var(--accent-soft);overflow:hidden}
+.goal-track > i{display:block;height:100%;border-radius:99px;background:var(--accent);transition:width .3s}
+.goal.hit .goal-track > i{background:var(--good)}
+.goal-streak{font-size:.78rem;color:var(--muted);margin-top:5px}
 dialog.auth{border:0;border-radius:16px;padding:0;background:var(--card);color:var(--ink);
   box-shadow:var(--shadow);max-width:340px;width:calc(100% - 32px)}
 dialog.auth::backdrop{background:rgba(6,18,15,.45)}
@@ -184,7 +221,7 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
     <h1>Włoski na co dzień</h1>
     <button class="theme-btn" id="theme">◐ motyw</button>
   </header>
-  <p class="sub">Fiszki, quiz i układanie zdań. Zaloguj się, żeby postęp szedł za Tobą między urządzeniami.</p>
+  <p class="sub">Codzienna sesja miesza fiszki, quiz i zdania. Zaloguj się, żeby postęp szedł za Tobą między urządzeniami.</p>
 
   <section class="sync" id="sync">
     <div class="sync-row">
@@ -196,7 +233,7 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
   </section>
 
   <div class="tabs" role="tablist">
-    <button role="tab" data-tab="flash" aria-selected="true">Fiszki</button>
+    <button role="tab" data-tab="flash" aria-selected="true">Nauka</button>
     <button role="tab" data-tab="quiz" aria-selected="false">Quiz</button>
     <button role="tab" data-tab="sent" aria-selected="false">Zdania</button>
     <button role="tab" data-tab="list" aria-selected="false">Słownik</button>
@@ -213,35 +250,52 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
 
   <!-- FISZKI -->
   <section class="panel" id="p-flash">
-    <div class="queue">
-      <span class="q-pill due"><b id="f-n-due">0</b> do powtórki</span>
-      <span class="q-pill"><b id="f-n-new">0</b> nowych</span>
-      <span class="q-pill"><b id="f-n-today">0</b> dziś</span>
-      <label class="q-lim">nowe/dzień
-        <select id="f-limit">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-        </select>
-      </label>
+    <div class="sess">
+      <div class="sess-top">
+        <span class="sess-left" id="f-left">Zostało 0 kart</span>
+        <span class="sess-of" id="f-of">0 / 0</span>
+      </div>
+      <div class="bar"><i id="f-bar" style="width:0%"></i></div>
+      <div class="sess-mix" id="f-mix"></div>
     </div>
 
     <div id="f-session">
       <div class="card flash" id="flashcard">
+        <button class="say" id="f-say" title="Przeczytaj na głos (S)" aria-label="Przeczytaj na głos">🔊</button>
         <div class="cat" id="f-cat"></div>
         <div class="word" id="f-word"></div>
         <div class="pron" id="f-pron"></div>
-        <div class="trans" id="f-trans" style="visibility:hidden">—</div>
+        <div class="trans" id="f-trans" hidden>—</div>
         <div class="sched" id="f-sched"></div>
       </div>
-      <div class="hint" id="f-hint">Kliknij kartę, żeby zobaczyć tłumaczenie</div>
-      <div class="row grades" id="f-actions" style="display:none">
-        <button class="btn warn" id="f-again">Jeszcze nie<small id="f-t-again"></small></button>
-        <button class="btn good" id="f-good">Umiem<small id="f-t-good"></small></button>
-        <button class="btn easy" id="f-easy">Łatwe<small id="f-t-easy"></small></button>
+      <button class="btn reveal" id="f-reveal">Pokaż tłumaczenie <small>spacja</small></button>
+      <div class="row grades" id="f-actions" hidden>
+        <button class="btn warn" id="f-again"><span>Jeszcze nie</span><small id="f-t-again"></small></button>
+        <button class="btn good" id="f-good"><span>Umiem</span><small id="f-t-good"></small></button>
+        <button class="btn easy" id="f-easy"><span>Łatwe</span><small id="f-t-easy"></small></button>
       </div>
+    </div>
+
+    <div id="x-quiz" hidden>
+      <div class="card ask">
+        <div class="ask-lead" id="xq-lead"></div>
+        <div class="ask-main" id="xq-text"></div>
+        <div class="ask-sub" id="xq-sub"></div>
+      </div>
+      <div class="opts" id="xq-opts"></div>
+      <div class="verdict" id="xq-verdict" hidden></div>
+      <button class="btn nextq" id="xq-next" hidden>Dalej <small>spacja</small></button>
+    </div>
+
+    <div id="x-gap" hidden>
+      <div class="card ask">
+        <div class="ask-lead">Uzupełnij zdanie</div>
+        <div class="ask-main" id="xg-line"></div>
+        <div class="ask-sub" id="xg-pl"></div>
+      </div>
+      <div class="opts" id="xg-opts"></div>
+      <div class="verdict" id="xg-verdict" hidden></div>
+      <button class="btn nextq" id="xg-next" hidden>Dalej <small>spacja</small></button>
     </div>
 
     <div class="done-box" id="f-done" hidden>
@@ -250,10 +304,25 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
       <button class="btn ghost" id="f-extra">Ucz się dalej poza planem</button>
     </div>
 
-    <div class="bar"><i id="f-bar" style="width:0%"></i></div>
-    <div class="row" style="justify-content:space-between;margin-top:10px">
-      <span class="meta" id="f-stat"></span>
-      <button class="btn ghost" id="f-reset">Wyzeruj postęp</button>
+    <div class="sess-foot">
+      <span id="f-stat"></span>
+      <details class="opts">
+        <summary>Ustawienia</summary>
+        <div class="opts-in">
+          <label>Nowe słowa dziennie
+            <select id="f-limit">
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+            </select>
+          </label>
+          <label class="chk"><input type="checkbox" id="f-mix-on"> Mieszaj ćwiczenia: fiszki, quiz, zdania</label>
+          <label class="chk"><input type="checkbox" id="f-auto"> Czytaj słowo na głos automatycznie</label>
+          <button class="btn ghost" id="f-reset">Wyzeruj postęp fiszek</button>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -372,6 +441,11 @@ const ORDER = new Map(WORDS.map((w, i) => [w.it, i]));
 const $ = s => document.querySelector(s);
 const rnd = a => a[Math.floor(Math.random()*a.length)];
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+// 1 karta / 2 karty / 5 kart
+function plural(n, one, few, many){
+  const t = n % 10, h = n % 100;
+  return n === 1 ? one : (t >= 2 && t <= 4 && (h < 12 || h > 14)) ? few : many;
+}
 const norm = s => s.toLowerCase().replace(/[.,!?¿¡]/g,"").trim();
 
 function load(k, dflt){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):dflt; }catch(e){ return dflt; } }
@@ -447,6 +521,26 @@ $("#all-off").onclick = () => { activeCats = [CATS[0]]; save("it250.cats", activ
 
 function refreshAll(){ nextCard(); newQuestion(); newSentence(); renderList(); }
 
+/* ---------- wymowa ---------- */
+let voiceOn = load("it250.voice", true);
+let itVoice = null;
+function pickVoice(){
+  if(!window.speechSynthesis) return;
+  const vs = speechSynthesis.getVoices();
+  itVoice = vs.find(v => (v.lang || "").toLowerCase().startsWith("it")) || null;
+}
+if(window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(text){
+  if(!window.speechSynthesis || !text) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/\s*\/\s*/g, ", "));
+    u.lang = "it-IT"; u.rate = 0.9;
+    if(itVoice) u.voice = itVoice;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
 /* ---------- FISZKI (powtórki rozłożone w czasie, à la SM-2) ---------- */
 const DAY_MS = 86400000;
 const localNow = () => Date.now() - new Date().getTimezoneOffset()*60000;
@@ -455,7 +549,7 @@ const keyOf    = t => new Date(t).toISOString().slice(0,10);
 const dayKey   = () => keyOf(localNow());
 
 function rollDay(){
-  if(day.k !== dayKey()){ day = { k: dayKey(), n: 0 }; save("it250.day", day); }
+  if(day.k !== dayKey()){ day = { k: dayKey(), n: 0 }; save("it250.day", day); sessDone = 0; }
 }
 function bumpToday(){
   days[dayKey()] = (days[dayKey()] || 0) + 1;
@@ -494,7 +588,109 @@ const newWords = () => pool().filter(isNew)
   .sort((a, b) => (a.l || 1) - (b.l || 1) || ORDER.get(a.it) - ORDER.get(b.it));
 const newLeft  = () => Math.max(0, newLimit - day.n);
 
-let queue = [], current = null, flipped = false, extra = false;
+let queue = [], current = null, flipped = false, extra = false, sessDone = 0;
+let mixOn = load("it250.mix", true), mode = "card";
+
+// Zdania, w których da się schować to słowo.
+const SENT_FOR = (() => {
+  const m = new Map();
+  SENT.forEach(x => { (m.get(x.gap.toLowerCase()) || m.set(x.gap.toLowerCase(), []).get(x.gap.toLowerCase())).push(x); });
+  return m;
+})();
+const sentencesFor = w => SENT_FOR.get(w.it.toLowerCase()) || [];
+
+// \b w JS nie działa po literach z akcentem ("città."), więc szukamy wprost.
+function splitGap(sentence, gap){
+  const i = sentence.toLowerCase().indexOf(gap.toLowerCase());
+  return i < 0 ? [sentence, ""] : [sentence.slice(0, i), sentence.slice(i + gap.length)];
+}
+
+// Im lepiej znasz słowo, tym trudniejszą formę pytania może dostać.
+function exerciseFor(w){
+  const c = srs[w.it];
+  if(!mixOn || !c || c.r < 1) return "card";        // nowe słowo zawsze wchodzi fiszką
+  const opts = ["card", "quiz-it-pl"];
+  if(c.r >= 2) opts.push("quiz-pl-it");
+  if(c.r >= 3 && sentencesFor(w).length) opts.push("gap", "gap");
+  return rnd(opts);
+}
+
+function showView(v){
+  $("#flashcard").hidden = v !== "card";
+  $("#f-reveal").hidden  = v !== "card";
+  $("#f-actions").hidden = true;
+  $("#x-quiz").hidden = v !== "quiz";
+  $("#x-gap").hidden  = v !== "gap";
+}
+
+// Cztery odpowiedzi: poprawna plus trzy z tej samej puli, żeby nie było zgadywanki po poziomie.
+function choices(word, key){
+  const others = shuffle(studied().filter(w => w.it !== word.it)).slice(0, 3);
+  return shuffle([word, ...others]).map(w => ({ w, text: w[key] }));
+}
+
+function renderQuizStep(dir){
+  const askIt = dir === "quiz-pl-it";
+  $("#xq-lead").textContent = askIt ? "Jak to powiedzieć po włosku" : "Co to znaczy";
+  $("#xq-text").textContent = askIt ? current.pl : current.it;
+  $("#xq-sub").textContent  = askIt ? "" : "[" + current.pr + "]";
+  if(!askIt && voiceOn) say(current.it);
+  const wrap = $("#xq-opts"); wrap.innerHTML = "";
+  choices(current, askIt ? "it" : "pl").forEach((o, idx) => {
+    const btn = document.createElement("button");
+    const right = o.w.it === current.it;
+    btn.className = "opt";
+    btn.dataset.ok = right ? "1" : "0";
+    btn.innerHTML = '<span class="kbd">' + (idx + 1) + "</span>";
+    btn.append(document.createTextNode(o.text));
+    btn.onclick = () => settleChoice(wrap, btn, right, "#xq-verdict", "#xq-next",
+      current.it + " [" + current.pr + "] — " + current.pl);
+    wrap.appendChild(btn);
+  });
+  $("#xq-verdict").hidden = true; $("#xq-next").hidden = true;
+}
+
+function renderGapStep(){
+  const sc = rnd(sentencesFor(current));
+  const [before, after] = splitGap(sc.it, sc.gap);
+  const line = $("#xg-line"); line.innerHTML = "";
+  line.appendChild(document.createTextNode(before));
+  const hole = document.createElement("b"); hole.textContent = "\u00a0\u00a0";
+  line.appendChild(hole);
+  line.appendChild(document.createTextNode(after));
+  $("#xg-pl").textContent = sc.pl;
+  const wrong = shuffle(studied().filter(w => w.it !== current.it)).slice(0, 3).map(w => w.it);
+  const wrap = $("#xg-opts"); wrap.innerHTML = "";
+  shuffle([sc.gap, ...wrong]).forEach((o, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.dataset.ok = o === sc.gap ? "1" : "0";
+    btn.innerHTML = '<span class="kbd">' + (idx + 1) + "</span>";
+    btn.append(document.createTextNode(o));
+    btn.onclick = () => {
+      hole.textContent = sc.gap;
+      if(voiceOn) say(sc.it);
+      settleChoice(wrap, btn, o === sc.gap, "#xg-verdict", "#xg-next", sc.it);
+    };
+    wrap.appendChild(btn);
+  });
+  $("#xg-verdict").hidden = true; $("#xg-next").hidden = true;
+}
+
+// Wspólna obsługa odpowiedzi w quizie i w zdaniach.
+let settled = false;
+function settleChoice(wrap, btn, ok, verdictSel, nextSel, verdictText){
+  if(settled) return;
+  settled = true;
+  [...wrap.children].forEach(c => { c.disabled = true; if(c.dataset.ok === "1") c.classList.add("ok"); });
+  btn.classList.add(ok ? "ok" : "no");
+  const v = $(verdictSel);
+  v.className = "verdict " + (ok ? "ok" : "no");
+  v.textContent = ok ? "Dobrze!" : "Poprawnie: " + verdictText;
+  v.hidden = false;
+  $(nextSel).hidden = false;
+  applyGrade(ok ? "good" : "again");
+}
 
 function buildQueue(){
   const fresh = newWords().slice(0, extra ? 10 : newLeft());
@@ -508,15 +704,20 @@ function nextCard(){
   rollDay();
   if(!queue.length) buildQueue();
   if(!queue.length){ showDone(); return; }
-  current = queue.shift(); flipped = false;
+  current = queue.shift(); flipped = false; settled = false;
   $("#f-session").hidden = false; $("#f-done").hidden = true;
+  mode = exerciseFor(current);
+  showView(mode === "card" ? "card" : mode === "gap" ? "gap" : "quiz");
+  if(mode === "gap"){ renderGapStep(); updateBar(); return; }
+  if(mode !== "card"){ renderQuizStep(mode); updateBar(); return; }
   $("#f-cat").textContent  = current.c;
   $("#f-word").textContent = current.it;
   $("#f-pron").textContent = "[" + current.pr + "]";
   $("#f-trans").textContent = current.pl;
-  $("#f-trans").style.visibility = "hidden";
-  $("#f-actions").style.display = "none";
-  $("#f-hint").textContent = "Kliknij kartę, żeby zobaczyć tłumaczenie";
+  $("#f-trans").hidden = true;
+  $("#f-actions").hidden = true;
+  $("#f-reveal").hidden = false;
+  if(voiceOn) say(current.it);
   const c = srs[current.it];
   $("#f-sched").textContent = !c ? "nowe słowo"
     : c.i > 0 ? "powtórka · poprzedni odstęp " + intervalLabel(c.i)
@@ -528,6 +729,7 @@ function showDone(){
   current = null;
   $("#f-session").hidden = true;
   $("#f-done").hidden = false;
+  $("#x-quiz").hidden = true; $("#x-gap").hidden = true; $("#f-actions").hidden = true;
   const soonest = pool().filter(w => srs[w.it]).map(w => srs[w.it].d).sort((a,b) => a-b)[0];
   const left = newWords().length;
   const msg = [];
@@ -537,28 +739,57 @@ function showDone(){
   updateBar();
 }
 
-$("#flashcard").onclick = () => {
+function reveal(){
   if(flipped || !current) return;
   flipped = true;
-  $("#f-trans").style.visibility = "visible";
-  $("#f-actions").style.display = "flex";
-  $("#f-hint").textContent = "";
+  $("#f-trans").hidden = false;
+  $("#f-actions").hidden = false;
+  $("#f-reveal").hidden = true;
   const c = srs[current.it];
   $("#f-t-again").textContent = "za chwilę";
   $("#f-t-good").textContent  = intervalLabel(schedule(c, "good").i);
   $("#f-t-easy").textContent  = intervalLabel(schedule(c, "easy").i);
-};
+}
+$("#f-reveal").onclick = reveal;
+$("#flashcard").onclick = e => { if(!e.target.closest("#f-say")) reveal(); };
+$("#f-say").onclick = () => { if(current) say(current.it); };
 
-function grade(g){
+// klawiatura: spacja odsłania, 1/2/3 ocenia, S czyta na głos
+addEventListener("keydown", e => {
+  if($("#p-flash").hidden || e.metaKey || e.ctrlKey || e.altKey) return;
+  if(e.target.closest("input, select, textarea, summary")) return;
+  const inQuiz = mode !== "card" && current;
+  if(e.code === "Space" || e.code === "Enter"){
+    e.preventDefault();
+    if(inQuiz){ if(settled) nextCard(); }
+    else if(!flipped && current) reveal();
+    else if(flipped) grade("good");
+    else if(!$("#f-done").hidden) $("#f-extra").click();
+  } else if(e.key === "s" || e.key === "S"){
+    if(current) say(current.it);
+  } else if(inQuiz && !settled && "1234".includes(e.key)){
+    const wrap = mode === "gap" ? $("#xg-opts") : $("#xq-opts");
+    const btn = wrap.children[+e.key - 1];
+    if(btn) btn.click();
+  } else if(!inQuiz && flipped && "123".includes(e.key)){
+    grade({ "1": "again", "2": "good", "3": "easy" }[e.key]);
+  }
+});
+
+function applyGrade(g){
   if(!current) return;
   const fresh = isNew(current);
   srs[current.it] = schedule(srs[current.it], g);
   if(fresh && !extra){ day.n++; save("it250.day", day); }
   bumpToday();
+  sessDone++;
   save("it250.srs", srs);                 // to budzi synchronizację
   if(g === "again") queue.splice(Math.min(queue.length, 4), 0, current);
-  nextCard();
+  updateBar();
 }
+function grade(g){ if(!current) return; applyGrade(g); nextCard(); }
+$("#xq-next").onclick = nextCard;
+$("#xg-next").onclick = nextCard;
 $("#f-again").onclick = () => grade("again");
 $("#f-good").onclick  = () => grade("good");
 $("#f-easy").onclick  = () => grade("easy");
@@ -566,27 +797,45 @@ $("#f-easy").onclick  = () => grade("easy");
 $("#f-limit").value = String(newLimit);
 $("#f-limit").onchange = e => {
   newLimit = +e.target.value; save("it250.limit", newLimit);
-  extra = false; queue = []; nextCard();
+  extra = false; queue = []; sessDone = 0; nextCard();
 };
-$("#f-extra").onclick = () => { extra = true; queue = []; nextCard(); };
+$("#f-extra").onclick = () => { extra = true; queue = []; sessDone = 0; nextCard(); };
+$("#f-mix-on").checked = mixOn;
+$("#f-mix-on").onchange = e => { mixOn = e.target.checked; save("it250.mix", mixOn); queue = []; sessDone = 0; nextCard(); };
+$("#f-auto").checked = voiceOn;
+$("#f-auto").onchange = e => { voiceOn = e.target.checked; save("it250.voice", voiceOn); };
 $("#f-reset").onclick = () => {
   if(!confirm("Wyzerować cały postęp fiszek?")) return;
   srs = {}; save("it250.srs", srs);
   day = { k: dayKey(), n: 0 }; save("it250.day", day);
-  extra = false; queue = []; nextCard();
+  extra = false; queue = []; sessDone = 0; nextCard();
 };
 
 function updateBar(){
+  const rest = current ? [current].concat(queue) : queue.slice();
+  const left = rest.length;
+  const fresh = rest.filter(isNew).length;        // słowa widziane dziś pierwszy raz
+  const again = left - fresh;
+  const total = sessDone + left;
+
+  $("#f-left").textContent = left
+    ? "Zostało " + left + " " + plural(left, "karta", "karty", "kart")
+    : "Sesja skończona";
+  $("#f-of").textContent = sessDone + " / " + total;
+  $("#f-bar").style.width = (total ? sessDone / total * 100 : 100) + "%";
+  $("#f-mix").textContent = !left ? "" :
+    [ again ? again + " " + plural(again, "powtórka", "powtórki", "powtórek") : "",
+      fresh ? fresh + " " + plural(fresh, "nowe słowo", "nowe słowa", "nowych słów") : ""
+    ].filter(Boolean).join(" · ");
+
   const p = pool();
   const mature = p.filter(w => srs[w.it] && srs[w.it].i >= 21).length;
-  const doneToday = days[dayKey()] || 0;
-  const left = queue.length + (current ? 1 : 0);
-  $("#f-n-due").textContent   = dueWords().length;
-  $("#f-n-new").textContent   = Math.min(extra ? 10 : newLeft(), newWords().length);
-  $("#f-n-today").textContent = doneToday;
-  const total = doneToday + left;
-  $("#f-bar").style.width = (total ? doneToday / total * 100 : 100) + "%";
-  $("#f-stat").textContent = "Utrwalone: " + mature + " / " + p.length + " · seria: " + streak() + " dni";
+  const st = streak();
+  $("#f-stat").textContent =
+    "Dziś " + (days[dayKey()] || 0) + " " + plural(days[dayKey()] || 0, "fiszka", "fiszki", "fiszek") +
+    " · nowe " + Math.min(day.n, newLimit) + "/" + newLimit +
+    " · seria " + st + " " + plural(st, "dzień", "dni", "dni") +
+    " · utrwalone " + mature + "/" + p.length;
 }
 
 /* ---------- QUIZ ---------- */
@@ -702,12 +951,12 @@ $("#s-check").onclick = () => {
 };
 function renderGap(){
   $("#g-pl").textContent = sCur.pl;
-  const parts = sCur.it.split(new RegExp("\\b" + sCur.gap.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "\\b"));
+  const [before, after] = splitGap(sCur.it, sCur.gap);
   const line = $("#g-line"); line.innerHTML = "";
-  line.appendChild(document.createTextNode(parts[0] || ""));
+  line.appendChild(document.createTextNode(before));
   const b = document.createElement("b"); b.textContent = "\u00a0";
   line.appendChild(b);
-  line.appendChild(document.createTextNode(parts.slice(1).join(sCur.gap) || ""));
+  line.appendChild(document.createTextNode(after));
   const wrongs = shuffle(GAPS.filter(g => g !== sCur.gap)).slice(0,3);
   const opts = shuffle([sCur.gap, ...wrongs]);
   const wrap = $("#g-opts"); wrap.innerHTML = "";

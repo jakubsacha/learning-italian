@@ -71,31 +71,56 @@ async function init(){
 
   /* --- tablica wyników ------------------------------------------------ */
   const DAY_MS = 86400000;
+  const GOAL = window.DAILY_GOAL || 40;
   const keyOf = t => new Date(t - new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
   const todayKey = () => keyOf(Date.now());
 
-  function streakOf(days){
+  // Wspólna seria: dni, w których RAZEM wyrobiliście cel.
+  function sharedStreak(all){
+    const sum = k => all.reduce((a, d) => a + (d[k] || 0), 0);
     let n = 0, t = Date.now();
-    if(!days[keyOf(t)]) t -= DAY_MS;
-    while(days[keyOf(t)]){ n++; t -= DAY_MS; }
+    if(sum(keyOf(t)) < GOAL) t -= DAY_MS;      // dziś jeszcze nie — patrzymy od wczoraj
+    while(sum(keyOf(t)) >= GOAL){ n++; t -= DAY_MS; }
     return n;
   }
 
   async function renderBoard(){
     const { data, error } = await sb.from("progress").select("username,known,days");
     if(error || !data){ board.classList.remove("show"); return; }
+    const all = data.map(r => r.days || {});
     const rows = data.map(r => {
       const days = r.days || {};
-      return { nick: r.username, today: days[todayKey()] || 0, streak: streakOf(days), known: r.known || 0 };
+      return { nick: r.username, today: days[todayKey()] || 0, known: r.known || 0 };
     }).sort((a, b) => b.today - a.today || b.known - a.known);
 
-    const top = Math.max(1, ...rows.map(r => r.today));
+    const total = rows.reduce((a, r) => a + r.today, 0);
+    const done = total >= GOAL;
+    const shared = sharedStreak(all);
+
     board.innerHTML = "";
     const head = document.createElement("div");
     head.className = "board-head";
-    head.textContent = "Fiszki dzisiaj";
+    head.textContent = "Wspólny cel na dziś";
     board.appendChild(head);
 
+    const goal = document.createElement("div");
+    goal.className = "goal" + (done ? " hit" : "");
+    const gt = document.createElement("div"); gt.className = "goal-track";
+    const gi = document.createElement("i"); gi.style.width = Math.min(100, total / GOAL * 100) + "%";
+    gt.appendChild(gi);
+    const gl = document.createElement("div"); gl.className = "goal-label";
+    gl.textContent = done
+      ? "Cel zrobiony: " + total + " / " + GOAL + " fiszek 🎉"
+      : total + " / " + GOAL + " fiszek — brakuje " + (GOAL - total);
+    goal.append(gl, gt);
+    if(shared){
+      const st = document.createElement("div"); st.className = "goal-streak";
+      st.textContent = "Wspólna seria: " + shared + (shared === 1 ? " dzień" : " dni") + " pod rząd";
+      goal.appendChild(st);
+    }
+    board.appendChild(goal);
+
+    const top = Math.max(1, ...rows.map(r => r.today));
     rows.forEach(r => {
       const row = document.createElement("div");
       row.className = "board-row" + (r.nick === username ? " me" : "");
@@ -104,7 +129,7 @@ async function init(){
       const i = document.createElement("i"); i.style.width = Math.round(r.today / top * 100) + "%";
       t.appendChild(i);
       const num = document.createElement("span"); num.className = "num";
-      num.textContent = r.today + (r.streak ? " · seria " + r.streak : "") + " · " + r.known + " utrw.";
+      num.textContent = r.today + " dziś · " + r.known + " utrw.";
       row.append(n, t, num);
       board.appendChild(row);
     });
