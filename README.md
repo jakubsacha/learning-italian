@@ -11,6 +11,21 @@ tablica wyników działają na Supabase.
 
 ## Jak działa nauka
 
+Zakładka **Nauka** to jedna sesja dziennie, w której ćwiczenia się przeplatają
+(*interleaving* — przypominanie w różnych formach utrwala lepiej niż jedna forma w kółko).
+Typ ćwiczenia zależy od tego, jak dobrze znasz dane słowo:
+
+| Stan słowa | Co możesz dostać |
+| --- | --- |
+| nowe | zawsze fiszka — najpierw trzeba je zobaczyć |
+| 1–2 powtórki | fiszka albo quiz włoski → polski (rozpoznawanie) |
+| 3+ powtórki | dochodzi quiz polski → włoski (produkcja) |
+| 3+ powtórki i jest pasujące zdanie | dochodzi uzupełnianie luki w zdaniu |
+
+Każda forma karmi ten sam harmonogram: dobra odpowiedź to „Umiem", zła to „Jeszcze nie".
+Mieszanie można wyłączyć w Ustawieniach (zostaną same fiszki).
+Zakładki Quiz i Zdania działają dalej jako swobodne ćwiczenie, bez wpływu na terminy.
+
 Nie ma celu „przerób wszystko dziś". Każdego dnia dostajesz **10 nowych słów**
 (do zmiany w interfejsie: 5–30) plus **powtórki, które wypadają na dziś**.
 
@@ -30,10 +45,24 @@ Quiz i zdania trzymają się materiału, który już wprowadziłeś.
 
 Zła odpowiedź w quizie cofa słowo do powtórki — tak samo jak „Jeszcze nie" na fiszce.
 
-## Tablica wyników
+## Wspólny cel i tablica
 
-Po zalogowaniu pod paskiem widać, **ile fiszek każdy zrobił dzisiaj**, serię dni pod rząd
-i liczbę utrwalonych słów. Liczy się każda ocena na fiszce (także powtórki).
+Po zalogowaniu na górze jest **wspólny cel dzienny**: suma kart zrobionych przez wszystkich
+(domyślnie 40, zmienisz w `config.js` przez `window.DAILY_GOAL`). Pasek pokazuje, ile brakuje,
+a **wspólna seria** liczy dni pod rząd, w których cel został wyrobiony razem — łamie się,
+gdy któregoś dnia nie wyjdzie. Pod spodem widać wkład każdej osoby.
+
+To celowo nie jest wyścig: przy dwóch osobach o różnym tempie ranking zniechęca tę wolniejszą,
+a wspólny cel ustawia oboje po tej samej stronie.
+
+## Sterowanie i wymowa
+
+- **spacja** — pokaż tłumaczenie, potem „Umiem"; w quizie przechodzi dalej
+- **1 / 2 / 3** — oceny na fiszce; w quizie **1–4** wybierają odpowiedź
+- **S** — przeczytaj słowo na głos (`speechSynthesis`, głos `it-IT`)
+
+Automatyczne czytanie nowych słów można wyłączyć w Ustawieniach. Jakość głosu zależy od
+systemu — na iOS i macOS włoski jest dobry, na Linuksie bywa, że nie ma go wcale.
 
 ## Live
 
