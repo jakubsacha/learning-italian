@@ -27,8 +27,10 @@ Konfiguracja raz, w Supabase:
 2. **SQL Editor** → wklej i uruchom całe `supabase.sql` (tabela `progress` + RLS).
 3. **Authentication → Sign In / Providers → Email**: włącz, a **wyłącz „Confirm email”**.
    Bez tego rejestracja utknie na potwierdzeniu, którego nikt nie odbierze.
-4. **Project Settings → API**: skopiuj `Project URL` i klucz `anon` do `config.js`.
-   Klucz `anon` jest publiczny z założenia — może leżeć w repo, bo dostępu pilnuje RLS.
+4. **Project Settings → API Keys**: skopiuj `Project URL` i **Publishable key**
+   (`sb_publishable_...`) do `config.js`. Ten klucz jest publiczny z założenia — trafia
+   do źródła strony i może leżeć w repo, bo dostępu do danych pilnuje RLS.
+   Starszy klucz `anon` też zadziała, ale Supabase oznacza go już jako legacy.
 
 Jak to działa pod spodem: nazwa jest zamieniana na adres `nazwa@learning-italian.app`
 (domena z `config.js`), bo Supabase Auth wymaga e-maila. Na ten adres nic nie leci.
