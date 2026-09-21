@@ -12,8 +12,38 @@ https://jakubsacha.github.io/learning-italian/
 Publikacja odbywa się automatycznie przez GitHub Actions (`.github/workflows/pages.yml`)
 przy każdym pushu na `main`.
 
-Jednorazowa konfiguracja w repozytorium:
+Workflow sam włącza Pages (`configure-pages` z `enablement: true`). Gdyby krok
+`configure-pages` mimo to padł, ustaw ręcznie:
 **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+## Konta i synchronizacja (Supabase)
+
+Logowanie samą nazwą i hasłem — bez e-maila, bez potwierdzania. Nazwa jest zajmowana
+na stałe: gdy „monika” już istnieje, nikt inny jej nie założy. Po zalogowaniu postęp
+fiszek trafia do chmury, a pod paskiem widać tablicę z wynikami wszystkich osób.
+
+Konfiguracja raz, w Supabase:
+
+1. Utwórz darmowy projekt na https://supabase.com.
+2. **SQL Editor** → wklej i uruchom całe `supabase.sql` (tabela `progress` + RLS).
+3. **Authentication → Sign In / Providers → Email**: włącz, a **wyłącz „Confirm email”**.
+   Bez tego rejestracja utknie na potwierdzeniu, którego nikt nie odbierze.
+4. **Project Settings → API Keys**: skopiuj `Project URL` i **Publishable key**
+   (`sb_publishable_...`) do `config.js`. Ten klucz jest publiczny z założenia — trafia
+   do źródła strony i może leżeć w repo, bo dostępu do danych pilnuje RLS.
+   Starszy klucz `anon` też zadziała, ale Supabase oznacza go już jako legacy.
+
+Jak to działa pod spodem: nazwa jest zamieniana na adres `nazwa@learning-italian.app`
+(domena z `config.js`), bo Supabase Auth wymaga e-maila. Na ten adres nic nie leci.
+
+Zasady scalania postępu przy logowaniu:
+
+- pierwsze logowanie danym kontem — postęp z przeglądarki jedzie do chmury;
+- ta sama osoba na swoim urządzeniu — stan lokalny i zdalny scalają się (wyższy poziom wygrywa);
+- inna osoba w tej przeglądarce — obowiązuje stan z serwera, żeby nie przejąć cudzych wyników.
+
+Bez wypełnionego `config.js` aplikacja działa dokładnie jak wcześniej: lokalnie,
+bez logowania.
 
 ## Lokalnie
 
