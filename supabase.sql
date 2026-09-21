@@ -1,13 +1,19 @@
 -- Schemat dla aplikacji "Włoski — 250 słów".
--- Wklej całość do Supabase → SQL Editor → Run.
+-- Wklej całość do Supabase → SQL Editor → Run. Można uruchamiać wielokrotnie.
 
 create table if not exists public.progress (
   user_id    uuid primary key references auth.users on delete cascade,
   username   text not null unique,
-  box        jsonb not null default '{}'::jsonb,  -- słowo -> poziom 0..3
-  known      int  not null default 0,             -- ile słów opanowanych (poziom 3)
+  box        jsonb not null default '{}'::jsonb,  -- stary Leitner, zostaje dla migracji
+  known      int  not null default 0,             -- ile słów utrwalonych (interwał >= 21 dni)
   updated_at timestamptz not null default now()
 );
+
+-- Powtórki rozłożone w czasie (SM-2): słowo -> {e: łatwość, i: interwał, d: dzień powtórki, r: powtórki, l: wpadki}
+alter table public.progress add column if not exists srs jsonb not null default '{}'::jsonb;
+
+-- Dzienna aktywność: "RRRR-MM-DD" -> liczba fiszek zrobionych tego dnia
+alter table public.progress add column if not exists days jsonb not null default '{}'::jsonb;
 
 alter table public.progress enable row level security;
 
