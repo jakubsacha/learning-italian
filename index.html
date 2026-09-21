@@ -163,6 +163,16 @@ details.filters[open] summary::before{transform:rotate(90deg)}
 .grades .btn small{font-size:.65rem;opacity:.8;font-weight:700;text-transform:none}
 @media (max-width:380px){ .grades{grid-template-columns:repeat(2,1fr)} }
 
+/* Na dotyku nie ma klawiatury, więc podpowiedzi klawiszy tylko zabierają miejsce. */
+@media (pointer:coarse){
+  .grades .btn span i,
+  .kbd,
+  .kb-hint,
+  .btn.reveal small,
+  .btn.nextq small{display:none}
+  .opt{padding-left:16px}
+}
+
 /* --- pytania --- */
 .card.ask{min-height:160px;display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center;gap:10px}
@@ -224,6 +234,8 @@ details.filters[open] summary::before{transform:rotate(90deg)}
   background:var(--card);font-size:.95rem;font-weight:700;box-shadow:0 3px 0 var(--line)}
 .tile:active{transform:translateY(3px);box-shadow:none}
 .tile.used{opacity:.25;pointer-events:none;box-shadow:none}
+.tile:disabled{box-shadow:none;cursor:default;opacity:.55}
+.tile.used:disabled{opacity:.2}
 .slot .tile{background:var(--blue-soft);border-color:var(--blue);color:var(--blue-dark);
   box-shadow:0 3px 0 var(--blue)}
 .prompt-pl{font-size:1.15rem;font-weight:800;margin-bottom:4px}
@@ -403,7 +415,7 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
       <div class="card ask">
         <div class="ask-lead">Posłuchaj i wybierz znaczenie</div>
         <button class="big-say" id="xl-play" aria-label="Odtwórz">🔊</button>
-        <div class="ask-sub">kliknij, żeby powtórzyć · klawisz S</div>
+        <div class="ask-sub">kliknij, żeby powtórzyć<span class="kb-hint"> · klawisz S</span></div>
       </div>
       <div class="opts" id="xl-opts"></div>
       <div class="verdict" id="xl-verdict" hidden></div>
@@ -926,6 +938,7 @@ function settleChoice(wrap, btn, ok, verdictSel, nextSel, verdictText){
   v.textContent = ok ? "Dobrze!" : "Poprawnie: " + verdictText;
   v.hidden = false;
   $(nextSel).hidden = false;
+  if(voiceOn && current && mode !== "listen") say(current.it);
   applyGrade(ok ? "good" : "again");
 }
 
@@ -1168,6 +1181,7 @@ function answer(btn, chosen, wrap){
     });
     if(srs[qWord.it]){ srs[qWord.it] = schedule(srs[qWord.it], "again"); save("it250.srs", srs); }
   }
+  if(voiceOn) say(qWord.it);
   const v = $("#q-verdict");
   v.className = "verdict " + (ok ? "ok" : "no");
   v.textContent = ok ? "Dobrze! " + qWord.it + " [" + qWord.pr + "] — " + qWord.pl
@@ -1179,12 +1193,12 @@ function answer(btn, chosen, wrap){
 }
 
 /* ---------- ZDANIA ---------- */
-let sMode="order", sCur=null, sSlot=[], sOk=0, sDone=0;
+let sMode="order", sCur=null, sSlot=[], sOk=0, sDone=0, sChecked=false;
 const GAPS = SENT.map(s => s.gap);
 $("#s-mode").onchange = e => { sMode = e.target.value; newSentence(); };
 $("#s-next").onclick = () => newSentence();
 $("#g-next").onclick = () => newSentence();
-$("#s-clear").onclick = () => { sSlot = []; renderOrder(); };
+$("#s-clear").onclick = () => { if(!sChecked){ sSlot = []; renderOrder(); } };
 
 // Poziom zdań rośnie razem z materiałem, który już wprowadziłeś.
 function sentPool(){
@@ -1195,7 +1209,8 @@ function sentPool(){
 }
 function newSentence(){
   sCur = rnd(sentPool());
-  sSlot = [];
+  sSlot = []; sChecked = false;
+  $("#s-check").disabled = false;
   $("#s-order-box").hidden = sMode !== "order";
   $("#s-gap-box").hidden = sMode !== "gap";
   if(sMode === "order") renderOrder(); else renderGap();
@@ -1208,30 +1223,39 @@ function renderOrder(){
   const slot = $("#s-slot"); slot.innerHTML = "";
   sSlot.forEach((t, idx) => {
     const b = document.createElement("button");
-    b.className = "tile"; b.textContent = t.w;
-    b.onclick = () => { sSlot.splice(idx,1); renderOrder(); };
+    b.className = "tile"; b.textContent = t.w; b.disabled = sChecked;
+    b.onclick = () => { if(!sChecked){ sSlot.splice(idx,1); renderOrder(); } };
     slot.appendChild(b);
   });
   const pl = $("#s-pool"); pl.innerHTML = "";
   shuf.forEach(t => {
     const b = document.createElement("button");
     b.className = "tile" + (sSlot.some(x => x.i === t.i) ? " used" : "");
-    b.textContent = t.w;
-    b.onclick = () => { sSlot.push(t); renderOrder(); };
+    b.textContent = t.w; b.disabled = sChecked;
+    b.onclick = () => { if(!sChecked){ sSlot.push(t); renderOrder(); } };
     pl.appendChild(b);
   });
   $("#s-verdict").hidden = true;
 }
 $("#s-check").onclick = () => {
+  if(sChecked || !sSlot.length) return;
+  sChecked = true;
+  $("#s-check").disabled = true;
+  renderOrderLock();
   const guess = sSlot.map(t => t.w).join(" ");
   const ok = norm(guess) === norm(sCur.it);
   sDone++; if(ok) sOk++;
+  if(voiceOn) say(sCur.it);          // usłysz poprawne zdanie
   const v = $("#s-verdict");
   v.className = "verdict " + (ok ? "ok" : "no");
   v.textContent = ok ? "Brawo! " + sCur.it : "Poprawnie: " + sCur.it;
   v.hidden = false;
   $("#s-score").textContent = "Wynik: " + sOk + " / " + sDone;
 };
+// Po sprawdzeniu klocki przestają reagować — inaczej można je przestawiać po fakcie.
+function renderOrderLock(){
+  document.querySelectorAll("#s-slot .tile, #s-pool .tile").forEach(t => t.disabled = true);
+}
 function renderGap(){
   $("#g-pl").textContent = sCur.pl;
   const [before, after] = splitGap(sCur.it, sCur.gap);
@@ -1249,6 +1273,7 @@ function renderGap(){
     btn.onclick = () => {
       const ok = o === sCur.gap;
       sDone++; if(ok) sOk++;
+      if(voiceOn) say(sCur.it);        // całe zdanie, już z uzupełnioną luką
       [...wrap.children].forEach(c => { c.disabled = true; if(c.textContent === sCur.gap) c.classList.add("ok"); });
       if(!ok) btn.classList.add("no");
       b.textContent = sCur.gap;

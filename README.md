@@ -120,7 +120,12 @@ a wspólny cel ustawia oboje po tej samej stronie.
 - **1 / 2 / 3** — oceny na fiszce; w quizie **1–4** wybierają odpowiedź
 - **S** — przeczytaj słowo na głos (`speechSynthesis`, głos `it-IT`)
 
-Automatyczne czytanie nowych słów można wyłączyć w Ustawieniach. Jakość głosu zależy od
+Wymowa odzywa się też **po sprawdzeniu odpowiedzi** — w quizie, w uzupełnianiu luki
+i po ułożeniu zdania (wtedy czytane jest całe zdanie). Ćwiczenie ze słuchu nie dubluje
+odtworzenia. Automatyczne czytanie można wyłączyć w Ustawieniach.
+
+Na ekranach dotykowych podpowiedzi klawiszy (cyfry przy ocenach i odpowiedziach,
+„spacja" przy przyciskach) są ukrywane — tam i tak nie ma klawiatury. Jakość głosu zależy od
 systemu — na iOS i macOS włoski jest dobry, na Linuksie bywa, że nie ma go wcale.
 
 ## Live
