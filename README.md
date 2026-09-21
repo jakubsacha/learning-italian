@@ -12,9 +12,11 @@ https://jakubsacha.github.io/learning-italian/
 Publikacja odbywa się automatycznie przez GitHub Actions (`.github/workflows/pages.yml`)
 przy każdym pushu na `main`.
 
-Workflow sam włącza Pages (`configure-pages` z `enablement: true`). Gdyby krok
-`configure-pages` mimo to padł, ustaw ręcznie:
+Jednorazowo, zanim pierwszy deploy się powiedzie:
 **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+Tego kroku nie da się zrobić z poziomu workflow — `configure-pages` z
+`enablement: true` dostaje z API `Resource not accessible by integration`,
+bo `GITHUB_TOKEN` nie ma prawa tworzyć witryny Pages.
 
 ## Konta i synchronizacja (Supabase)
 
