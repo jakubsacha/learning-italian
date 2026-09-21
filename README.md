@@ -11,13 +11,16 @@ tablica wyników działają na Supabase.
 
 ## Jak działa nauka
 
-Są dwie zakładki na tę samą dzienną kolejkę:
+Trzy zakładki prowadzą naukę:
 
-- **Nauka** — ćwiczenia się przeplatają (fiszka, quiz, pisanie, słuch, luka w zdaniu)
-- **Fiszki** — wyłącznie klasyczne karty
+- **Nauka** — dzienna kolejka, ćwiczenia się przeplatają (fiszka, quiz, pisanie, słuch, luka)
+- **Fiszki** — ta sama dzienna kolejka, ale wyłącznie klasyczne karty
+- **Trudne** — trening na żądanie: same słowa, na których się wykładasz
 
-Wybór zakładki zapamiętuje się między wizytami. Postęp jest wspólny: karta zrobiona
-w jednym trybie znika z kolejki w drugim.
+Nauka i Fiszki dzielą kolejkę — karta zrobiona w jednym trybie znika w drugim.
+Trudne to osobna lista (do 20 słów, od największej liczby wpadek), niezależna od terminów
+powtórek; wyniki liczą się normalnie do harmonogramu i do dziennego licznika.
+Przy zakładce widać, ile takich słów masz. Wybór zakładki zapamiętuje się między wizytami.
 
 Zakładka **Nauka** to jedna sesja dziennie, w której ćwiczenia się przeplatają
 (*interleaving* — przypominanie w różnych formach utrwala lepiej niż jedna forma w kółko).
@@ -117,7 +120,12 @@ a wspólny cel ustawia oboje po tej samej stronie.
 - **1 / 2 / 3** — oceny na fiszce; w quizie **1–4** wybierają odpowiedź
 - **S** — przeczytaj słowo na głos (`speechSynthesis`, głos `it-IT`)
 
-Automatyczne czytanie nowych słów można wyłączyć w Ustawieniach. Jakość głosu zależy od
+Wymowa odzywa się też **po sprawdzeniu odpowiedzi** — w quizie, w uzupełnianiu luki
+i po ułożeniu zdania (wtedy czytane jest całe zdanie). Ćwiczenie ze słuchu nie dubluje
+odtworzenia. Automatyczne czytanie można wyłączyć w Ustawieniach.
+
+Na ekranach dotykowych podpowiedzi klawiszy (cyfry przy ocenach i odpowiedziach,
+„spacja" przy przyciskach) są ukrywane — tam i tak nie ma klawiatury. Jakość głosu zależy od
 systemu — na iOS i macOS włoski jest dobry, na Linuksie bywa, że nie ma go wcale.
 
 ## Live
@@ -164,6 +172,17 @@ Zasady scalania postępu przy logowaniu:
 
 Bez wypełnionego `config.js` aplikacja działa dokładnie jak wcześniej: lokalnie,
 bez logowania.
+
+## Wygląd
+
+Interfejs jest w stylu aplikacji do nauki języków: grube zaokrąglone przyciski
+z efektem wciśnięcia (kolorowa krawędź u dołu znika przy kliknięciu), mocna
+zaokrąglona typografia (Nunito z Google Fonts, z odwrotem do czcionki systemowej,
+gdy nie da się jej pobrać), nasycona zieleń jako kolor akcji i niebieski jako
+kolor zaznaczenia. Motyw jasny i ciemny idą za ustawieniem systemu, z ręcznym
+przełącznikiem w nagłówku.
+
+Zakładki układają się w siatkę 3×2 na telefonie i w jeden rząd od 600 px w górę.
 
 ## Lokalnie
 
