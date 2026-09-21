@@ -126,6 +126,19 @@ details.filters[open] summary::before{transform:rotate(90deg)}
 .btn.nextq small{opacity:.7;font-weight:400;margin-left:6px}
 .kbd{display:inline-block;min-width:16px;margin-right:7px;padding:0 4px;border-radius:5px;
   background:var(--line);color:var(--muted);font-size:.72rem;font-weight:600}
+.leech{font-size:.7rem;color:var(--bad);background:var(--bad-bg);border-radius:99px;
+  padding:2px 9px;margin-top:4px}
+.type-row{display:flex;gap:8px;margin-top:12px}
+.type-row input{flex:1 1 auto;min-width:0;padding:13px 14px;border:1px solid var(--line);
+  border-radius:12px;background:var(--card);color:var(--ink);font:inherit;font-size:1.05rem}
+.type-row input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.type-row input.ok{border-color:var(--good);background:var(--good-bg)}
+.type-row input.no{border-color:var(--bad);background:var(--bad-bg)}
+.big-say{width:84px;height:84px;border-radius:50%;font-size:2rem;line-height:1;
+  background:var(--accent-soft);color:var(--accent-ink);border:0}
+.big-say:active{transform:scale(.96)}
+.hard-list{margin-top:12px;font-size:.82rem;color:var(--muted)}
+.hard-list b{color:var(--ink);font-weight:600}
 .done-box{text-align:center;padding:22px 16px;border:1px dashed var(--line);border-radius:14px;margin-top:14px}
 .done-box b{display:block;font-size:1.05rem;margin-bottom:4px}
 .done-box p{margin:0 0 14px}
@@ -221,7 +234,7 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
     <h1>Włoski na co dzień</h1>
     <button class="theme-btn" id="theme">◐ motyw</button>
   </header>
-  <p class="sub">Codzienna sesja miesza fiszki, quiz i zdania. Zaloguj się, żeby postęp szedł za Tobą między urządzeniami.</p>
+  <p class="sub">Codzienna sesja miesza fiszki, quiz, pisanie i słuchanie. Zaloguj się, żeby postęp szedł za Tobą między urządzeniami.</p>
 
   <section class="sync" id="sync">
     <div class="sync-row">
@@ -263,6 +276,7 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
       <div class="card flash" id="flashcard">
         <button class="say" id="f-say" title="Przeczytaj na głos (S)" aria-label="Przeczytaj na głos">🔊</button>
         <div class="cat" id="f-cat"></div>
+        <div class="leech" id="f-leech" hidden>słowo, które sprawia kłopot</div>
         <div class="word" id="f-word"></div>
         <div class="pron" id="f-pron"></div>
         <div class="trans" id="f-trans" hidden>—</div>
@@ -298,9 +312,36 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
       <button class="btn nextq" id="xg-next" hidden>Dalej <small>spacja</small></button>
     </div>
 
+    <div id="x-type" hidden>
+      <div class="card ask">
+        <div class="ask-lead">Napisz po włosku</div>
+        <div class="ask-main" id="xt-pl"></div>
+        <div class="ask-sub" id="xt-hint"></div>
+      </div>
+      <form class="type-row" id="xt-form" autocomplete="off">
+        <input id="xt-in" type="text" inputmode="text" autocapitalize="none" autocorrect="off"
+               spellcheck="false" placeholder="wpisz po włosku…" aria-label="Odpowiedź po włosku">
+        <button class="btn" type="submit">Sprawdź</button>
+      </form>
+      <div class="verdict" id="xt-verdict" hidden></div>
+      <button class="btn nextq" id="xt-next" hidden>Dalej <small>spacja</small></button>
+    </div>
+
+    <div id="x-listen" hidden>
+      <div class="card ask">
+        <div class="ask-lead">Posłuchaj i wybierz znaczenie</div>
+        <button class="big-say" id="xl-play" aria-label="Odtwórz">🔊</button>
+        <div class="ask-sub">kliknij, żeby powtórzyć · klawisz S</div>
+      </div>
+      <div class="opts" id="xl-opts"></div>
+      <div class="verdict" id="xl-verdict" hidden></div>
+      <button class="btn nextq" id="xl-next" hidden>Dalej <small>spacja</small></button>
+    </div>
+
     <div class="done-box" id="f-done" hidden>
       <b>Na dziś zrobione 🎉</b>
       <p class="meta" id="f-done-msg"></p>
+      <div class="hard-list" id="f-hard" hidden></div>
       <button class="btn ghost" id="f-extra">Ucz się dalej poza planem</button>
     </div>
 
@@ -318,7 +359,7 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
               <option value="30">30</option>
             </select>
           </label>
-          <label class="chk"><input type="checkbox" id="f-mix-on"> Mieszaj ćwiczenia: fiszki, quiz, zdania</label>
+          <label class="chk"><input type="checkbox" id="f-mix-on"> Mieszaj ćwiczenia: fiszki, quiz, pisanie, słuchanie, zdania</label>
           <label class="chk"><input type="checkbox" id="f-auto"> Czytaj słowo na głos automatycznie</label>
           <button class="btn ghost" id="f-reset">Wyzeruj postęp fiszek</button>
         </div>
@@ -435,7 +476,7 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
 <script src="data.js"></script>
 <script>
 const WORDS = DATA.words, CATS = DATA.cats;
-const ORDER = new Map(WORDS.map((w, i) => [w.it, i]));
+const ORDER = new Map(WORDS.map((w, i) => [w.it, w.o || 9000 + i]));  // kolejność wg częstotliwości
 
 /* ---------- utils ---------- */
 const $ = s => document.querySelector(s);
@@ -549,7 +590,7 @@ const keyOf    = t => new Date(t).toISOString().slice(0,10);
 const dayKey   = () => keyOf(localNow());
 
 function rollDay(){
-  if(day.k !== dayKey()){ day = { k: dayKey(), n: 0 }; save("it250.day", day); sessDone = 0; }
+  if(day.k !== dayKey()){ day = { k: dayKey(), n: 0 }; save("it250.day", day); sessDone = 0; shownToday = new Set(); }
 }
 function bumpToday(){
   days[dayKey()] = (days[dayKey()] || 0) + 1;
@@ -584,11 +625,12 @@ const intervalLabel = n =>
 
 const isNew    = w => !srs[w.it];
 const dueWords = () => pool().filter(w => srs[w.it] && srs[w.it].d <= todayNum());
-const newWords = () => pool().filter(isNew)
-  .sort((a, b) => (a.l || 1) - (b.l || 1) || ORDER.get(a.it) - ORDER.get(b.it));
+// Najpierw to, co najczęstsze w mówionym włoskim — patrz pole o w data.js.
+const newWords = () => pool().filter(isNew).sort((a, b) => ORDER.get(a.it) - ORDER.get(b.it));
 const newLeft  = () => Math.max(0, newLimit - day.n);
 
 let queue = [], current = null, flipped = false, extra = false, sessDone = 0;
+let shownToday = new Set();   // żeby dociągane trudne słowa nie wracały w kółko
 let mixOn = load("it250.mix", true), mode = "card";
 
 // Zdania, w których da się schować to słowo.
@@ -605,12 +647,20 @@ function splitGap(sentence, gap){
   return i < 0 ? [sentence, ""] : [sentence.slice(0, i), sentence.slice(i + gap.length)];
 }
 
-// Im lepiej znasz słowo, tym trudniejszą formę pytania może dostać.
+const LEECH = 3;                                     // tyle wpadek robi ze słowa "trudne"
+const isLeech = w => (srs[w.it]?.l || 0) >= LEECH;
+const canListen = () => !!(window.speechSynthesis && itVoice);
+
+// Im lepiej znasz słowo, tym trudniejsza forma pytania. Słowo, na którym się
+// wykładasz, wraca do łatwiejszych form — inaczej utrwalasz samą porażkę.
 function exerciseFor(w){
   const c = srs[w.it];
-  if(!mixOn || !c || c.r < 1) return "card";        // nowe słowo zawsze wchodzi fiszką
+  if(!mixOn || !c || c.r < 1) return "card";         // nowe słowo zawsze wchodzi fiszką
+  if(isLeech(w)) return rnd(canListen() ? ["card", "quiz-it-pl", "listen"] : ["card", "quiz-it-pl"]);
   const opts = ["card", "quiz-it-pl"];
+  if(canListen()) opts.push("listen");
   if(c.r >= 2) opts.push("quiz-pl-it");
+  if(c.r >= 3) opts.push("type", "type");            // produkcja bije rozpoznawanie
   if(c.r >= 3 && sentencesFor(w).length) opts.push("gap", "gap");
   return rnd(opts);
 }
@@ -619,8 +669,10 @@ function showView(v){
   $("#flashcard").hidden = v !== "card";
   $("#f-reveal").hidden  = v !== "card";
   $("#f-actions").hidden = true;
-  $("#x-quiz").hidden = v !== "quiz";
-  $("#x-gap").hidden  = v !== "gap";
+  $("#x-quiz").hidden   = v !== "quiz";
+  $("#x-gap").hidden    = v !== "gap";
+  $("#x-type").hidden   = v !== "type";
+  $("#x-listen").hidden = v !== "listen";
 }
 
 // Cztery odpowiedzi: poprawna plus trzy z tej samej puli, żeby nie było zgadywanki po poziomie.
@@ -677,6 +729,85 @@ function renderGapStep(){
   $("#xg-verdict").hidden = true; $("#xg-next").hidden = true;
 }
 
+/* --- wpisywanie: produkcja bez podpowiedzi --- */
+const deaccent = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const tidy = t => deaccent(t.toLowerCase().trim()).replace(/[.,!?¿¡]/g, "").replace(/\s+/g, " ");
+
+// "scusi / scusa" -> obie formy; "piacere (mi piace)" -> z nawiasem i bez.
+function accepted(word){
+  const out = new Set();
+  word.it.split("/").forEach(part => {
+    const p = part.trim();
+    out.add(p);
+    out.add(p.replace(/\s*\(.*?\)\s*/g, " ").trim());
+    const inner = p.match(/\((.*?)\)/);
+    if(inner) out.add(inner[1].trim());
+  });
+  return [...out].filter(Boolean);
+}
+
+function editDistance(a, b){
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for(let j = 0; j <= b.length; j++) d[0][j] = j;
+  for(let i = 1; i <= a.length; i++)
+    for(let j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+
+function renderTypeStep(){
+  $("#xt-pl").textContent = current.pl;
+  $("#xt-hint").textContent = current.it.includes("/") ? "wystarczy jedna z form" : "";
+  const inp = $("#xt-in");
+  inp.value = ""; inp.className = ""; inp.disabled = false;
+  $("#xt-verdict").hidden = true; $("#xt-next").hidden = true;
+  setTimeout(() => inp.focus(), 30);
+}
+
+$("#xt-form").onsubmit = e => {
+  e.preventDefault();
+  if(settled || !current) return;
+  const inp = $("#xt-in"), guess = tidy(inp.value);
+  if(!guess) return;
+  const forms = accepted(current);
+  const exact = forms.some(f => tidy(f) === guess);
+  const close = !exact && forms.some(f => editDistance(tidy(f), guess) <= (guess.length > 6 ? 2 : 1));
+  settled = true;
+  inp.disabled = true;
+  inp.classList.add(exact || close ? "ok" : "no");
+  const v = $("#xt-verdict");
+  v.className = "verdict " + (exact || close ? "ok" : "no");
+  v.textContent = exact ? "Dobrze! " + current.it
+    : close ? "Prawie — poprawnie: " + current.it
+    : "Poprawnie: " + current.it + " [" + current.pr + "]";
+  v.hidden = false;
+  $("#xt-next").hidden = false;
+  if(voiceOn) say(current.it);
+  // Wpisanie z głowy to mocniejszy dowód niż wybór z czterech — odstęp rośnie szybciej.
+  applyGrade(exact ? "easy" : close ? "good" : "again");   // literówka nie kasuje postępu
+};
+$("#xt-next").onclick = nextCard;
+
+/* --- ze słuchu: bez tekstu, samo brzmienie --- */
+function renderListenStep(){
+  say(current.it);
+  const wrap = $("#xl-opts"); wrap.innerHTML = "";
+  choices(current, "pl").forEach((o, idx) => {
+    const right = o.w.it === current.it;
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.dataset.ok = right ? "1" : "0";
+    btn.innerHTML = '<span class="kbd">' + (idx + 1) + "</span>";
+    btn.append(document.createTextNode(o.text));
+    btn.onclick = () => settleChoice(wrap, btn, right, "#xl-verdict", "#xl-next",
+      current.it + " [" + current.pr + "] — " + current.pl);
+    wrap.appendChild(btn);
+  });
+  $("#xl-verdict").hidden = true; $("#xl-next").hidden = true;
+}
+$("#xl-play").onclick = () => current && say(current.it);
+$("#xl-next").onclick = nextCard;
+
 // Wspólna obsługa odpowiedzi w quizie i w zdaniach.
 let settled = false;
 function settleChoice(wrap, btn, ok, verdictSel, nextSel, verdictText){
@@ -694,7 +825,12 @@ function settleChoice(wrap, btn, ok, verdictSel, nextSel, verdictText){
 
 function buildQueue(){
   const fresh = newWords().slice(0, extra ? 10 : newLeft());
-  queue = shuffle(dueWords().concat(fresh));
+  const due = dueWords();
+  // Słowa, na których się wykładasz, dorzucamy do sesji także przed terminem.
+  const hard = pool().filter(w => isLeech(w) && !due.includes(w) && !shownToday.has(w.it))
+                     .sort((a, b) => srs[b.it].l - srs[a.it].l)
+                     .slice(0, 5);
+  queue = shuffle(due.concat(hard, fresh));
   if(extra && !queue.length){       // poza planem: to, co ma najbliższy termin
     queue = pool().filter(w => srs[w.it]).sort((a,b) => srs[a.it].d - srs[b.it].d).slice(0, 10);
   }
@@ -707,9 +843,12 @@ function nextCard(){
   current = queue.shift(); flipped = false; settled = false;
   $("#f-session").hidden = false; $("#f-done").hidden = true;
   mode = exerciseFor(current);
-  showView(mode === "card" ? "card" : mode === "gap" ? "gap" : "quiz");
+  showView(mode.startsWith("quiz") ? "quiz" : mode);
   if(mode === "gap"){ renderGapStep(); updateBar(); return; }
+  if(mode === "type"){ renderTypeStep(); updateBar(); return; }
+  if(mode === "listen"){ renderListenStep(); updateBar(); return; }
   if(mode !== "card"){ renderQuizStep(mode); updateBar(); return; }
+  $("#f-leech").hidden = !isLeech(current);
   $("#f-cat").textContent  = current.c;
   $("#f-word").textContent = current.it;
   $("#f-pron").textContent = "[" + current.pr + "]";
@@ -729,13 +868,26 @@ function showDone(){
   current = null;
   $("#f-session").hidden = true;
   $("#f-done").hidden = false;
-  $("#x-quiz").hidden = true; $("#x-gap").hidden = true; $("#f-actions").hidden = true;
+  showView("none"); $("#f-actions").hidden = true;
   const soonest = pool().filter(w => srs[w.it]).map(w => srs[w.it].d).sort((a,b) => a-b)[0];
   const left = newWords().length;
   const msg = [];
   if(soonest != null) msg.push("Następne powtórki: " + (soonest <= todayNum() ? "dziś" : intervalLabel(soonest - todayNum())) + ".");
   msg.push(left ? "Nowych słów w zapasie: " + left + "." : "Wszystkie słowa już wprowadzone.");
   $("#f-done-msg").textContent = msg.join(" ");
+
+  const hard = pool().filter(isLeech).sort((a, b) => srs[b.it].l - srs[a.it].l).slice(0, 6);
+  const box = $("#f-hard");
+  if(hard.length){
+    box.innerHTML = "Najczęściej się wykładasz na: ";
+    hard.forEach((w, i) => {
+      if(i) box.append(document.createTextNode(", "));
+      const b = document.createElement("b"); b.textContent = w.it;
+      box.appendChild(b);
+      box.append(document.createTextNode(" (" + w.pl + ")"));
+    });
+    box.hidden = false;
+  } else box.hidden = true;
   updateBar();
 }
 
@@ -757,18 +909,22 @@ $("#f-say").onclick = () => { if(current) say(current.it); };
 // klawiatura: spacja odsłania, 1/2/3 ocenia, S czyta na głos
 addEventListener("keydown", e => {
   if($("#p-flash").hidden || e.metaKey || e.ctrlKey || e.altKey) return;
-  if(e.target.closest("input, select, textarea, summary")) return;
-  const inQuiz = mode !== "card" && current;
+  if(e.target.closest("select, textarea, summary")) return;
+  if(e.target.closest("input")){                 // w polu tekstowym piszemy, nie sterujemy
+    if(e.code === "Space" || "1234".includes(e.key)) return;
+  }
+  const inQuiz = mode !== "card" && mode !== "type" && current;
   if(e.code === "Space" || e.code === "Enter"){
     e.preventDefault();
-    if(inQuiz){ if(settled) nextCard(); }
+    if(mode === "type"){ if(settled) nextCard(); }
+    else if(inQuiz){ if(settled) nextCard(); }
     else if(!flipped && current) reveal();
     else if(flipped) grade("good");
     else if(!$("#f-done").hidden) $("#f-extra").click();
-  } else if(e.key === "s" || e.key === "S"){
+  } else if((e.key === "s" || e.key === "S") && mode !== "type"){
     if(current) say(current.it);
   } else if(inQuiz && !settled && "1234".includes(e.key)){
-    const wrap = mode === "gap" ? $("#xg-opts") : $("#xq-opts");
+    const wrap = mode === "gap" ? $("#xg-opts") : mode === "listen" ? $("#xl-opts") : $("#xq-opts");
     const btn = wrap.children[+e.key - 1];
     if(btn) btn.click();
   } else if(!inQuiz && flipped && "123".includes(e.key)){
@@ -778,6 +934,7 @@ addEventListener("keydown", e => {
 
 function applyGrade(g){
   if(!current) return;
+  shownToday.add(current.it);
   const fresh = isNew(current);
   srs[current.it] = schedule(srs[current.it], g);
   if(fresh && !extra){ day.n++; save("it250.day", day); }
@@ -799,7 +956,7 @@ $("#f-limit").onchange = e => {
   newLimit = +e.target.value; save("it250.limit", newLimit);
   extra = false; queue = []; sessDone = 0; nextCard();
 };
-$("#f-extra").onclick = () => { extra = true; queue = []; sessDone = 0; nextCard(); };
+$("#f-extra").onclick = () => { extra = true; queue = []; sessDone = 0; shownToday = new Set(); nextCard(); };
 $("#f-mix-on").checked = mixOn;
 $("#f-mix-on").onchange = e => { mixOn = e.target.checked; save("it250.mix", mixOn); queue = []; sessDone = 0; nextCard(); };
 $("#f-auto").checked = voiceOn;
@@ -848,8 +1005,8 @@ $("#q-next").onclick = () => newQuestion();
 function studied(){
   const seen = pool().filter(w => srs[w.it]);
   if(seen.length >= 8) return seen;
-  return pool().slice()      // na start: najprostsze słowa, nie losowe z całych 700
-    .sort((a, b) => (a.l || 1) - (b.l || 1) || ORDER.get(a.it) - ORDER.get(b.it))
+  return pool().slice()      // na start: najczęstsze słowa, nie losowe z całych 700
+    .sort((a, b) => ORDER.get(a.it) - ORDER.get(b.it))
     .slice(0, 40);
 }
 function newQuestion(){
@@ -1015,7 +1172,7 @@ window.ITApp = {
 };
 
 /* ---------- start ---------- */
-$("#foot-count").textContent = WORDS.length + " słów w 3 poziomach: podstawy → rozszerzenie → konwersacja";
+$("#foot-count").textContent = WORDS.length + " haseł, wprowadzanych wg częstotliwości w mówionym włoskim";
 renderChips(); nextCard(); newQuestion(); newSentence(); renderList();
 </script>
 

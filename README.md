@@ -18,9 +18,21 @@ Typ ćwiczenia zależy od tego, jak dobrze znasz dane słowo:
 | Stan słowa | Co możesz dostać |
 | --- | --- |
 | nowe | zawsze fiszka — najpierw trzeba je zobaczyć |
-| 1–2 powtórki | fiszka albo quiz włoski → polski (rozpoznawanie) |
-| 3+ powtórki | dochodzi quiz polski → włoski (produkcja) |
-| 3+ powtórki i jest pasujące zdanie | dochodzi uzupełnianie luki w zdaniu |
+| 1+ powtórka | fiszka, quiz włoski → polski, ze słuchu (bez tekstu) |
+| 2+ powtórki | dochodzi quiz polski → włoski |
+| 3+ powtórki | dochodzi **wpisywanie z głowy** i uzupełnianie luki w zdaniu |
+| słowo, na którym się wykładasz | wraca do łatwych form: fiszka, rozpoznawanie, słuch |
+
+Trafienie w trudniejszej formie to mocniejszy dowód, więc **wpisanie z pamięci liczy się
+jak ocena „Łatwe"** i odstęp rośnie szybciej. Literówka (1–2 znaki) jest wybaczana —
+liczy się jak „Umiem", a nie jak błąd. Ćwiczenie ze słuchu włącza się tylko wtedy,
+gdy przeglądarka ma zainstalowany włoski głos.
+
+### Słowa, które sprawiają kłopot
+
+Po trzeciej wpadce słowo dostaje etykietę „trudne": wraca **częściej niż wynika
+z terminu** (do 5 takich na sesję), dostaje tylko łatwiejsze formy ćwiczeń,
+a na koniec dnia widzisz listę tych, na których wykładasz się najczęściej.
 
 Każda forma karmi ten sam harmonogram: dobra odpowiedź to „Umiem", zła to „Jeszcze nie".
 Mieszanie można wyłączyć w Ustawieniach (zostaną same fiszki).
@@ -39,8 +51,12 @@ liczy się jak w SM-2 (silnik Anki w wersji minimalnej):
 | Łatwe | 4 dni → poprzedni odstęp × łatwość × 1,3 |
 
 Słowo liczy się jako **utrwalone**, gdy jego odstęp sięgnie 21 dni.
-Nowe słowa wchodzą w kolejności poziomów (`l` w `data.js`): najpierw podstawy,
-potem rozszerzenie, na końcu zwroty konwersacyjne i gramatyka w praktyce.
+Nowe słowa wchodzą **w kolejności częstotliwości w mówionym włoskim** (pole `o`
+w `data.js`), policzonej z korpusu dialogów filmowych OpenSubtitles 2018
+([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords)).
+Wyjątek: zwroty grzecznościowe idą przodem, bo czysta frekwencja zaczynałaby naukę
+od `e`, `non`, `di` — słów częstych, ale bezużytecznych jako pierwsze fiszki.
+Zwrot wielowyrazowy dziedziczy rangę swojego najrzadszego składnika.
 Quiz i zdania trzymają się materiału, który już wprowadziłeś.
 
 Zła odpowiedź w quizie cofa słowo do powtórki — tak samo jak „Jeszcze nie" na fiszce.
