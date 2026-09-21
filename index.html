@@ -163,15 +163,6 @@ details.filters[open] summary::before{transform:rotate(90deg)}
 .grades .btn small{font-size:.65rem;opacity:.8;font-weight:700;text-transform:none}
 @media (max-width:380px){ .grades{grid-template-columns:repeat(2,1fr)} }
 
-/* Na dotyku nie ma klawiatury, więc podpowiedzi klawiszy tylko zabierają miejsce. */
-@media (pointer:coarse){
-  .grades .btn span i,
-  .kbd,
-  .kb-hint,
-  .btn.reveal small,
-  .btn.nextq small{display:none}
-  .opt{padding-left:16px}
-}
 
 /* --- pytania --- */
 .card.ask{min-height:160px;display:flex;flex-direction:column;align-items:center;
@@ -307,6 +298,16 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
 .auth-err.show{display:block}
 .auth-btns{display:flex;gap:9px;margin-top:18px}
 .auth-btns .btn{flex:1 1 0}
+
+/* Na dotyku nie ma klawiatury, więc podpowiedzi klawiszy tylko zabierają miejsce. */
+@media (pointer:coarse){
+  .grades .btn span i,
+  .kbd,
+  .kb-hint,
+  .btn.reveal small,
+  .btn.nextq small{display:none}
+  .opt{padding-left:16px}
+}
 </style>
 </head>
 <body>
