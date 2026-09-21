@@ -5,7 +5,7 @@ w czasie, quiz, układanie zdań i słownik. Statyczne pliki, bez backendu; kont
 tablica wyników działają na Supabase.
 
 - `index.html` — interfejs i logika nauki
-- `data.js` — słownictwo (725 słów) i zdania (116), podzielone na 3 poziomy
+- `data.js` — słownictwo (1914 haseł) i zdania (186)
 - `sync.js`, `config.js` — logowanie i synchronizacja
 - `supabase.sql` — schemat bazy
 
@@ -60,6 +60,19 @@ Zwrot wielowyrazowy dziedziczy rangę swojego najrzadszego składnika.
 Quiz i zdania trzymają się materiału, który już wprowadziłeś.
 
 Zła odpowiedź w quizie cofa słowo do powtórki — tak samo jak „Jeszcze nie" na fiszce.
+
+## Materiał
+
+1914 haseł, z czego **30% to zwroty wielowyrazowe** — bo płynność bierze się z gotowych
+klocków (*secondo me*, *non vedo l'ora*, *il problema è che*), a nie ze składania zdań
+słowo po słowie. Do tego 186 zdań do ćwiczenia luk.
+
+Pokrycie 200 najczęstszych słów mówionego włoskiego: **90%** (wcześniej 67%).
+Dla porównania, badania Nationa wskazują 2000–3000 rodzin wyrazów jako próg 95%
+pokrycia zwykłej rozmowy — hasło w tej aplikacji to nie to samo co rodzina wyrazów,
+więc do tego progu jeszcze trochę brakuje.
+
+Uwaga: tłumaczenia i fonetyka są pisane bez weryfikacji native speakera.
 
 ## Wspólny cel i tablica
 
