@@ -51,8 +51,8 @@ body{
   font-size:16px;line-height:1.5;font-weight:600;
 }
 .wrap{max-width:600px;margin:0 auto;padding:16px 16px 64px}
-header.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px}
-h1{font-size:1.3rem;margin:0;font-weight:800;letter-spacing:-.01em}
+header.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+h1{font-size:1.15rem;margin:0;font-weight:800;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:.85rem;margin:2px 0 16px;font-weight:600}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 
@@ -121,10 +121,10 @@ details.filters[open] summary::before{transform:rotate(90deg)}
 .sess-mix{color:var(--muted);font-size:.8rem;margin-top:8px}
 .sess-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
   margin-top:18px;color:var(--muted);font-size:.8rem}
-.opts{margin-left:auto}
-.opts summary{cursor:pointer;color:var(--muted);font-size:.8rem;list-style:none;font-weight:700}
-.opts summary::-webkit-details-marker{display:none}
-.opts summary::before{content:"⚙ "}
+.settings{margin-left:auto}
+.settings summary{cursor:pointer;color:var(--muted);font-size:.8rem;list-style:none;font-weight:700}
+.settings summary::-webkit-details-marker{display:none}
+.settings summary::before{content:"⚙ "}
 .opts-in{display:flex;flex-direction:column;gap:12px;align-items:flex-start;
   margin-top:10px;padding:14px;border:2px solid var(--line);border-radius:16px;background:var(--card)}
 .opts-in label{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink)}
@@ -172,7 +172,7 @@ details.filters[open] summary::before{transform:rotate(90deg)}
 .ask-main{font-size:1.6rem;font-weight:800;line-height:1.25}
 .ask-main b{color:var(--blue-dark);border-bottom:3px solid var(--blue);padding:0 16px}
 .ask-sub{color:var(--muted);font-size:.95rem;font-style:italic;font-weight:600}
-.opts{display:grid;gap:10px}
+.opts{display:grid;gap:10px;margin-top:16px}
 .opt{text-align:left;padding:14px 16px;border-radius:14px;border:2px solid var(--line);
   background:var(--card);font-size:1rem;font-weight:700;color:var(--ink);
   box-shadow:0 3px 0 var(--line);transition:background .12s,border-color .12s}
@@ -257,7 +257,7 @@ footer{margin-top:30px;text-align:center;color:var(--muted);font-size:.76rem;fon
 
 /* --- konta i wspólny cel --- */
 .sync{background:var(--card);border:2px solid var(--line);border-radius:18px;
-  padding:14px;margin:0 0 16px}
+  padding:14px;margin:28px 0 0}
 .sync-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .sync-who{font-size:.85rem;color:var(--muted);flex:1 1 auto;min-width:0}
 .sync-who b{color:var(--ink);font-weight:800}
@@ -316,16 +316,7 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
     <h1>Włoski na co dzień</h1>
     <button class="theme-btn" id="theme">◐ motyw</button>
   </header>
-  <p class="sub">Codzienna sesja miesza fiszki, quiz, pisanie i słuchanie. Zaloguj się, żeby postęp szedł za Tobą między urządzeniami.</p>
 
-  <section class="sync" id="sync">
-    <div class="sync-row">
-      <span class="sync-who" id="sync-who"><span class="dot"></span>Tryb lokalny — postęp tylko w tej przeglądarce</span>
-      <button class="btn ghost" id="sync-login">Zaloguj</button>
-      <button class="btn ghost" id="sync-logout" hidden>Wyloguj</button>
-    </div>
-    <div class="board" id="board"></div>
-  </section>
 
   <div class="tabs" role="tablist">
     <button role="tab" data-tab="flash" aria-selected="true">Nauka</button>
@@ -432,7 +423,7 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
 
     <div class="sess-foot">
       <span id="f-stat"></span>
-      <details class="opts">
+      <details class="settings">
         <summary>Ustawienia</summary>
         <div class="opts-in">
           <label>Nowe słowa dziennie
@@ -531,6 +522,15 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
       </table>
     </div>
     <p class="meta" style="margin-top:8px" id="list-count"></p>
+  </section>
+
+  <section class="sync" id="sync">
+    <div class="sync-row">
+      <span class="sync-who" id="sync-who"><span class="dot"></span>Tryb lokalny — postęp tylko w tej przeglądarce</span>
+      <button class="btn ghost" id="sync-login">Zaloguj</button>
+      <button class="btn ghost" id="sync-logout" hidden>Wyloguj</button>
+    </div>
+    <div class="board" id="board"></div>
   </section>
 
   <footer><span id="foot-count"></span> · wymowa zapisana polską fonetyką (przybliżona)</footer>
@@ -686,7 +686,8 @@ const keyOf    = t => new Date(t).toISOString().slice(0,10);
 const dayKey   = () => keyOf(localNow());
 
 function rollDay(){
-  if(day.k !== dayKey()){ day = { k: dayKey(), n: 0 }; save("it250.day", day); sessDone = 0; shownToday = new Set(); }
+  if(day.k !== dayKey()){ day = { k: dayKey(), n: 0 }; save("it250.day", day); sessDone = 0;
+    shownToday = new Set(); save("it250.seen", { k: dayKey(), w: [] }); }
 }
 function bumpToday(){
   days[dayKey()] = (days[dayKey()] || 0) + 1;
@@ -744,7 +745,14 @@ const newWords = () => pool().filter(isNew).sort((a, b) => ORDER.get(a.it) - ORD
 const newLeft  = () => Math.max(0, newLimit - day.n);
 
 let queue = [], current = null, flipped = false, extra = false, sessDone = 0;
-let shownToday = new Set();   // żeby dociągane trudne słowa nie wracały w kółko
+// Co już było dziś na ekranie. Musi przeżyć przeładowanie strony, inaczej
+// dociągane "trudne" słowa wracałyby po każdym odświeżeniu bez końca.
+const seenSaved = load("it250.seen", { k: "", w: [] });
+let shownToday = new Set(seenSaved.k === dayKey() ? (seenSaved.w || []) : []);
+function rememberShown(it){
+  shownToday.add(it);
+  save("it250.seen", { k: dayKey(), w: [...shownToday] });
+}
 let kind = load("it250.kind", "mix");     // mix | cards | hard
 let hardBuilt = false;                    // trening trudnych budujemy raz na wejście
 let cardMode = kind === "cards", mode = "card";
@@ -1073,7 +1081,7 @@ addEventListener("keydown", e => {
 
 function applyGrade(g, ev){
   if(!current) return;
-  shownToday.add(current.it);
+  rememberShown(current.it);
   const fresh = isNew(current);
   srs[current.it] = schedule(srs[current.it], g, ev != null ? ev : EVIDENCE[mode] || 1);
   if(fresh && !extra){ day.n++; save("it250.day", day); }
@@ -1096,13 +1104,14 @@ $("#f-limit").onchange = e => {
   newLimit = +e.target.value; save("it250.limit", newLimit);
   extra = false; queue = []; sessDone = 0; nextCard();
 };
-$("#f-extra").onclick = () => { extra = true; queue = []; sessDone = 0; shownToday = new Set(); nextCard(); };
+$("#f-extra").onclick = () => { extra = true; queue = []; sessDone = 0; nextCard(); };
 $("#f-auto").checked = voiceOn;
 $("#f-auto").onchange = e => { voiceOn = e.target.checked; save("it250.voice", voiceOn); };
 $("#f-reset").onclick = () => {
   if(!confirm("Wyzerować cały postęp fiszek?")) return;
   srs = {}; save("it250.srs", srs);
   day = { k: dayKey(), n: 0 }; save("it250.day", day);
+  shownToday = new Set(); save("it250.seen", { k: dayKey(), w: [] });
   extra = false; queue = []; sessDone = 0; nextCard();
 };
 
@@ -1110,7 +1119,8 @@ function updateBar(){
   const rest = current ? [current].concat(queue) : queue.slice();
   const left = rest.length;
   const fresh = rest.filter(isNew).length;        // słowa widziane dziś pierwszy raz
-  const again = left - fresh;
+  const tough = rest.filter(w => !isNew(w) && isLeech(w)).length;
+  const again = left - fresh - tough;
   const total = sessDone + left;
 
   $("#f-left").textContent = left
@@ -1120,6 +1130,7 @@ function updateBar(){
   $("#f-bar").style.width = (total ? sessDone / total * 100 : 100) + "%";
   $("#f-mix").textContent = !left ? "" :
     [ again ? again + " " + plural(again, "powtórka", "powtórki", "powtórek") : "",
+      tough ? tough + " " + plural(tough, "trudne słowo", "trudne słowa", "trudnych słów") : "",
       fresh ? fresh + " " + plural(fresh, "nowe słowo", "nowe słowa", "nowych słów") : ""
     ].filter(Boolean).join(" · ");
 

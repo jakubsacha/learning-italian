@@ -44,6 +44,11 @@ gdy przeglądarka ma zainstalowany włoski głos.
 Po trzeciej wpadce słowo dostaje etykietę „trudne": wraca **częściej niż wynika
 z terminu** (do 5 takich na sesję), dostaje tylko łatwiejsze formy ćwiczeń,
 a na koniec dnia widzisz listę tych, na których wykładasz się najczęściej.
+Linijka pod paskiem postępu rozbija kolejkę na powtórki, trudne i nowe słowa,
+więc widać, skąd się wzięła każda karta.
+
+Lista słów pokazanych danego dnia jest zapisywana, więc dociągnięte trudne słowa
+nie wracają po odświeżeniu strony.
 
 Każda forma karmi ten sam harmonogram: dobra odpowiedź to „Umiem", zła to „Jeszcze nie".
 Mieszanie można wyłączyć w Ustawieniach (zostaną same fiszki).
@@ -183,6 +188,8 @@ kolor zaznaczenia. Motyw jasny i ciemny idą za ustawieniem systemu, z ręcznym
 przełącznikiem w nagłówku.
 
 Zakładki układają się w siatkę 3×2 na telefonie i w jeden rząd od 600 px w górę.
+Nauka jest na górze ekranu; konto, wspólny cel i tablica siedzą pod sesją, nad stopką —
+widzisz je, gdy skończysz, a nie zanim zaczniesz.
 
 ## Lokalnie
 
