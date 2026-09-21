@@ -168,6 +168,17 @@ Zasady scalania postępu przy logowaniu:
 Bez wypełnionego `config.js` aplikacja działa dokładnie jak wcześniej: lokalnie,
 bez logowania.
 
+## Wygląd
+
+Interfejs jest w stylu aplikacji do nauki języków: grube zaokrąglone przyciski
+z efektem wciśnięcia (kolorowa krawędź u dołu znika przy kliknięciu), mocna
+zaokrąglona typografia (Nunito z Google Fonts, z odwrotem do czcionki systemowej,
+gdy nie da się jej pobrać), nasycona zieleń jako kolor akcji i niebieski jako
+kolor zaznaczenia. Motyw jasny i ciemny idą za ustawieniem systemu, z ręcznym
+przełącznikiem w nagłówku.
+
+Zakładki układają się w siatkę 3×2 na telefonie i w jeden rząd od 600 px w górę.
+
 ## Lokalnie
 
 ```sh
