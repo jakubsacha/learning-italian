@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Włoski — 250 słów</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f7f9f8; --card:#ffffff; --ink:#15211e; --muted:#6b7b77;
+  --line:#e2e9e6; --accent:#0e7a5f; --accent-soft:#dceae5; --accent-ink:#0b5c47;
+  --good:#1a7f4f; --bad:#b4342c; --good-bg:#e4f4ea; --bad-bg:#fbe8e6;
+  --shadow:0 1px 2px rgba(16,40,34,.06),0 8px 24px rgba(16,40,34,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1513; --card:#182220; --ink:#e8efec; --muted:#93a39e;
+    --line:#26332f; --accent:#3fbf97; --accent-soft:#1d332c; --accent-ink:#7fd9bd;
+    --good:#4cc58a; --bad:#f08b80; --good-bg:#182f25; --bad-bg:#33201e;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1513; --card:#182220; --ink:#e8efec; --muted:#93a39e;
+  --line:#26332f; --accent:#3fbf97; --accent-soft:#1d332c; --accent-ink:#7fd9bd;
+  --good:#4cc58a; --bad:#f08b80; --good-bg:#182f25; --bad-bg:#33201e;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:16px;line-height:1.5;
+}
+.wrap{max-width:760px;margin:0 auto;padding:18px 16px 64px}
+header.top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+h1{font-size:1.32rem;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:.86rem;margin:2px 0 16px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:5px;box-shadow:var(--shadow);overflow-x:auto}
+.tabs button{flex:1 0 auto;padding:9px 12px;border-radius:8px;font-size:.92rem;
+  font-weight:600;color:var(--muted);white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--accent-soft);color:var(--accent-ink)}
+.panel{margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:18px;box-shadow:var(--shadow)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{padding:10px 16px;border-radius:10px;background:var(--accent);color:#fff;
+  font-weight:600;font-size:.92rem}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:500}
+.btn.good{background:var(--good)}
+.btn.warn{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+select{padding:8px 10px;border-radius:9px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);font-size:.9rem}
+.meta{color:var(--muted);font-size:.82rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{padding:6px 11px;border-radius:999px;border:1px solid var(--line);
+  font-size:.78rem;color:var(--muted);background:var(--card)}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent-soft);
+  color:var(--accent-ink);font-weight:600}
+details.filters{margin-top:14px}
+details.filters summary{cursor:pointer;color:var(--muted);font-size:.85rem;
+  list-style:none;display:flex;align-items:center;gap:6px}
+details.filters summary::-webkit-details-marker{display:none}
+details.filters summary::before{content:"▸";transition:transform .15s}
+details.filters[open] summary::before{transform:rotate(90deg)}
+
+/* fiszka */
+.flash{min-height:230px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;cursor:pointer;user-select:none;gap:6px}
+.flash .word{font-size:2.1rem;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.flash .pron{color:var(--muted);font-size:.95rem;font-style:italic}
+.flash .trans{font-size:1.25rem;color:var(--accent-ink);font-weight:600}
+.flash .cat{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.hint{color:var(--muted);font-size:.8rem;margin-top:10px;text-align:center}
+.bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:14px 0 4px}
+.bar > i{display:block;height:100%;background:var(--accent);transition:width .25s}
+
+/* quiz */
+.q{font-size:1.45rem;font-weight:700;text-align:center;margin:6px 0 2px}
+.q-pron{text-align:center;color:var(--muted);font-style:italic;font-size:.9rem;margin-bottom:16px}
+.opts{display:grid;gap:9px}
+.opt{text-align:left;padding:13px 15px;border-radius:11px;border:1px solid var(--line);
+  background:var(--card);font-size:.98rem;transition:background .12s,border-color .12s}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.ok{background:var(--good-bg);border-color:var(--good);font-weight:600}
+.opt.no{background:var(--bad-bg);border-color:var(--bad)}
+
+/* zdania */
+.slot{min-height:64px;border:1.5px dashed var(--line);border-radius:11px;padding:10px;
+  display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start;margin-bottom:12px}
+.pool{display:flex;flex-wrap:wrap;gap:7px}
+.tile{padding:7px 12px;border-radius:9px;border:1px solid var(--line);
+  background:var(--card);font-size:.95rem}
+.tile.used{opacity:.3;pointer-events:none}
+.slot .tile{background:var(--accent-soft);border-color:var(--accent-soft);color:var(--accent-ink)}
+.verdict{margin-top:12px;padding:11px 13px;border-radius:10px;font-size:.92rem}
+.verdict.ok{background:var(--good-bg);color:var(--good)}
+.verdict.no{background:var(--bad-bg);color:var(--bad)}
+.prompt-pl{font-size:1.12rem;font-weight:600;margin-bottom:3px}
+.gapline{font-size:1.18rem;font-weight:600;text-align:center;margin:4px 0 16px;line-height:1.5}
+.gapline b{color:var(--accent-ink);border-bottom:2px solid var(--accent);padding:0 22px}
+
+/* słownik */
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+td.it{font-weight:600;white-space:nowrap}
+td.it small{display:block;font-weight:400;font-style:italic;color:var(--muted);font-size:.78rem}
+.scroll{max-height:62vh;overflow:auto;-webkit-overflow-scrolling:touch}
+input.search{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);font-size:.95rem;margin-bottom:10px}
+.ai{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.ai .out{margin-top:10px;font-size:.98rem}
+.ai .out .it{font-weight:700;font-size:1.1rem}
+.ai .out .pr{color:var(--muted);font-style:italic;font-size:.86rem}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--line);
+  border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;
+  vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.78rem}
+.theme-btn{color:var(--muted);font-size:.8rem;margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Włoski — 250 słów na co dzień</h1>
+    <button class="theme-btn" id="theme">◐ motyw</button>
+  </header>
+  <p class="sub">Fiszki, quiz i układanie zdań. Postęp zapisuje się w tej przeglądarce.</p>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="flash" aria-selected="true">Fiszki</button>
+    <button role="tab" data-tab="quiz" aria-selected="false">Quiz</button>
+    <button role="tab" data-tab="sent" aria-selected="false">Zdania</button>
+    <button role="tab" data-tab="list" aria-selected="false">Słownik</button>
+  </div>
+
+  <details class="filters">
+    <summary>Zakres materiału — <span id="filter-info"></span></summary>
+    <div class="chips" id="chips"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn ghost" id="all-on">Zaznacz wszystkie</button>
+      <button class="btn ghost" id="all-off">Odznacz wszystkie</button>
+    </div>
+  </details>
+
+  <!-- FISZKI -->
+  <section class="panel" id="p-flash">
+    <div class="card flash" id="flashcard">
+      <div class="cat" id="f-cat"></div>
+      <div class="word" id="f-word"></div>
+      <div class="pron" id="f-pron"></div>
+      <div class="trans" id="f-trans" style="visibility:hidden">—</div>
+    </div>
+    <div class="hint" id="f-hint">Kliknij kartę, żeby zobaczyć tłumaczenie</div>
+    <div class="bar"><i id="f-bar" style="width:0%"></i></div>
+    <div class="row" style="justify-content:space-between;margin-top:10px">
+      <span class="meta" id="f-stat"></span>
+      <button class="btn ghost" id="f-reset">Wyzeruj postęp</button>
+    </div>
+    <div class="row" id="f-actions" style="margin-top:14px;display:none">
+      <button class="btn warn" id="f-again">Jeszcze nie umiem</button>
+      <button class="btn good" id="f-know">Umiem</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="panel" id="p-quiz" hidden>
+    <div class="row" style="margin-bottom:12px">
+      <select id="q-dir">
+        <option value="it-pl">włoski → polski</option>
+        <option value="pl-it">polski → włoski</option>
+        <option value="pr-it">wymowa → włoski</option>
+      </select>
+      <span class="meta" id="q-progress"></span>
+    </div>
+    <div class="card">
+      <div class="q" id="q-text"></div>
+      <div class="q-pron" id="q-sub"></div>
+      <div class="opts" id="q-opts"></div>
+      <div class="verdict" id="q-verdict" hidden></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="q-next" hidden>Dalej</button>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px;justify-content:space-between">
+      <span class="meta" id="q-score"></span>
+      <button class="btn ghost" id="q-restart">Nowa runda</button>
+    </div>
+  </section>
+
+  <!-- ZDANIA -->
+  <section class="panel" id="p-sent" hidden>
+    <div class="row" style="margin-bottom:12px">
+      <select id="s-mode">
+        <option value="order">Ułóż zdanie z rozsypanki</option>
+        <option value="gap">Uzupełnij lukę</option>
+      </select>
+      <span class="meta" id="s-score"></span>
+    </div>
+
+    <div class="card" id="s-order-box">
+      <div class="prompt-pl" id="s-pl"></div>
+      <div class="meta" style="margin-bottom:10px">Ułóż zdanie po włosku</div>
+      <div class="slot" id="s-slot"></div>
+      <div class="pool" id="s-pool"></div>
+      <div class="verdict" id="s-verdict" hidden></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="s-check">Sprawdź</button>
+        <button class="btn ghost" id="s-clear">Wyczyść</button>
+        <button class="btn ghost" id="s-next">Następne</button>
+      </div>
+    </div>
+
+    <div class="card" id="s-gap-box" hidden>
+      <div class="prompt-pl" id="g-pl"></div>
+      <div class="gapline" id="g-line"></div>
+      <div class="opts" id="g-opts"></div>
+      <div class="verdict" id="g-verdict" hidden></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="g-next" hidden>Następne</button>
+      </div>
+    </div>
+
+    <div class="card ai" id="ai-box" hidden style="display:none">
+      <strong style="font-size:.95rem">Generator zdań</strong>
+      <p class="meta" style="margin:4px 0 10px">
+        Claude ułoży nowe zdanie z wylosowanych słów z Twojego zakresu.</p>
+      <div class="row">
+        <button class="btn" id="ai-go">Wygeneruj zdanie</button>
+        <span class="meta" id="ai-words"></span>
+      </div>
+      <div class="out" id="ai-out"></div>
+    </div>
+  </section>
+
+  <!-- SŁOWNIK -->
+  <section class="panel" id="p-list" hidden>
+    <input class="search" id="search" placeholder="Szukaj po włosku lub polsku…">
+    <div class="card scroll">
+      <table>
+        <thead><tr><th>Włoski / wymowa</th><th>Polski</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p class="meta" style="margin-top:8px" id="list-count"></p>
+  </section>
+
+  <footer>250 słów · wymowa zapisana polską fonetyką (przybliżona)</footer>
+</div>
+
+<script>
+const DATA = {"cats": ["Powitania i grzeczność", "Pytania", "Zaimki i określniki", "Czasowniki", "Liczby i czas", "Jedzenie i restauracja", "Podróż i miasto", "Zakupy i pieniądze", "Ludzie i rodzina", "Dom i rzeczy codzienne", "Przymiotniki i przysłówki", "Spójniki, przyimki i zwroty"], "words": [{"it": "ciao", "pr": "czao", "pl": "cześć (nieformalnie)", "c": "Powitania i grzeczność"}, {"it": "salve", "pr": "salwe", "pl": "witam (neutralnie)", "c": "Powitania i grzeczność"}, {"it": "buongiorno", "pr": "buondżorno", "pl": "dzień dobry", "c": "Powitania i grzeczność"}, {"it": "buonasera", "pr": "buonasera", "pl": "dobry wieczór", "c": "Powitania i grzeczność"}, {"it": "buonanotte", "pr": "buonanotte", "pl": "dobranoc", "c": "Powitania i grzeczność"}, {"it": "arrivederci", "pr": "arriwederczi", "pl": "do widzenia", "c": "Powitania i grzeczność"}, {"it": "a domani", "pr": "a domani", "pl": "do jutra", "c": "Powitania i grzeczność"}, {"it": "sì", "pr": "si", "pl": "tak", "c": "Powitania i grzeczność"}, {"it": "no", "pr": "no", "pl": "nie", "c": "Powitania i grzeczność"}, {"it": "grazie", "pr": "gracje", "pl": "dziękuję", "c": "Powitania i grzeczność"}, {"it": "prego", "pr": "prego", "pl": "proszę (w odpowiedzi na „grazie”)", "c": "Powitania i grzeczność"}, {"it": "per favore", "pr": "per fawore", "pl": "proszę (gdy o coś prosisz)", "c": "Powitania i grzeczność"}, {"it": "scusi / scusa", "pr": "skuzi / skuza", "pl": "przepraszam (form. / nieform.)", "c": "Powitania i grzeczność"}, {"it": "mi dispiace", "pr": "mi dispjacze", "pl": "przykro mi", "c": "Powitania i grzeczność"}, {"it": "va bene", "pr": "wa bene", "pl": "w porządku, dobrze", "c": "Powitania i grzeczność"}, {"it": "piacere", "pr": "pjaczere", "pl": "miło mi", "c": "Powitania i grzeczność"}, {"it": "come stai?", "pr": "kome staj", "pl": "jak się masz?", "c": "Powitania i grzeczność"}, {"it": "cosa / che cosa", "pr": "koza / ke koza", "pl": "co", "c": "Pytania"}, {"it": "chi", "pr": "ki", "pl": "kto", "c": "Pytania"}, {"it": "dove", "pr": "dowe", "pl": "gdzie", "c": "Pytania"}, {"it": "quando", "pr": "kuando", "pl": "kiedy", "c": "Pytania"}, {"it": "perché", "pr": "perke", "pl": "dlaczego / ponieważ", "c": "Pytania"}, {"it": "come", "pr": "kome", "pl": "jak", "c": "Pytania"}, {"it": "quanto", "pr": "kuanto", "pl": "ile", "c": "Pytania"}, {"it": "quale", "pr": "kuale", "pl": "który", "c": "Pytania"}, {"it": "c'è", "pr": "cze", "pl": "jest, znajduje się", "c": "Pytania"}, {"it": "ci sono", "pr": "czi sono", "pl": "są, znajdują się", "c": "Pytania"}, {"it": "quanto costa?", "pr": "kuanto kosta", "pl": "ile to kosztuje?", "c": "Pytania"}, {"it": "dov'è?", "pr": "dowe", "pl": "gdzie jest?", "c": "Pytania"}, {"it": "che ora è?", "pr": "ke ora e", "pl": "która godzina?", "c": "Pytania"}, {"it": "come si dice?", "pr": "kome si dicze", "pl": "jak się mówi?", "c": "Pytania"}, {"it": "posso?", "pr": "posso", "pl": "mogę? / czy można?", "c": "Pytania"}, {"it": "io", "pr": "io", "pl": "ja", "c": "Zaimki i określniki"}, {"it": "tu", "pr": "tu", "pl": "ty", "c": "Zaimki i określniki"}, {"it": "lui", "pr": "lui", "pl": "on", "c": "Zaimki i określniki"}, {"it": "lei", "pr": "lej", "pl": "ona / Pan, Pani", "c": "Zaimki i określniki"}, {"it": "noi", "pr": "noj", "pl": "my", "c": "Zaimki i określniki"}, {"it": "voi", "pr": "woj", "pl": "wy", "c": "Zaimki i określniki"}, {"it": "loro", "pr": "loro", "pl": "oni", "c": "Zaimki i określniki"}, {"it": "mi", "pr": "mi", "pl": "mnie, mi", "c": "Zaimki i określniki"}, {"it": "ti", "pr": "ti", "pl": "ciebie, tobie", "c": "Zaimki i określniki"}, {"it": "ci", "pr": "czi", "pl": "nas, nam; tam", "c": "Zaimki i określniki"}, {"it": "questo / questa", "pr": "kuesto / kuesta", "pl": "ten / ta", "c": "Zaimki i określniki"}, {"it": "quello / quella", "pr": "kuello / kuella", "pl": "tamten / tamta", "c": "Zaimki i określniki"}, {"it": "mio / mia", "pr": "mio / mia", "pl": "mój / moja", "c": "Zaimki i określniki"}, {"it": "tuo / tua", "pr": "tuo / tua", "pl": "twój / twoja", "c": "Zaimki i określniki"}, {"it": "suo / sua", "pr": "suo / sua", "pl": "jego / jej", "c": "Zaimki i określniki"}, {"it": "tutto", "pr": "tutto", "pl": "wszystko, cały", "c": "Zaimki i określniki"}, {"it": "essere", "pr": "essere", "pl": "być (sono – jestem, è – jest)", "c": "Czasowniki"}, {"it": "avere", "pr": "awere", "pl": "mieć (ho – mam)", "c": "Czasowniki"}, {"it": "fare", "pr": "fare", "pl": "robić (faccio)", "c": "Czasowniki"}, {"it": "andare", "pr": "andare", "pl": "iść, jechać (vado)", "c": "Czasowniki"}, {"it": "venire", "pr": "wenire", "pl": "przychodzić (vengo)", "c": "Czasowniki"}, {"it": "stare", "pr": "stare", "pl": "być, czuć się (sto)", "c": "Czasowniki"}, {"it": "potere", "pr": "potere", "pl": "móc (posso)", "c": "Czasowniki"}, {"it": "volere", "pr": "wolere", "pl": "chcieć (voglio)", "c": "Czasowniki"}, {"it": "dovere", "pr": "dowere", "pl": "musieć (devo)", "c": "Czasowniki"}, {"it": "sapere", "pr": "sapere", "pl": "wiedzieć, umieć (so)", "c": "Czasowniki"}, {"it": "conoscere", "pr": "konoszere", "pl": "znać (kogoś, miejsce)", "c": "Czasowniki"}, {"it": "capire", "pr": "kapire", "pl": "rozumieć (capisco)", "c": "Czasowniki"}, {"it": "parlare", "pr": "parlare", "pl": "mówić, rozmawiać", "c": "Czasowniki"}, {"it": "dire", "pr": "dire", "pl": "powiedzieć (dico)", "c": "Czasowniki"}, {"it": "chiedere", "pr": "kiedere", "pl": "pytać, prosić", "c": "Czasowniki"}, {"it": "rispondere", "pr": "rispondere", "pl": "odpowiadać", "c": "Czasowniki"}, {"it": "vedere", "pr": "wedere", "pl": "widzieć", "c": "Czasowniki"}, {"it": "guardare", "pr": "guardare", "pl": "patrzeć, oglądać", "c": "Czasowniki"}, {"it": "sentire", "pr": "sentire", "pl": "słyszeć, czuć", "c": "Czasowniki"}, {"it": "ascoltare", "pr": "askoltare", "pl": "słuchać", "c": "Czasowniki"}, {"it": "mangiare", "pr": "mandżare", "pl": "jeść", "c": "Czasowniki"}, {"it": "bere", "pr": "bere", "pl": "pić (bevo)", "c": "Czasowniki"}, {"it": "prendere", "pr": "prendere", "pl": "brać, zamawiać", "c": "Czasowniki"}, {"it": "comprare", "pr": "komprare", "pl": "kupować", "c": "Czasowniki"}, {"it": "pagare", "pr": "pagare", "pl": "płacić", "c": "Czasowniki"}, {"it": "lavorare", "pr": "laworare", "pl": "pracować", "c": "Czasowniki"}, {"it": "studiare", "pr": "studjare", "pl": "uczyć się, studiować", "c": "Czasowniki"}, {"it": "leggere", "pr": "leddżere", "pl": "czytać", "c": "Czasowniki"}, {"it": "scrivere", "pr": "skriwere", "pl": "pisać", "c": "Czasowniki"}, {"it": "aprire", "pr": "aprire", "pl": "otwierać", "c": "Czasowniki"}, {"it": "chiudere", "pr": "kiudere", "pl": "zamykać", "c": "Czasowniki"}, {"it": "aiutare", "pr": "ajutare", "pl": "pomagać", "c": "Czasowniki"}, {"it": "chiamare", "pr": "kiamare", "pl": "dzwonić, nazywać", "c": "Czasowniki"}, {"it": "aspettare", "pr": "aspettare", "pl": "czekać", "c": "Czasowniki"}, {"it": "cercare", "pr": "czerkare", "pl": "szukać", "c": "Czasowniki"}, {"it": "dare", "pr": "dare", "pl": "dawać (do)", "c": "Czasowniki"}, {"it": "partire", "pr": "partire", "pl": "wyjeżdżać, odjeżdżać", "c": "Czasowniki"}, {"it": "arrivare", "pr": "arriware", "pl": "przyjeżdżać, docierać", "c": "Czasowniki"}, {"it": "tornare", "pr": "tornare", "pl": "wracać", "c": "Czasowniki"}, {"it": "dormire", "pr": "dormire", "pl": "spać", "c": "Czasowniki"}, {"it": "abitare", "pr": "abitare", "pl": "mieszkać", "c": "Czasowniki"}, {"it": "piacere (mi piace)", "pr": "pjaczere (mi pjacze)", "pl": "podobać się, lubić", "c": "Czasowniki"}, {"it": "uno", "pr": "uno", "pl": "jeden", "c": "Liczby i czas"}, {"it": "due", "pr": "due", "pl": "dwa", "c": "Liczby i czas"}, {"it": "tre", "pr": "tre", "pl": "trzy", "c": "Liczby i czas"}, {"it": "quattro", "pr": "kuattro", "pl": "cztery", "c": "Liczby i czas"}, {"it": "cinque", "pr": "czinkue", "pl": "pięć", "c": "Liczby i czas"}, {"it": "sei", "pr": "sej", "pl": "sześć", "c": "Liczby i czas"}, {"it": "sette", "pr": "sette", "pl": "siedem", "c": "Liczby i czas"}, {"it": "otto", "pr": "otto", "pl": "osiem", "c": "Liczby i czas"}, {"it": "nove", "pr": "nowe", "pl": "dziewięć", "c": "Liczby i czas"}, {"it": "dieci", "pr": "dieczi", "pl": "dziesięć", "c": "Liczby i czas"}, {"it": "venti", "pr": "wenti", "pl": "dwadzieścia", "c": "Liczby i czas"}, {"it": "cento", "pr": "czento", "pl": "sto", "c": "Liczby i czas"}, {"it": "mille", "pr": "mille", "pl": "tysiąc", "c": "Liczby i czas"}, {"it": "oggi", "pr": "oddżi", "pl": "dzisiaj", "c": "Liczby i czas"}, {"it": "domani", "pr": "domani", "pl": "jutro", "c": "Liczby i czas"}, {"it": "ieri", "pr": "jeri", "pl": "wczoraj", "c": "Liczby i czas"}, {"it": "adesso / ora", "pr": "adesso / ora", "pl": "teraz", "c": "Liczby i czas"}, {"it": "dopo", "pr": "dopo", "pl": "potem, po", "c": "Liczby i czas"}, {"it": "prima", "pr": "prima", "pl": "przedtem, najpierw", "c": "Liczby i czas"}, {"it": "presto", "pr": "presto", "pl": "wcześnie, szybko", "c": "Liczby i czas"}, {"it": "tardi", "pr": "tardi", "pl": "późno", "c": "Liczby i czas"}, {"it": "sempre", "pr": "sempre", "pl": "zawsze", "c": "Liczby i czas"}, {"it": "mai", "pr": "maj", "pl": "nigdy", "c": "Liczby i czas"}, {"it": "mattina", "pr": "mattina", "pl": "poranek", "c": "Liczby i czas"}, {"it": "sera", "pr": "sera", "pl": "wieczór", "c": "Liczby i czas"}, {"it": "notte", "pr": "notte", "pl": "noc", "c": "Liczby i czas"}, {"it": "giorno", "pr": "dżorno", "pl": "dzień", "c": "Liczby i czas"}, {"it": "settimana", "pr": "settimana", "pl": "tydzień", "c": "Liczby i czas"}, {"it": "mese", "pr": "meze", "pl": "miesiąc", "c": "Liczby i czas"}, {"it": "acqua", "pr": "akkua", "pl": "woda", "c": "Jedzenie i restauracja"}, {"it": "caffè", "pr": "kaffe", "pl": "kawa", "c": "Jedzenie i restauracja"}, {"it": "latte", "pr": "latte", "pl": "mleko", "c": "Jedzenie i restauracja"}, {"it": "vino", "pr": "wino", "pl": "wino", "c": "Jedzenie i restauracja"}, {"it": "birra", "pr": "birra", "pl": "piwo", "c": "Jedzenie i restauracja"}, {"it": "pane", "pr": "pane", "pl": "chleb", "c": "Jedzenie i restauracja"}, {"it": "cibo", "pr": "czibo", "pl": "jedzenie", "c": "Jedzenie i restauracja"}, {"it": "colazione", "pr": "kolacjone", "pl": "śniadanie", "c": "Jedzenie i restauracja"}, {"it": "pranzo", "pr": "prandzo", "pl": "obiad", "c": "Jedzenie i restauracja"}, {"it": "cena", "pr": "czena", "pl": "kolacja", "c": "Jedzenie i restauracja"}, {"it": "pasta", "pr": "pasta", "pl": "makaron", "c": "Jedzenie i restauracja"}, {"it": "pizza", "pr": "picca", "pl": "pizza", "c": "Jedzenie i restauracja"}, {"it": "carne", "pr": "karne", "pl": "mięso", "c": "Jedzenie i restauracja"}, {"it": "pesce", "pr": "pesze", "pl": "ryba", "c": "Jedzenie i restauracja"}, {"it": "verdura", "pr": "werdura", "pl": "warzywa", "c": "Jedzenie i restauracja"}, {"it": "frutta", "pr": "frutta", "pl": "owoce", "c": "Jedzenie i restauracja"}, {"it": "formaggio", "pr": "formaddżo", "pl": "ser", "c": "Jedzenie i restauracja"}, {"it": "sale", "pr": "sale", "pl": "sól", "c": "Jedzenie i restauracja"}, {"it": "dolce", "pr": "dolcze", "pl": "deser; słodki", "c": "Jedzenie i restauracja"}, {"it": "menù", "pr": "menu", "pl": "menu", "c": "Jedzenie i restauracja"}, {"it": "conto", "pr": "konto", "pl": "rachunek", "c": "Jedzenie i restauracja"}, {"it": "tavolo", "pr": "tawolo", "pl": "stolik", "c": "Jedzenie i restauracja"}, {"it": "cameriere", "pr": "kamerjere", "pl": "kelner", "c": "Jedzenie i restauracja"}, {"it": "bicchiere", "pr": "bikkiere", "pl": "szklanka, kieliszek", "c": "Jedzenie i restauracja"}, {"it": "stazione", "pr": "stacjone", "pl": "dworzec", "c": "Podróż i miasto"}, {"it": "treno", "pr": "treno", "pl": "pociąg", "c": "Podróż i miasto"}, {"it": "autobus", "pr": "autobus", "pl": "autobus", "c": "Podróż i miasto"}, {"it": "aereo", "pr": "aereo", "pl": "samolot", "c": "Podróż i miasto"}, {"it": "aeroporto", "pr": "aeroporto", "pl": "lotnisko", "c": "Podróż i miasto"}, {"it": "biglietto", "pr": "biljetto", "pl": "bilet", "c": "Podróż i miasto"}, {"it": "macchina", "pr": "makkina", "pl": "samochód", "c": "Podróż i miasto"}, {"it": "taxi", "pr": "taksi", "pl": "taksówka", "c": "Podróż i miasto"}, {"it": "strada", "pr": "strada", "pl": "droga, ulica", "c": "Podróż i miasto"}, {"it": "via", "pr": "wia", "pl": "ulica (w adresie)", "c": "Podróż i miasto"}, {"it": "piazza", "pr": "pjacca", "pl": "plac", "c": "Podróż i miasto"}, {"it": "centro", "pr": "czentro", "pl": "centrum", "c": "Podróż i miasto"}, {"it": "città", "pr": "czitta", "pl": "miasto", "c": "Podróż i miasto"}, {"it": "albergo", "pr": "albergo", "pl": "hotel", "c": "Podróż i miasto"}, {"it": "camera", "pr": "kamera", "pl": "pokój", "c": "Podróż i miasto"}, {"it": "chiave", "pr": "kiawe", "pl": "klucz", "c": "Podróż i miasto"}, {"it": "bagno", "pr": "banio", "pl": "łazienka, toaleta", "c": "Podróż i miasto"}, {"it": "ospedale", "pr": "ospedale", "pl": "szpital", "c": "Podróż i miasto"}, {"it": "farmacia", "pr": "farmaczia", "pl": "apteka", "c": "Podróż i miasto"}, {"it": "banca", "pr": "banka", "pl": "bank", "c": "Podróż i miasto"}, {"it": "chiesa", "pr": "kieza", "pl": "kościół", "c": "Podróż i miasto"}, {"it": "mare", "pr": "mare", "pl": "morze", "c": "Podróż i miasto"}, {"it": "destra", "pr": "destra", "pl": "prawo (a destra – w prawo)", "c": "Podróż i miasto"}, {"it": "sinistra", "pr": "sinistra", "pl": "lewo (a sinistra – w lewo)", "c": "Podróż i miasto"}, {"it": "dritto", "pr": "dritto", "pl": "prosto", "c": "Podróż i miasto"}, {"it": "vicino", "pr": "wiczino", "pl": "blisko, w pobliżu", "c": "Podróż i miasto"}, {"it": "negozio", "pr": "negocjo", "pl": "sklep", "c": "Zakupy i pieniądze"}, {"it": "mercato", "pr": "merkato", "pl": "targ", "c": "Zakupy i pieniądze"}, {"it": "supermercato", "pr": "supermerkato", "pl": "supermarket", "c": "Zakupy i pieniądze"}, {"it": "soldi", "pr": "soldi", "pl": "pieniądze", "c": "Zakupy i pieniądze"}, {"it": "prezzo", "pr": "precco", "pl": "cena", "c": "Zakupy i pieniądze"}, {"it": "sconto", "pr": "skonto", "pl": "zniżka", "c": "Zakupy i pieniądze"}, {"it": "contanti", "pr": "kontanti", "pl": "gotówka", "c": "Zakupy i pieniądze"}, {"it": "carta di credito", "pr": "karta di kredito", "pl": "karta kredytowa", "c": "Zakupy i pieniądze"}, {"it": "aperto", "pr": "aperto", "pl": "otwarte", "c": "Zakupy i pieniądze"}, {"it": "chiuso", "pr": "kiuzo", "pl": "zamknięte", "c": "Zakupy i pieniądze"}, {"it": "uomo", "pr": "uomo", "pl": "mężczyzna", "c": "Ludzie i rodzina"}, {"it": "donna", "pr": "donna", "pl": "kobieta", "c": "Ludzie i rodzina"}, {"it": "ragazzo", "pr": "ragacco", "pl": "chłopak", "c": "Ludzie i rodzina"}, {"it": "ragazza", "pr": "ragacca", "pl": "dziewczyna", "c": "Ludzie i rodzina"}, {"it": "bambino", "pr": "bambino", "pl": "dziecko", "c": "Ludzie i rodzina"}, {"it": "amico", "pr": "amiko", "pl": "przyjaciel, kolega", "c": "Ludzie i rodzina"}, {"it": "famiglia", "pr": "familja", "pl": "rodzina", "c": "Ludzie i rodzina"}, {"it": "madre", "pr": "madre", "pl": "matka", "c": "Ludzie i rodzina"}, {"it": "padre", "pr": "padre", "pl": "ojciec", "c": "Ludzie i rodzina"}, {"it": "figlio", "pr": "filjo", "pl": "syn", "c": "Ludzie i rodzina"}, {"it": "figlia", "pr": "filja", "pl": "córka", "c": "Ludzie i rodzina"}, {"it": "fratello", "pr": "fratello", "pl": "brat", "c": "Ludzie i rodzina"}, {"it": "sorella", "pr": "sorella", "pl": "siostra", "c": "Ludzie i rodzina"}, {"it": "moglie", "pr": "molje", "pl": "żona", "c": "Ludzie i rodzina"}, {"it": "marito", "pr": "marito", "pl": "mąż", "c": "Ludzie i rodzina"}, {"it": "signore / signora", "pr": "sinjore / sinjora", "pl": "pan / pani", "c": "Ludzie i rodzina"}, {"it": "casa", "pr": "kaza", "pl": "dom, mieszkanie", "c": "Dom i rzeczy codzienne"}, {"it": "porta", "pr": "porta", "pl": "drzwi", "c": "Dom i rzeczy codzienne"}, {"it": "finestra", "pr": "finestra", "pl": "okno", "c": "Dom i rzeczy codzienne"}, {"it": "letto", "pr": "letto", "pl": "łóżko", "c": "Dom i rzeczy codzienne"}, {"it": "telefono", "pr": "telefono", "pl": "telefon", "c": "Dom i rzeczy codzienne"}, {"it": "computer", "pr": "kompjuter", "pl": "komputer", "c": "Dom i rzeczy codzienne"}, {"it": "borsa", "pr": "borsa", "pl": "torba", "c": "Dom i rzeczy codzienne"}, {"it": "libro", "pr": "libro", "pl": "książka", "c": "Dom i rzeczy codzienne"}, {"it": "lavoro", "pr": "laworo", "pl": "praca", "c": "Dom i rzeczy codzienne"}, {"it": "tempo", "pr": "tempo", "pl": "czas; pogoda", "c": "Dom i rzeczy codzienne"}, {"it": "buono", "pr": "buono", "pl": "dobry", "c": "Przymiotniki i przysłówki"}, {"it": "cattivo", "pr": "kattiwo", "pl": "zły", "c": "Przymiotniki i przysłówki"}, {"it": "grande", "pr": "grande", "pl": "duży", "c": "Przymiotniki i przysłówki"}, {"it": "piccolo", "pr": "pikkolo", "pl": "mały", "c": "Przymiotniki i przysłówki"}, {"it": "bello", "pr": "bello", "pl": "piękny, ładny", "c": "Przymiotniki i przysłówki"}, {"it": "brutto", "pr": "brutto", "pl": "brzydki", "c": "Przymiotniki i przysłówki"}, {"it": "nuovo", "pr": "nuowo", "pl": "nowy", "c": "Przymiotniki i przysłówki"}, {"it": "vecchio", "pr": "wekkio", "pl": "stary", "c": "Przymiotniki i przysłówki"}, {"it": "caro", "pr": "karo", "pl": "drogi", "c": "Przymiotniki i przysłówki"}, {"it": "facile", "pr": "faczile", "pl": "łatwy", "c": "Przymiotniki i przysłówki"}, {"it": "difficile", "pr": "difficzile", "pl": "trudny", "c": "Przymiotniki i przysłówki"}, {"it": "caldo", "pr": "kaldo", "pl": "ciepły, gorący", "c": "Przymiotniki i przysłówki"}, {"it": "freddo", "pr": "freddo", "pl": "zimny", "c": "Przymiotniki i przysłówki"}, {"it": "stanco", "pr": "stanko", "pl": "zmęczony", "c": "Przymiotniki i przysłówki"}, {"it": "felice", "pr": "felicze", "pl": "szczęśliwy", "c": "Przymiotniki i przysłówki"}, {"it": "molto", "pr": "molto", "pl": "bardzo, dużo", "c": "Przymiotniki i przysłówki"}, {"it": "poco", "pr": "poko", "pl": "mało", "c": "Przymiotniki i przysłówki"}, {"it": "bene", "pr": "bene", "pl": "dobrze", "c": "Przymiotniki i przysłówki"}, {"it": "male", "pr": "male", "pl": "źle", "c": "Przymiotniki i przysłówki"}, {"it": "troppo", "pr": "troppo", "pl": "za dużo, zbyt", "c": "Przymiotniki i przysłówki"}, {"it": "meglio", "pr": "meljo", "pl": "lepiej", "c": "Przymiotniki i przysłówki"}, {"it": "libero", "pr": "libero", "pl": "wolny, dostępny", "c": "Przymiotniki i przysłówki"}, {"it": "pronto", "pr": "pronto", "pl": "gotowy; halo (przez telefon)", "c": "Przymiotniki i przysłówki"}, {"it": "e", "pr": "e", "pl": "i", "c": "Spójniki, przyimki i zwroty"}, {"it": "o", "pr": "o", "pl": "lub", "c": "Spójniki, przyimki i zwroty"}, {"it": "ma", "pr": "ma", "pl": "ale", "c": "Spójniki, przyimki i zwroty"}, {"it": "se", "pr": "se", "pl": "jeśli", "c": "Spójniki, przyimki i zwroty"}, {"it": "anche", "pr": "anke", "pl": "też", "c": "Spójniki, przyimki i zwroty"}, {"it": "con", "pr": "kon", "pl": "z (kimś, czymś)", "c": "Spójniki, przyimki i zwroty"}, {"it": "senza", "pr": "sendza", "pl": "bez", "c": "Spójniki, przyimki i zwroty"}, {"it": "per", "pr": "per", "pl": "dla, na, do", "c": "Spójniki, przyimki i zwroty"}, {"it": "di", "pr": "di", "pl": "z, od (dopełniacz)", "c": "Spójniki, przyimki i zwroty"}, {"it": "a", "pr": "a", "pl": "do, w (a Roma – w Rzymie)", "c": "Spójniki, przyimki i zwroty"}, {"it": "in", "pr": "in", "pl": "w, do", "c": "Spójniki, przyimki i zwroty"}, {"it": "da", "pr": "da", "pl": "od, u, z", "c": "Spójniki, przyimki i zwroty"}, {"it": "su", "pr": "su", "pl": "na", "c": "Spójniki, przyimki i zwroty"}, {"it": "non", "pr": "non", "pl": "nie (przed czasownikiem)", "c": "Spójniki, przyimki i zwroty"}, {"it": "più", "pr": "pju", "pl": "więcej, bardziej", "c": "Spójniki, przyimki i zwroty"}, {"it": "meno", "pr": "meno", "pl": "mniej", "c": "Spójniki, przyimki i zwroty"}, {"it": "già", "pr": "dża", "pl": "już", "c": "Spójniki, przyimki i zwroty"}, {"it": "ancora", "pr": "ankora", "pl": "jeszcze, znowu", "c": "Spójniki, przyimki i zwroty"}, {"it": "niente", "pr": "njente", "pl": "nic", "c": "Spójniki, przyimki i zwroty"}, {"it": "forse", "pr": "forse", "pl": "może", "c": "Spójniki, przyimki i zwroty"}, {"it": "allora", "pr": "allora", "pl": "więc, no to", "c": "Spójniki, przyimki i zwroty"}, {"it": "ecco", "pr": "ekko", "pl": "oto, proszę bardzo", "c": "Spójniki, przyimki i zwroty"}]};
+const SENT = [{"it": "Un caffè, per favore.", "pl": "Poproszę kawę.", "gap": "caffè"}, {"it": "Quanto costa il biglietto?", "pl": "Ile kosztuje bilet?", "gap": "biglietto"}, {"it": "Scusi, dov'è la stazione?", "pl": "Przepraszam, gdzie jest dworzec?", "gap": "stazione"}, {"it": "Non capisco, mi dispiace.", "pl": "Nie rozumiem, przykro mi.", "gap": "capisco"}, {"it": "Posso avere il conto?", "pl": "Czy mogę prosić o rachunek?", "gap": "conto"}, {"it": "Mi piace molto questa città.", "pl": "Bardzo podoba mi się to miasto.", "gap": "città"}, {"it": "Non parlo bene italiano.", "pl": "Nie mówię dobrze po włosku.", "gap": "parlo"}, {"it": "Dove posso comprare il pane?", "pl": "Gdzie mogę kupić chleb?", "gap": "pane"}, {"it": "Voglio andare al mare.", "pl": "Chcę pojechać nad morze.", "gap": "mare"}, {"it": "Il treno arriva alle otto.", "pl": "Pociąg przyjeżdża o ósmej.", "gap": "treno"}, {"it": "Ho una camera in albergo.", "pl": "Mam pokój w hotelu.", "gap": "camera"}, {"it": "Questa pizza è molto buona.", "pl": "Ta pizza jest bardzo dobra.", "gap": "buona"}, {"it": "Devo andare a casa.", "pl": "Muszę iść do domu.", "gap": "casa"}, {"it": "Posso pagare con la carta di credito?", "pl": "Czy mogę zapłacić kartą kredytową?", "gap": "pagare"}, {"it": "Il negozio è aperto oggi?", "pl": "Czy sklep jest dzisiaj otwarty?", "gap": "aperto"}, {"it": "Non ho soldi con me.", "pl": "Nie mam przy sobie pieniędzy.", "gap": "soldi"}, {"it": "Che ora è, per favore?", "pl": "Która godzina, proszę?", "gap": "ora"}, {"it": "Domani vado al lavoro.", "pl": "Jutro idę do pracy.", "gap": "lavoro"}, {"it": "La farmacia è vicino alla piazza.", "pl": "Apteka jest blisko placu.", "gap": "farmacia"}, {"it": "Mio fratello abita a Roma.", "pl": "Mój brat mieszka w Rzymie.", "gap": "fratello"}, {"it": "Vorrei un bicchiere di acqua.", "pl": "Poproszę szklankę wody.", "gap": "acqua"}, {"it": "Scusi, dov'è il bagno?", "pl": "Przepraszam, gdzie jest toaleta?", "gap": "bagno"}, {"it": "Oggi sono molto stanco.", "pl": "Jestem dzisiaj bardzo zmęczony.", "gap": "stanco"}, {"it": "Domani andiamo al mercato.", "pl": "Jutro idziemy na targ.", "gap": "mercato"}, {"it": "Questo libro è molto bello.", "pl": "Ta książka jest bardzo ładna.", "gap": "libro"}, {"it": "Può aiutarmi, per favore?", "pl": "Czy może mi Pan pomóc?", "gap": "aiutarmi"}, {"it": "La mia famiglia è grande.", "pl": "Moja rodzina jest duża.", "gap": "famiglia"}, {"it": "Non voglio mangiare adesso.", "pl": "Nie chcę teraz jeść.", "gap": "mangiare"}, {"it": "Il caffè è troppo caldo.", "pl": "Kawa jest za gorąca.", "gap": "caldo"}, {"it": "A che ora parte l'autobus?", "pl": "O której odjeżdża autobus?", "gap": "autobus"}, {"it": "Vado sempre a dormire tardi.", "pl": "Zawsze późno chodzę spać.", "gap": "dormire"}, {"it": "Questo prezzo è troppo caro.", "pl": "Ta cena jest za wysoka.", "gap": "prezzo"}, {"it": "Mia figlia studia a casa.", "pl": "Moja córka uczy się w domu.", "gap": "figlia"}, {"it": "Cerco una farmacia aperta.", "pl": "Szukam otwartej apteki.", "gap": "farmacia"}, {"it": "Prendo un tavolo per due.", "pl": "Biorę stolik dla dwóch osób.", "gap": "tavolo"}, {"it": "Grazie mille e arrivederci!", "pl": "Dziękuję bardzo i do widzenia!", "gap": "arrivederci"}, {"it": "Il mio telefono non funziona.", "pl": "Mój telefon nie działa.", "gap": "telefono"}, {"it": "Quanto costa una camera per due notti?", "pl": "Ile kosztuje pokój na dwie noce?", "gap": "notti"}, {"it": "Mangio sempre la colazione a casa.", "pl": "Zawsze jem śniadanie w domu.", "gap": "colazione"}, {"it": "Il ristorante è chiuso la domenica.", "pl": "Restauracja jest zamknięta w niedzielę.", "gap": "chiuso"}, {"it": "Vado a destra o a sinistra?", "pl": "Mam iść w prawo czy w lewo?", "gap": "destra"}, {"it": "Non conosco questa strada.", "pl": "Nie znam tej ulicy.", "gap": "strada"}, {"it": "Mia moglie lavora in banca.", "pl": "Moja żona pracuje w banku.", "gap": "banca"}, {"it": "Aspetto un amico qui.", "pl": "Czekam tu na przyjaciela.", "gap": "amico"}, {"it": "Questo vino è molto caro.", "pl": "To wino jest bardzo drogie.", "gap": "vino"}, {"it": "Il bambino dorme già.", "pl": "Dziecko już śpi.", "gap": "dorme"}];
+const WORDS = DATA.words, CATS = DATA.cats;
+
+/* ---------- utils ---------- */
+const $ = s => document.querySelector(s);
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const norm = s => s.toLowerCase().replace(/[.,!?¿¡]/g,"").trim();
+
+function load(k, dflt){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):dflt; }catch(e){ return dflt; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+let box = load("it250.box", {});          // słowo -> 0..3
+let activeCats = load("it250.cats", CATS.slice());
+if(!Array.isArray(activeCats) || !activeCats.length) activeCats = CATS.slice();
+
+function pool(){
+  const p = WORDS.filter(w => activeCats.includes(w.c));
+  return p.length ? p : WORDS;
+}
+
+/* ---------- motyw ---------- */
+$("#theme").onclick = () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : cur === "light" ? "dark" :
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark");
+  document.documentElement.setAttribute("data-theme", next);
+  save("it250.theme", next);
+};
+const savedTheme = load("it250.theme", null);
+if(savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
+
+/* ---------- zakładki ---------- */
+document.querySelectorAll('[role="tab"]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[role="tab"]').forEach(x => x.setAttribute("aria-selected", x===b));
+  ["flash","quiz","sent","list"].forEach(t => $("#p-"+t).hidden = (t !== b.dataset.tab));
+  if(b.dataset.tab==="quiz") newQuestion();
+  if(b.dataset.tab==="sent") newSentence();
+  if(b.dataset.tab==="list") renderList();
+});
+
+/* ---------- filtry kategorii ---------- */
+function renderChips(){
+  const box = $("#chips"); box.innerHTML = "";
+  CATS.forEach(c => {
+    const b = document.createElement("button");
+    b.className = "chip"; b.textContent = c;
+    b.setAttribute("aria-pressed", activeCats.includes(c));
+    b.onclick = () => {
+      if(activeCats.includes(c)) activeCats = activeCats.filter(x => x!==c);
+      else activeCats.push(c);
+      if(!activeCats.length) activeCats = CATS.slice();
+      save("it250.cats", activeCats); renderChips(); refreshAll();
+    };
+    box.appendChild(b);
+  });
+  $("#filter-info").textContent = activeCats.length===CATS.length
+    ? "wszystkie kategorie (" + WORDS.length + " słów)"
+    : activeCats.length + " z " + CATS.length + " kategorii (" + pool().length + " słów)";
+}
+$("#all-on").onclick = () => { activeCats = CATS.slice(); save("it250.cats", activeCats); renderChips(); refreshAll(); };
+$("#all-off").onclick = () => { activeCats = [CATS[0]]; save("it250.cats", activeCats); renderChips(); refreshAll(); };
+
+function refreshAll(){ nextCard(); newQuestion(); newSentence(); renderList(); }
+
+/* ---------- FISZKI (Leitner 0-3) ---------- */
+let current = null, flipped = false;
+function pickCard(){
+  const p = pool();
+  const weighted = [];
+  p.forEach(w => { const b = box[w.it] || 0; const reps = [5,3,2,1][b]; for(let i=0;i<reps;i++) weighted.push(w); });
+  return rnd(weighted.length ? weighted : p);
+}
+function nextCard(){
+  current = pickCard(); flipped = false;
+  $("#f-cat").textContent = current.c;
+  $("#f-word").textContent = current.it;
+  $("#f-pron").textContent = "[" + current.pr + "]";
+  $("#f-trans").textContent = current.pl;
+  $("#f-trans").style.visibility = "hidden";
+  $("#f-actions").style.display = "none";
+  $("#f-hint").textContent = "Kliknij kartę, żeby zobaczyć tłumaczenie";
+  updateBar();
+}
+$("#flashcard").onclick = () => {
+  if(flipped) return;
+  flipped = true;
+  $("#f-trans").style.visibility = "visible";
+  $("#f-actions").style.display = "flex";
+  $("#f-hint").textContent = "";
+};
+$("#f-know").onclick = () => { box[current.it] = Math.min(3,(box[current.it]||0)+1); save("it250.box",box); nextCard(); };
+$("#f-again").onclick = () => { box[current.it] = 0; save("it250.box",box); nextCard(); };
+$("#f-reset").onclick = () => { if(confirm("Wyzerować postęp fiszek?")){ box = {}; save("it250.box",box); nextCard(); } };
+function updateBar(){
+  const p = pool();
+  const known = p.filter(w => (box[w.it]||0) >= 3).length;
+  $("#f-bar").style.width = (p.length ? known/p.length*100 : 0) + "%";
+  $("#f-stat").textContent = "Opanowane: " + known + " / " + p.length;
+}
+
+/* ---------- QUIZ ---------- */
+let qWord=null, qDir="it-pl", qDone=0, qOk=0, qTotal=10;
+$("#q-dir").onchange = e => { qDir = e.target.value; newQuestion(); };
+$("#q-restart").onclick = () => { qDone=0; qOk=0; newQuestion(); };
+$("#q-next").onclick = () => newQuestion();
+
+function newQuestion(){
+  if(qDone >= qTotal){ qDone = 0; qOk = 0; }
+  const p = pool();
+  qWord = rnd(p);
+  const others = shuffle(WORDS.filter(w => w.it !== qWord.it)).slice(0,3);
+  const opts = shuffle([qWord, ...others]);
+  const askIt = qDir === "pl-it" || qDir === "pr-it";
+  $("#q-text").textContent = qDir==="it-pl" ? qWord.it : qDir==="pl-it" ? qWord.pl : "[" + qWord.pr + "]";
+  $("#q-sub").textContent = qDir==="it-pl" ? "[" + qWord.pr + "]" : "";
+  const wrap = $("#q-opts"); wrap.innerHTML = "";
+  opts.forEach(o => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = askIt ? o.it : o.pl;
+    b.onclick = () => answer(b, o, wrap);
+    wrap.appendChild(b);
+  });
+  $("#q-verdict").hidden = true; $("#q-next").hidden = true;
+  $("#q-progress").textContent = "Pytanie " + (qDone+1) + " z " + qTotal;
+  $("#q-score").textContent = "Wynik: " + qOk + " / " + qDone;
+}
+function answer(btn, chosen, wrap){
+  const ok = chosen.it === qWord.it;
+  qDone++; if(ok) qOk++;
+  [...wrap.children].forEach(c => { c.disabled = true; });
+  btn.classList.add(ok ? "ok" : "no");
+  if(!ok){
+    [...wrap.children].forEach(c => {
+      const t = c.textContent;
+      if(t === qWord.it || t === qWord.pl) c.classList.add("ok");
+    });
+    box[qWord.it] = 0; save("it250.box", box);
+  } else {
+    box[qWord.it] = Math.min(3,(box[qWord.it]||0)+1); save("it250.box", box);
+  }
+  const v = $("#q-verdict");
+  v.className = "verdict " + (ok ? "ok" : "no");
+  v.textContent = ok ? "Dobrze! " + qWord.it + " [" + qWord.pr + "] — " + qWord.pl
+                     : "Poprawnie: " + qWord.it + " [" + qWord.pr + "] — " + qWord.pl;
+  v.hidden = false;
+  $("#q-next").hidden = false;
+  $("#q-score").textContent = "Wynik: " + qOk + " / " + qDone;
+  updateBar();
+}
+
+/* ---------- ZDANIA ---------- */
+let sMode="order", sCur=null, sSlot=[], sOk=0, sDone=0;
+const GAPS = SENT.map(s => s.gap);
+$("#s-mode").onchange = e => { sMode = e.target.value; newSentence(); };
+$("#s-next").onclick = () => newSentence();
+$("#g-next").onclick = () => newSentence();
+$("#s-clear").onclick = () => { sSlot = []; renderOrder(); };
+
+function newSentence(){
+  sCur = rnd(SENT);
+  sSlot = [];
+  $("#s-order-box").hidden = sMode !== "order";
+  $("#s-gap-box").hidden = sMode !== "gap";
+  if(sMode === "order") renderOrder(); else renderGap();
+  $("#s-score").textContent = sDone ? "Wynik: " + sOk + " / " + sDone : "";
+}
+function renderOrder(){
+  $("#s-pl").textContent = sCur.pl;
+  const words = sCur.it.split(" ");
+  const shuf = shuffle(words.map((w,i) => ({w, i})));
+  const slot = $("#s-slot"); slot.innerHTML = "";
+  sSlot.forEach((t, idx) => {
+    const b = document.createElement("button");
+    b.className = "tile"; b.textContent = t.w;
+    b.onclick = () => { sSlot.splice(idx,1); renderOrder(); };
+    slot.appendChild(b);
+  });
+  const pl = $("#s-pool"); pl.innerHTML = "";
+  shuf.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "tile" + (sSlot.some(x => x.i === t.i) ? " used" : "");
+    b.textContent = t.w;
+    b.onclick = () => { sSlot.push(t); renderOrder(); };
+    pl.appendChild(b);
+  });
+  $("#s-verdict").hidden = true;
+}
+$("#s-check").onclick = () => {
+  const guess = sSlot.map(t => t.w).join(" ");
+  const ok = norm(guess) === norm(sCur.it);
+  sDone++; if(ok) sOk++;
+  const v = $("#s-verdict");
+  v.className = "verdict " + (ok ? "ok" : "no");
+  v.textContent = ok ? "Brawo! " + sCur.it : "Poprawnie: " + sCur.it;
+  v.hidden = false;
+  $("#s-score").textContent = "Wynik: " + sOk + " / " + sDone;
+};
+function renderGap(){
+  $("#g-pl").textContent = sCur.pl;
+  const parts = sCur.it.split(new RegExp("\\b" + sCur.gap.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "\\b"));
+  const line = $("#g-line"); line.innerHTML = "";
+  line.appendChild(document.createTextNode(parts[0] || ""));
+  const b = document.createElement("b"); b.textContent = "\u00a0";
+  line.appendChild(b);
+  line.appendChild(document.createTextNode(parts.slice(1).join(sCur.gap) || ""));
+  const wrongs = shuffle(GAPS.filter(g => g !== sCur.gap)).slice(0,3);
+  const opts = shuffle([sCur.gap, ...wrongs]);
+  const wrap = $("#g-opts"); wrap.innerHTML = "";
+  opts.forEach(o => {
+    const btn = document.createElement("button");
+    btn.className = "opt"; btn.textContent = o;
+    btn.onclick = () => {
+      const ok = o === sCur.gap;
+      sDone++; if(ok) sOk++;
+      [...wrap.children].forEach(c => { c.disabled = true; if(c.textContent === sCur.gap) c.classList.add("ok"); });
+      if(!ok) btn.classList.add("no");
+      b.textContent = sCur.gap;
+      const v = $("#g-verdict");
+      v.className = "verdict " + (ok ? "ok" : "no");
+      v.textContent = ok ? "Dobrze!" : "Poprawnie: " + sCur.gap;
+      v.hidden = false;
+      $("#g-next").hidden = false;
+      $("#s-score").textContent = "Wynik: " + sOk + " / " + sDone;
+    };
+    wrap.appendChild(btn);
+  });
+  $("#g-verdict").hidden = true; $("#g-next").hidden = true;
+}
+
+/* ---------- SŁOWNIK ---------- */
+function renderList(){
+  const q = norm($("#search").value || "");
+  const rows = pool().filter(w => !q || norm(w.it).includes(q) || norm(w.pl).includes(q) || norm(w.pr).includes(q));
+  const tb = $("#tbody"); tb.innerHTML = "";
+  rows.forEach(w => {
+    const tr = document.createElement("tr");
+    const td1 = document.createElement("td"); td1.className = "it";
+    td1.textContent = w.it;
+    const sm = document.createElement("small"); sm.textContent = "[" + w.pr + "]";
+    td1.appendChild(sm);
+    const td2 = document.createElement("td"); td2.textContent = w.pl;
+    tr.append(td1, td2); tb.appendChild(tr);
+  });
+  $("#list-count").textContent = rows.length + " słów";
+}
+$("#search").oninput = renderList;
+
+/* ---------- start ---------- */
+renderChips(); nextCard(); newQuestion(); newSentence(); renderList();
+</script>
+</body>
+</html>
