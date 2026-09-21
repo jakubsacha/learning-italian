@@ -11,6 +11,14 @@ tablica wyników działają na Supabase.
 
 ## Jak działa nauka
 
+Są dwie zakładki na tę samą dzienną kolejkę:
+
+- **Nauka** — ćwiczenia się przeplatają (fiszka, quiz, pisanie, słuch, luka w zdaniu)
+- **Fiszki** — wyłącznie klasyczne karty
+
+Wybór zakładki zapamiętuje się między wizytami. Postęp jest wspólny: karta zrobiona
+w jednym trybie znika z kolejki w drugim.
+
 Zakładka **Nauka** to jedna sesja dziennie, w której ćwiczenia się przeplatają
 (*interleaving* — przypominanie w różnych formach utrwala lepiej niż jedna forma w kółko).
 Typ ćwiczenia zależy od tego, jak dobrze znasz dane słowo:
@@ -41,14 +49,33 @@ Zakładki Quiz i Zdania działają dalej jako swobodne ćwiczenie, bez wpływu n
 Nie ma celu „przerób wszystko dziś". Każdego dnia dostajesz **10 nowych słów**
 (do zmiany w interfejsie: 5–30) plus **powtórki, które wypadają na dziś**.
 
-Po odsłonięciu tłumaczenia wybierasz jedną z trzech ocen, a odstęp do następnej powtórki
-liczy się jak w SM-2 (silnik Anki w wersji minimalnej):
+Po odsłonięciu tłumaczenia wybierasz jedną z czterech ocen — klawisze **1–4**:
 
-| Ocena | Co robi |
-| --- | --- |
-| Jeszcze nie | słowo wraca w tej samej sesji, odstęp zerowany, współczynnik łatwości w dół |
-| Umiem | 1 dzień → 3 dni → poprzedni odstęp × łatwość |
-| Łatwe | 4 dni → poprzedni odstęp × łatwość × 1,3 |
+| Ocena | Klawisz | Co robi |
+| --- | --- | --- |
+| Nie wiem | 1 | wraca w tej samej sesji, odstęp zerowany, łatwość −0,2, liczy się wpadka |
+| Słabo | 2 | 1 dzień → poprzedni odstęp × 1,2; łatwość −0,15 |
+| Dobrze | 3 | 2 dni → 3 dni → poprzedni odstęp × łatwość |
+| Łatwo | 4 | 4 dni → poprzedni odstęp × łatwość × 1,3; łatwość +0,15 |
+
+Odstęp jest ograniczony do roku.
+
+### Waga dowodu: nie każde trafienie znaczy tyle samo
+
+Poprawna odpowiedź w teście wyboru to słabszy dowód niż przypomnienie sobie słowa
+z pustej głowy — jedno na cztery można trafić przypadkiem. Dlatego wynik ćwiczenia
+przemnaża odstęp przez wagę formy:
+
+| Forma | Waga | Dlaczego |
+| --- | --- | --- |
+| wpisywanie | ×1,20 | produkcja bez podpowiedzi, nie da się zgadnąć |
+| fiszka | ×1,00 | przypomnienie, ale ocenione przez Ciebie samego |
+| quiz PL→IT, luka | ×0,95 | produkcja, ale rozpoznawana z listy |
+| ze słuchu | ×0,90 | rozpoznanie + dodatkowa trudność odbioru |
+| quiz IT→PL | ×0,85 | najłatwiejsza forma, 25% szans na traf |
+
+W praktyce słowo klikane w quizie i to samo słowo wpisywane z pamięci rozjeżdżają się
+z każdą powtórką: 2 → 4 → 9 → 19 → 40 dni przy quizie, 2 → 6 → 18 → 54 → 162 przy pisaniu.
 
 Słowo liczy się jako **utrwalone**, gdy jego odstęp sięgnie 21 dni.
 Nowe słowa wchodzą **w kolejności częstotliwości w mówionym włoskim** (pole `o`

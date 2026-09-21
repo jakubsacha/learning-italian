@@ -42,8 +42,10 @@ h1{font-size:1.32rem;margin:0;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:.86rem;margin:2px 0 16px}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);
-  border-radius:12px;padding:5px;box-shadow:var(--shadow);overflow-x:auto}
-.tabs button{flex:1 0 auto;padding:9px 12px;border-radius:8px;font-size:.92rem;
+  border-radius:12px;padding:5px;box-shadow:var(--shadow);overflow-x:auto;
+  scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;padding:9px 10px;border-radius:8px;font-size:.86rem;
   font-weight:600;color:var(--muted);white-space:nowrap}
 .tabs button[aria-selected="true"]{background:var(--accent-soft);color:var(--accent-ink)}
 .panel{margin-top:16px}
@@ -110,12 +112,19 @@ details.filters[open] summary::before{transform:rotate(90deg)}
 .btn.reveal{width:100%;margin-top:12px;background:var(--card);color:var(--ink);
   border:1px solid var(--line);font-weight:600;padding:13px}
 .btn.reveal small{color:var(--muted);font-weight:400;margin-left:6px}
-.grades{margin-top:12px;gap:8px}
-.grades .btn{flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:12px 6px;min-height:58px}
-.grades .btn span{font-weight:600}
-.grades .btn small{font-size:.7rem;opacity:.8;font-weight:400}
+.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.grades .btn{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:11px 4px;min-height:60px;font-size:.88rem;min-width:0}
+.grades .btn span{font-weight:600;white-space:nowrap}
+.grades .btn span i{display:inline-block;font-style:normal;font-size:.68rem;opacity:.65;
+  margin-right:3px;font-weight:600}
+.grades .btn small{font-size:.68rem;opacity:.8;font-weight:400}
+.btn.again{background:var(--bad-bg);color:var(--bad);border:1px solid transparent}
+.btn.hard{background:transparent;border:1px solid var(--line);color:var(--ink)}
 .btn.easy{background:var(--accent-soft);color:var(--accent-ink)}
+@media (max-width:380px){
+  .grades{grid-template-columns:repeat(2,1fr)}
+}
 .card.ask{min-height:150px;display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center;gap:8px}
 .ask-lead{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
@@ -247,9 +256,10 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
 
   <div class="tabs" role="tablist">
     <button role="tab" data-tab="flash" aria-selected="true">Nauka</button>
+    <button role="tab" data-tab="cards" aria-selected="false">Fiszki</button>
     <button role="tab" data-tab="quiz" aria-selected="false">Quiz</button>
     <button role="tab" data-tab="sent" aria-selected="false">Zdania</button>
-    <button role="tab" data-tab="list" aria-selected="false">Słownik</button>
+    <button role="tab" data-tab="list" aria-selected="false">Słowa</button>
   </div>
 
   <details class="filters">
@@ -284,9 +294,10 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
       </div>
       <button class="btn reveal" id="f-reveal">Pokaż tłumaczenie <small>spacja</small></button>
       <div class="row grades" id="f-actions" hidden>
-        <button class="btn warn" id="f-again"><span>Jeszcze nie</span><small id="f-t-again"></small></button>
-        <button class="btn good" id="f-good"><span>Umiem</span><small id="f-t-good"></small></button>
-        <button class="btn easy" id="f-easy"><span>Łatwe</span><small id="f-t-easy"></small></button>
+        <button class="btn again" id="f-again"><span><i>1</i> Nie wiem</span><small id="f-t-again"></small></button>
+        <button class="btn hard"  id="f-hard"><span><i>2</i> Słabo</span><small id="f-t-hard"></small></button>
+        <button class="btn good"  id="f-good"><span><i>3</i> Dobrze</span><small id="f-t-good"></small></button>
+        <button class="btn easy"  id="f-easy"><span><i>4</i> Łatwo</span><small id="f-t-easy"></small></button>
       </div>
     </div>
 
@@ -359,7 +370,6 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
               <option value="30">30</option>
             </select>
           </label>
-          <label class="chk"><input type="checkbox" id="f-mix-on"> Mieszaj ćwiczenia: fiszki, quiz, pisanie, słuchanie, zdania</label>
           <label class="chk"><input type="checkbox" id="f-auto"> Czytaj słowo na głos automatycznie</label>
           <button class="btn ghost" id="f-reset">Wyzeruj postęp fiszek</button>
         </div>
@@ -530,12 +540,23 @@ const savedTheme = load("it250.theme", null);
 if(savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
 
 /* ---------- zakładki ---------- */
+// "Nauka" i "Fiszki" to ta sama dzienna kolejka, różnią się tylko formą pytań.
+const PANEL_OF = { flash:"flash", cards:"flash", quiz:"quiz", sent:"sent", list:"list" };
 document.querySelectorAll('[role="tab"]').forEach(b => b.onclick = () => {
+  const t = b.dataset.tab, panel = PANEL_OF[t];
   document.querySelectorAll('[role="tab"]').forEach(x => x.setAttribute("aria-selected", x===b));
-  ["flash","quiz","sent","list"].forEach(t => $("#p-"+t).hidden = (t !== b.dataset.tab));
-  if(b.dataset.tab==="quiz") newQuestion();
-  if(b.dataset.tab==="sent") newSentence();
-  if(b.dataset.tab==="list") renderList();
+  ["flash","quiz","sent","list"].forEach(x => $("#p-"+x).hidden = (x !== panel));
+  if(panel === "flash"){
+    const want = (t === "cards");
+    if(want !== cardMode){
+      cardMode = want; save("it250.cardmode", cardMode);
+      if(current){ queue.unshift(current); current = null; }   // przerysuj bieżącą kartę
+      nextCard();
+    }
+  }
+  if(t==="quiz") newQuestion();
+  if(t==="sent") newSentence();
+  if(t==="list") renderList();
 });
 
 /* ---------- filtry kategorii ---------- */
@@ -605,18 +626,36 @@ function streak(){
   return n;
 }
 
-// Trzy oceny; interwał w dniach rośnie przez współczynnik łatwości.
-function schedule(card, grade){
+/* Cztery oceny, jak w SM-2. Do tego waga dowodu: trafienie w teście wyboru
+   znaczy mniej niż przypomnienie sobie z głowy, bo jedno na cztery można
+   trafić przypadkiem. Wpisanie znaczy najwięcej — nie da się go zgadnąć. */
+const EVIDENCE = {
+  "type": 1.2,           // wpisane z pamięci — nie da się zgadnąć
+  "card": 1,             // fiszka: przypomnienie, ale ocenione przez Ciebie
+  "quiz-pl-it": 0.95,    // produkcja, ale rozpoznawana z listy
+  "gap": 0.95,
+  "listen": 0.9,
+  "quiz-it-pl": 0.85     // najłatwiejsza forma: jedno z czterech można trafić
+};
+const MAX_INTERVAL = 365;   // waga mnoży się przy każdej powtórce, więc potrzebny sufit
+
+function schedule(card, grade, ev){
+  const w = ev || 1;
   const c = card ? Object.assign({}, card) : { e: 2.5, i: 0, r: 0, l: 0 };
   if(grade === "again"){
     c.e = Math.max(1.3, c.e - 0.2); c.l++; c.i = 0;
+  } else if(grade === "hard"){
+    c.e = Math.max(1.3, c.e - 0.15);
+    c.i = c.r === 0 ? 1 : Math.max(1, Math.round(c.i * 1.2 * w));
   } else if(grade === "good"){
-    c.i = c.r === 0 ? 1 : c.i <= 1 ? 3 : Math.round(c.i * c.e);
+    // Przy pierwszym trafieniu 2 dni, żeby "Dobrze" realnie różniło się od "Słabo".
+    c.i = c.r === 0 ? 2 : c.i <= 1 ? Math.max(2, Math.round(3 * w)) : Math.round(c.i * c.e * w);
   } else {
     c.e = Math.min(3.2, c.e + 0.15);
-    c.i = c.r === 0 ? 4 : Math.max(4, Math.round(c.i * c.e * 1.3));
+    c.i = c.r === 0 ? 4 : Math.max(4, Math.round(c.i * c.e * 1.3 * w));
   }
   c.r++;
+  c.i = Math.min(c.i, MAX_INTERVAL);
   c.d = todayNum() + c.i;
   return c;
 }
@@ -631,7 +670,7 @@ const newLeft  = () => Math.max(0, newLimit - day.n);
 
 let queue = [], current = null, flipped = false, extra = false, sessDone = 0;
 let shownToday = new Set();   // żeby dociągane trudne słowa nie wracały w kółko
-let mixOn = load("it250.mix", true), mode = "card";
+let cardMode = load("it250.cardmode", false), mode = "card";
 
 // Zdania, w których da się schować to słowo.
 const SENT_FOR = (() => {
@@ -655,7 +694,7 @@ const canListen = () => !!(window.speechSynthesis && itVoice);
 // wykładasz, wraca do łatwiejszych form — inaczej utrwalasz samą porażkę.
 function exerciseFor(w){
   const c = srs[w.it];
-  if(!mixOn || !c || c.r < 1) return "card";         // nowe słowo zawsze wchodzi fiszką
+  if(cardMode || !c || c.r < 1) return "card";       // w trybie Fiszki i dla nowych słów zawsze karta
   if(isLeech(w)) return rnd(canListen() ? ["card", "quiz-it-pl", "listen"] : ["card", "quiz-it-pl"]);
   const opts = ["card", "quiz-it-pl"];
   if(canListen()) opts.push("listen");
@@ -783,8 +822,9 @@ $("#xt-form").onsubmit = e => {
   v.hidden = false;
   $("#xt-next").hidden = false;
   if(voiceOn) say(current.it);
-  // Wpisanie z głowy to mocniejszy dowód niż wybór z czterech — odstęp rośnie szybciej.
-  applyGrade(exact ? "easy" : close ? "good" : "again");   // literówka nie kasuje postępu
+  // Wpisanie z głowy ma najwyższą wagę dowodu (EVIDENCE.type); literówka liczy się
+  // jak zwykłe "Dobrze", więc nie kasuje postępu, ale też go nie przyspiesza.
+  applyGrade(exact ? "good" : close ? "good" : "again", exact ? undefined : 1);
 };
 $("#xt-next").onclick = nextCard;
 
@@ -899,8 +939,9 @@ function reveal(){
   $("#f-reveal").hidden = true;
   const c = srs[current.it];
   $("#f-t-again").textContent = "za chwilę";
-  $("#f-t-good").textContent  = intervalLabel(schedule(c, "good").i);
-  $("#f-t-easy").textContent  = intervalLabel(schedule(c, "easy").i);
+  $("#f-t-hard").textContent  = intervalLabel(schedule(c, "hard", 1).i);
+  $("#f-t-good").textContent  = intervalLabel(schedule(c, "good", 1).i);
+  $("#f-t-easy").textContent  = intervalLabel(schedule(c, "easy", 1).i);
 }
 $("#f-reveal").onclick = reveal;
 $("#flashcard").onclick = e => { if(!e.target.closest("#f-say")) reveal(); };
@@ -927,16 +968,16 @@ addEventListener("keydown", e => {
     const wrap = mode === "gap" ? $("#xg-opts") : mode === "listen" ? $("#xl-opts") : $("#xq-opts");
     const btn = wrap.children[+e.key - 1];
     if(btn) btn.click();
-  } else if(!inQuiz && flipped && "123".includes(e.key)){
-    grade({ "1": "again", "2": "good", "3": "easy" }[e.key]);
+  } else if(!inQuiz && flipped && "1234".includes(e.key)){
+    grade({ "1": "again", "2": "hard", "3": "good", "4": "easy" }[e.key]);
   }
 });
 
-function applyGrade(g){
+function applyGrade(g, ev){
   if(!current) return;
   shownToday.add(current.it);
   const fresh = isNew(current);
-  srs[current.it] = schedule(srs[current.it], g);
+  srs[current.it] = schedule(srs[current.it], g, ev != null ? ev : EVIDENCE[mode] || 1);
   if(fresh && !extra){ day.n++; save("it250.day", day); }
   bumpToday();
   sessDone++;
@@ -948,6 +989,7 @@ function grade(g){ if(!current) return; applyGrade(g); nextCard(); }
 $("#xq-next").onclick = nextCard;
 $("#xg-next").onclick = nextCard;
 $("#f-again").onclick = () => grade("again");
+$("#f-hard").onclick  = () => grade("hard");
 $("#f-good").onclick  = () => grade("good");
 $("#f-easy").onclick  = () => grade("easy");
 
@@ -957,8 +999,6 @@ $("#f-limit").onchange = e => {
   extra = false; queue = []; sessDone = 0; nextCard();
 };
 $("#f-extra").onclick = () => { extra = true; queue = []; sessDone = 0; shownToday = new Set(); nextCard(); };
-$("#f-mix-on").checked = mixOn;
-$("#f-mix-on").onchange = e => { mixOn = e.target.checked; save("it250.mix", mixOn); queue = []; sessDone = 0; nextCard(); };
 $("#f-auto").checked = voiceOn;
 $("#f-auto").onchange = e => { voiceOn = e.target.checked; save("it250.voice", voiceOn); };
 $("#f-reset").onclick = () => {
@@ -1173,6 +1213,9 @@ window.ITApp = {
 
 /* ---------- start ---------- */
 $("#foot-count").textContent = WORDS.length + " haseł, wprowadzanych wg częstotliwości w mówionym włoskim";
+if(cardMode){
+  document.querySelectorAll('[role="tab"]').forEach(x => x.setAttribute("aria-selected", x.dataset.tab === "cards"));
+}
 renderChips(); nextCard(); newQuestion(); newSentence(); renderList();
 </script>
 
