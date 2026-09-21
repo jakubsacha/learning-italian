@@ -33,8 +33,17 @@ async function init(){
   const cleanNick = v => (v || "").trim().toLowerCase();
 
   /* --- łączenie postępów -------------------------------------------- */
-  // Maksimum z obu stron: nauka na dwóch urządzeniach nic nie gubi.
-  const mergeMax = (a, b) => {
+  // Dwa urządzenia: dla każdego słowa wygrywa karta dalej w nauce,
+  // dla każdego dnia większa liczba zrobionych fiszek.
+  const mergeSrs = (a, b) => {
+    const out = Object.assign({}, a || {});
+    for(const [k, v] of Object.entries(b || {})){
+      const cur = out[k];
+      if(!cur || (v.r || 0) > (cur.r || 0) || ((v.r || 0) === (cur.r || 0) && (v.d || 0) > (cur.d || 0))) out[k] = v;
+    }
+    return out;
+  };
+  const mergeDays = (a, b) => {
     const out = Object.assign({}, a || {});
     for(const [k, v] of Object.entries(b || {})) out[k] = Math.max(out[k] || 0, v || 0);
     return out;
@@ -47,7 +56,8 @@ async function init(){
     const { error } = await sb.from("progress").upsert({
       user_id: user.id,
       username,
-      box: window.ITApp.getBox(),
+      srs: window.ITApp.getSrs(),
+      days: window.ITApp.getDays(),
       known: window.ITApp.known(),
       updated_at: new Date().toISOString()
     });
@@ -60,25 +70,41 @@ async function init(){
   addEventListener("visibilitychange", () => { if(document.hidden && pushTimer) flush(); });
 
   /* --- tablica wyników ------------------------------------------------ */
-  function ago(iso){
-    const d = Math.floor((Date.now() - new Date(iso)) / 86400000);
-    return d <= 0 ? "dziś" : d === 1 ? "wczoraj" : d + " dni temu";
+  const DAY_MS = 86400000;
+  const keyOf = t => new Date(t - new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+  const todayKey = () => keyOf(Date.now());
+
+  function streakOf(days){
+    let n = 0, t = Date.now();
+    if(!days[keyOf(t)]) t -= DAY_MS;
+    while(days[keyOf(t)]){ n++; t -= DAY_MS; }
+    return n;
   }
+
   async function renderBoard(){
-    const { data, error } = await sb.from("progress")
-      .select("username,known,updated_at").order("known", { ascending: false });
+    const { data, error } = await sb.from("progress").select("username,known,days");
     if(error || !data){ board.classList.remove("show"); return; }
+    const rows = data.map(r => {
+      const days = r.days || {};
+      return { nick: r.username, today: days[todayKey()] || 0, streak: streakOf(days), known: r.known || 0 };
+    }).sort((a, b) => b.today - a.today || b.known - a.known);
+
+    const top = Math.max(1, ...rows.map(r => r.today));
     board.innerHTML = "";
-    const total = window.ITApp.total;
-    data.forEach(r => {
+    const head = document.createElement("div");
+    head.className = "board-head";
+    head.textContent = "Fiszki dzisiaj";
+    board.appendChild(head);
+
+    rows.forEach(r => {
       const row = document.createElement("div");
-      row.className = "board-row" + (r.username === username ? " me" : "");
-      const n = document.createElement("span"); n.className = "nick"; n.textContent = r.username;
+      row.className = "board-row" + (r.nick === username ? " me" : "");
+      const n = document.createElement("span"); n.className = "nick"; n.textContent = r.nick;
       const t = document.createElement("span"); t.className = "track";
-      const i = document.createElement("i"); i.style.width = Math.round((r.known / total) * 100) + "%";
+      const i = document.createElement("i"); i.style.width = Math.round(r.today / top * 100) + "%";
       t.appendChild(i);
       const num = document.createElement("span"); num.className = "num";
-      num.textContent = r.known + "/" + total + " · " + ago(r.updated_at);
+      num.textContent = r.today + (r.streak ? " · seria " + r.streak : "") + " · " + r.known + " utrw.";
       row.append(n, t, num);
       board.appendChild(row);
     });
@@ -96,8 +122,8 @@ async function init(){
     signedInLabel();
 
     const { data: row } = await sb.from("progress")
-      .select("box").eq("user_id", user.id).maybeSingle();
-    const local = window.ITApp.getBox();
+      .select("srs,days").eq("user_id", user.id).maybeSingle();
+    const localSrs = window.ITApp.getSrs(), localDays = window.ITApp.getDays();
     const lastOwner = localStorage.getItem("it250.owner");
 
     if(!row){
@@ -105,11 +131,11 @@ async function init(){
       await flush();
     } else if(lastOwner === username){
       // To samo urządzenie, ta sama osoba — scalamy, nic nie ginie.
-      window.ITApp.setBox(mergeMax(row.box, local));
+      window.ITApp.setState(mergeSrs(row.srs, localSrs), mergeDays(row.days, localDays));
       await flush();
     } else {
       // Cudza (albo świeża) przeglądarka — obowiązuje stan z serwera.
-      window.ITApp.setBox(row.box || {});
+      window.ITApp.setState(row.srs || {}, row.days || {});
     }
     localStorage.setItem("it250.owner", username);
     renderBoard();
