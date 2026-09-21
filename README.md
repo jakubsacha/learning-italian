@@ -12,7 +12,8 @@ https://jakubsacha.github.io/learning-italian/
 Publikacja odbywa się automatycznie przez GitHub Actions (`.github/workflows/pages.yml`)
 przy każdym pushu na `main`.
 
-Jednorazowa konfiguracja w repozytorium:
+Workflow sam włącza Pages (`configure-pages` z `enablement: true`). Gdyby krok
+`configure-pages` mimo to padł, ustaw ręcznie:
 **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
 ## Konta i synchronizacja (Supabase)
