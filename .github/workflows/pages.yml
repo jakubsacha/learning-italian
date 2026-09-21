@@ -22,11 +22,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      # enablement: turns Pages on via the API, so the repo needs no manual
-      # "Source: GitHub Actions" click before the first deploy.
+      # Wymaga włączonego Pages (Settings → Pages → Source: GitHub Actions).
+      # enablement: true nie zadziała — GITHUB_TOKEN nie ma prawa utworzyć
+      # witryny Pages ("Resource not accessible by integration").
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
