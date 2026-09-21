@@ -79,10 +79,10 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .btn:disabled{opacity:.45;cursor:default;box-shadow:none;transform:none}
 
 /* --- zakładki --- */
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
   padding:4px 0 10px;border-bottom:2px solid var(--line);margin-bottom:14px}
-@media (min-width:600px){ .tabs{grid-template-columns:repeat(6,1fr)} }
-.tabs button{padding:9px 6px;border-radius:12px;font-size:.78rem;
+@media (min-width:600px){ .tabs{grid-template-columns:repeat(7,1fr)} }
+.tabs button{padding:9px 3px;border-radius:12px;font-size:.72rem;
   font-weight:800;color:var(--muted);white-space:nowrap;text-transform:uppercase;
   letter-spacing:.03em;border:2px solid transparent}
 .tabs button[aria-selected="true"]{background:var(--blue-soft);color:var(--blue-dark);
@@ -255,6 +255,47 @@ input.search:focus{outline:0;border-color:var(--blue)}
 footer{margin-top:30px;text-align:center;color:var(--muted);font-size:.76rem;font-weight:600}
 .theme-btn{color:var(--muted);font-size:.8rem;margin-left:auto;font-weight:700}
 
+/* --- postęp ---
+   Trzy odcienie zieleni to stany nauki; rozstaw sprawdzony walidatorem
+   z poradnika wizualizacji (ΔE 19,5 przy protanopii, 20,0 normalnie).
+   Szarość to celowy neutralny "brak danych", zawsze z podpisem. */
+:root{
+  --st-3:#17490a; --st-2:#3f9b00; --st-1:#8fd94f; --st-0:#d6d6d6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){ --st-3:#d3f5a8; --st-2:#79d032; --st-1:#2f7d10; --st-0:#37464f }
+}
+:root[data-theme="dark"]{ --st-3:#d3f5a8; --st-2:#79d032; --st-1:#2f7d10; --st-0:#37464f }
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile-stat{background:var(--card);border:2px solid var(--line);border-radius:16px;
+  padding:14px 8px;text-align:center}
+.tile-stat b{display:block;font-size:1.7rem;font-weight:800;line-height:1.1}
+.tile-stat span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.st-h{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  margin:26px 0 10px;font-weight:800}
+.segbar{display:flex;gap:2px;height:22px;border-radius:99px;overflow:hidden}
+.segbar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:10px;font-size:.8rem}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend s{width:12px;height:12px;border-radius:4px;flex:none}
+.legend b{font-weight:800}
+.spark{display:flex;align-items:flex-end;gap:2px;height:84px}
+.spark i{flex:1 1 0;min-width:0;background:var(--st-2);border-radius:4px 4px 0 0;
+  display:block;min-height:2px}
+.spark i.none{background:var(--line)}
+.spark i.future{background:var(--blue)}
+.cover-txt{margin:0 0 8px;font-size:1rem;font-weight:800}
+.cover-txt span{color:var(--muted);font-weight:700;font-size:.84rem}
+.catbar{padding:7px 0}
+.catbar .top{display:flex;gap:10px;align-items:baseline;margin-bottom:5px}
+.catbar .nm{flex:1 1 auto;font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.catbar .tr{display:block;height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.catbar .tr i{display:block;height:100%;background:var(--st-2);border-radius:99px}
+.catbar .vl{flex:none;color:var(--muted);font-size:.76rem;font-variant-numeric:tabular-nums}
+.num-col{text-align:right}
+td.num-col{text-align:right;font-variant-numeric:tabular-nums;font-weight:800}
+
 /* --- konta i wspólny cel --- */
 .sync{background:var(--card);border:2px solid var(--line);border-radius:18px;
   padding:14px;margin:28px 0 0}
@@ -325,6 +366,7 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
     <button role="tab" data-tab="quiz" aria-selected="false">Quiz</button>
     <button role="tab" data-tab="sent" aria-selected="false">Zdania</button>
     <button role="tab" data-tab="list" aria-selected="false">Słowa</button>
+    <button role="tab" data-tab="stats" aria-selected="false">Postęp</button>
   </div>
 
   <details class="filters">
@@ -417,7 +459,7 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
     <div class="done-box" id="f-done" hidden>
       <b id="f-done-title">Na dziś zrobione 🎉</b>
       <p class="meta" id="f-done-msg"></p>
-      <div class="hard-list" id="f-hard" hidden></div>
+      <div class="hard-list" id="f-leeches" hidden></div>
       <button class="btn ghost" id="f-extra">Ucz się dalej poza planem</button>
     </div>
 
@@ -524,6 +566,41 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
     <p class="meta" style="margin-top:8px" id="list-count"></p>
   </section>
 
+  <!-- POSTĘP -->
+  <section class="panel" id="p-stats" hidden>
+    <div class="tiles">
+      <div class="tile-stat"><b id="st-mature">0</b><span>utrwalone</span></div>
+      <div class="tile-stat"><b id="st-seen">0</b><span>poznane</span></div>
+      <div class="tile-stat"><b id="st-streak">0</b><span>dni z rzędu</span></div>
+    </div>
+
+    <h3 class="st-h">Ile kursu za Tobą</h3>
+    <p class="cover-txt" id="st-cover-txt"></p>
+    <div class="bar"><i id="st-cover"></i></div>
+
+    <h3 class="st-h">Jak dzielą się poznane słowa</h3>
+    <div class="segbar" id="st-seg"></div>
+    <div class="legend" id="st-legend"></div>
+
+    <h3 class="st-h">Aktywność — ostatnie 30 dni</h3>
+    <div class="spark" id="st-days"></div>
+    <p class="meta" id="st-days-sum"></p>
+
+    <h3 class="st-h">Co Cię czeka — najbliższe 14 dni</h3>
+    <div class="spark" id="st-due"></div>
+    <p class="meta" id="st-due-sum"></p>
+
+    <h3 class="st-h">Kategorie z największym postępem</h3>
+    <div id="st-cats"></div>
+
+    <h3 class="st-h">Najtrudniejsze słowa</h3>
+    <table>
+      <thead><tr><th>Słowo</th><th>Znaczenie</th><th class="num-col">Wpadki</th></tr></thead>
+      <tbody id="st-hard"></tbody>
+    </table>
+    <p class="meta" id="st-hard-none" hidden>Jeszcze nie ma słów z trzema wpadkami. Dobrze.</p>
+  </section>
+
   <section class="sync" id="sync">
     <div class="sync-row">
       <span class="sync-who" id="sync-who"><span class="dot"></span>Tryb lokalny — postęp tylko w tej przeglądarce</span>
@@ -615,23 +692,24 @@ if(savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
 
 /* ---------- zakładki ---------- */
 // "Nauka" i "Fiszki" to ta sama dzienna kolejka, różnią się tylko formą pytań.
-const PANEL_OF = { flash:"flash", cards:"flash", hard:"flash", quiz:"quiz", sent:"sent", list:"list" };
+const PANEL_OF = { flash:"flash", cards:"flash", hard:"flash", quiz:"quiz", sent:"sent", list:"list", stats:"stats" };
 document.querySelectorAll('[role="tab"]').forEach(b => b.onclick = () => {
   const t = b.dataset.tab, panel = PANEL_OF[t];
   document.querySelectorAll('[role="tab"]').forEach(x => x.setAttribute("aria-selected", x===b));
-  ["flash","quiz","sent","list"].forEach(x => $("#p-"+x).hidden = (x !== panel));
+  ["flash","quiz","sent","list","stats"].forEach(x => $("#p-"+x).hidden = (x !== panel));
   if(panel === "flash" && t !== kind){
     const sameQueue = (kind !== "hard" && t !== "hard");        // mix <-> cards to ta sama kolejka
     kind = t === "flash" ? "mix" : t;
     cardMode = kind === "cards";
     save("it250.kind", kind);
     if(sameQueue && current){ queue.unshift(current); current = null; }
-    else { queue = []; current = null; sessDone = 0; extra = false; hardBuilt = false; }
+    else { queue = []; current = null; sessPassed = 0; extra = false; hardBuilt = false; }
     nextCard();
   }
   if(t==="quiz") newQuestion();
   if(t==="sent") newSentence();
   if(t==="list") renderList();
+  if(t==="stats") renderStats();
 });
 
 /* ---------- filtry kategorii ---------- */
@@ -686,7 +764,7 @@ const keyOf    = t => new Date(t).toISOString().slice(0,10);
 const dayKey   = () => keyOf(localNow());
 
 function rollDay(){
-  if(day.k !== dayKey()){ day = { k: dayKey(), n: 0 }; save("it250.day", day); sessDone = 0;
+  if(day.k !== dayKey()){ day = { k: dayKey(), n: 0 }; save("it250.day", day); sessPassed = 0;
     shownToday = new Set(); save("it250.seen", { k: dayKey(), w: [] }); }
 }
 function bumpToday(){
@@ -744,7 +822,10 @@ const dueWords = () => pool().filter(w => srs[w.it] && srs[w.it].d <= todayNum()
 const newWords = () => pool().filter(isNew).sort((a, b) => ORDER.get(a.it) - ORDER.get(b.it));
 const newLeft  = () => Math.max(0, newLimit - day.n);
 
-let queue = [], current = null, flipped = false, extra = false, sessDone = 0;
+let queue = [], current = null, flipped = false, extra = false;
+// Ile kart tej sesji masz już z głowy. "Nie wiem" nie zalicza karty — wraca do
+// kolejki, więc licznik i suma stoją w miejscu, zamiast rosnąć z każdą odpowiedzią.
+let sessPassed = 0;
 // Co już było dziś na ekranie. Musi przeżyć przeładowanie strony, inaczej
 // dociągane "trudne" słowa wracałyby po każdym odświeżeniu bez końca.
 const seenSaved = load("it250.seen", { k: "", w: [] });
@@ -1010,7 +1091,7 @@ function showDone(){
     $("#f-done-msg").textContent = any
       ? "Wróć tu jutro — albo po prostu ucz się dalej w zakładce Nauka."
       : "Tu trafiają słowa, na których pomylisz się co najmniej trzy razy. Na razie pusto.";
-    $("#f-hard").hidden = true;
+    $("#f-leeches").hidden = true;
     updateBar();
     return;
   }
@@ -1023,7 +1104,7 @@ function showDone(){
   $("#f-done-msg").textContent = msg.join(" ");
 
   const hard = pool().filter(isLeech).sort((a, b) => srs[b.it].l - srs[a.it].l).slice(0, 6);
-  const box = $("#f-hard");
+  const box = $("#f-leeches");
   if(hard.length){
     box.innerHTML = "Najczęściej się wykładasz na: ";
     hard.forEach((w, i) => {
@@ -1086,7 +1167,7 @@ function applyGrade(g, ev){
   srs[current.it] = schedule(srs[current.it], g, ev != null ? ev : EVIDENCE[mode] || 1);
   if(fresh && !extra){ day.n++; save("it250.day", day); }
   bumpToday();
-  sessDone++;
+  if(g !== "again") sessPassed++;
   save("it250.srs", srs);                 // to budzi synchronizację
   if(g === "again") queue.splice(Math.min(queue.length, 4), 0, current);
   updateBar();
@@ -1102,9 +1183,9 @@ $("#f-easy").onclick  = () => grade("easy");
 $("#f-limit").value = String(newLimit);
 $("#f-limit").onchange = e => {
   newLimit = +e.target.value; save("it250.limit", newLimit);
-  extra = false; queue = []; sessDone = 0; nextCard();
+  extra = false; queue = []; sessPassed = 0; nextCard();
 };
-$("#f-extra").onclick = () => { extra = true; queue = []; sessDone = 0; nextCard(); };
+$("#f-extra").onclick = () => { extra = true; queue = []; sessPassed = 0; nextCard(); };
 $("#f-auto").checked = voiceOn;
 $("#f-auto").onchange = e => { voiceOn = e.target.checked; save("it250.voice", voiceOn); };
 $("#f-reset").onclick = () => {
@@ -1112,7 +1193,7 @@ $("#f-reset").onclick = () => {
   srs = {}; save("it250.srs", srs);
   day = { k: dayKey(), n: 0 }; save("it250.day", day);
   shownToday = new Set(); save("it250.seen", { k: dayKey(), w: [] });
-  extra = false; queue = []; sessDone = 0; nextCard();
+  extra = false; queue = []; sessPassed = 0; nextCard();
 };
 
 function updateBar(){
@@ -1121,13 +1202,13 @@ function updateBar(){
   const fresh = rest.filter(isNew).length;        // słowa widziane dziś pierwszy raz
   const tough = rest.filter(w => !isNew(w) && isLeech(w)).length;
   const again = left - fresh - tough;
-  const total = sessDone + left;
+  const total = sessPassed + left;
 
   $("#f-left").textContent = left
     ? (kind === "hard" ? "Trening trudnych: " : "Zostało ") + left + " " + plural(left, "karta", "karty", "kart")
     : "Sesja skończona";
-  $("#f-of").textContent = sessDone + " / " + total;
-  $("#f-bar").style.width = (total ? sessDone / total * 100 : 100) + "%";
+  $("#f-of").textContent = sessPassed + " / " + total;
+  $("#f-bar").style.width = (total ? sessPassed / total * 100 : 100) + "%";
   $("#f-mix").textContent = !left ? "" :
     [ again ? again + " " + plural(again, "powtórka", "powtórki", "powtórek") : "",
       tough ? tough + " " + plural(tough, "trudne słowo", "trudne słowa", "trudnych słów") : "",
@@ -1318,6 +1399,136 @@ function renderList(){
   $("#list-count").textContent = rows.length + " słów";
 }
 $("#search").oninput = renderList;
+
+/* ---------- POSTĘP ---------- */
+// Stan słowa liczony z długości odstępu: tak samo, jak pokazuje to sesja.
+const STATE_OF = w => {
+  const c = srs[w.it];
+  if(!c) return 0;                 // nietknięte
+  if(c.i >= 21) return 3;          // utrwalone
+  if(c.i >= 7) return 2;           // młode
+  return 1;                        // w nauce
+};
+
+function bars(host, data, cls){
+  host.innerHTML = "";
+  const max = Math.max(1, ...data.map(d => d.v));
+  data.forEach(d => {
+    const i = document.createElement("i");
+    i.style.height = Math.round(d.v / max * 100) + "%";
+    if(!d.v) i.className = "none"; else if(cls) i.className = cls;
+    i.title = d.label;             // szczegóły pod kursorem
+    host.appendChild(i);
+  });
+}
+
+function renderStats(){
+  const all = WORDS, n = all.length;
+  const by = [0,0,0,0];
+  all.forEach(w => by[STATE_OF(w)]++);
+  const seen = by[1] + by[2] + by[3];
+
+  $("#st-mature").textContent = by[3];
+  $("#st-seen").textContent   = seen;
+  $("#st-streak").textContent = streak();
+
+  // Pokrycie kursu to jedna liczba; podział stanów ma sens dopiero wśród poznanych,
+  // bo inaczej 93% paska to szare "nietknięte" i nie widać niczego innego.
+  $("#st-cover-txt").innerHTML = "";
+  $("#st-cover-txt").append(seen + " / " + n + " ");
+  const sp0 = document.createElement("span");
+  sp0.textContent = "(" + Math.round(seen / n * 100) + "% słownictwa)";
+  $("#st-cover-txt").appendChild(sp0);
+  $("#st-cover").style.width = (seen / n * 100) + "%";
+
+  const base = seen || 1;
+  const segs = [
+    { name:"utrwalone", v:by[3], c:"var(--st-3)" },
+    { name:"młode",     v:by[2], c:"var(--st-2)" },
+    { name:"w nauce",   v:by[1], c:"var(--st-1)" }
+  ];
+  const seg = $("#st-seg"); seg.innerHTML = "";
+  const leg = $("#st-legend"); leg.innerHTML = "";
+  if(!seen){
+    const i = document.createElement("i");
+    i.style.cssText = "width:100%;background:var(--st-0)";
+    i.title = "nic jeszcze nie poznane";
+    seg.appendChild(i);
+  }
+  segs.forEach(g => {
+    if(g.v){
+      const i = document.createElement("i");
+      i.style.cssText = "width:" + (g.v / base * 100) + "%;background:" + g.c;
+      i.title = g.name + ": " + g.v;
+      seg.appendChild(i);
+    }
+    const sp = document.createElement("span");
+    const sw = document.createElement("s"); sw.style.background = g.c;
+    const b = document.createElement("b"); b.textContent = g.v;
+    sp.append(sw, b, document.createTextNode(" " + g.name));
+    leg.appendChild(sp);
+  });
+
+  // Aktywność: 30 dni wstecz, łącznie z pustymi.
+  const act = [];
+  for(let d = 29; d >= 0; d--){
+    const key = keyOf(localNow() - d * DAY_MS);
+    const v = days[key] || 0;
+    act.push({ v, label: key + ": " + v + " " + plural(v, "fiszka", "fiszki", "fiszek") });
+  }
+  bars($("#st-days"), act);
+  const sum = act.reduce((a, x) => a + x.v, 0), best = Math.max(0, ...act.map(x => x.v));
+  const activeDays = act.filter(x => x.v).length;
+  $("#st-days-sum").textContent = "Razem " + sum + " " + plural(sum, "fiszka", "fiszki", "fiszek") +
+    " w " + activeDays + " " + plural(activeDays, "dzień", "dni", "dni") +
+    " · najlepszy dzień " + best;
+
+  // Plan powtórek: dziś (z zaległymi) i kolejne 13 dni.
+  const t = todayNum(), fut = Array.from({ length: 14 }, () => 0);
+  all.forEach(w => {
+    const c = srs[w.it]; if(!c) return;
+    const d = Math.max(0, c.d - t);
+    if(d < 14) fut[d]++;
+  });
+  bars($("#st-due"), fut.map((v, i) => ({ v,
+    label: (i === 0 ? "dziś" : "za " + i + " " + plural(i, "dzień", "dni", "dni")) + ": " + v })), "future");
+  const week = fut.slice(0, 7).reduce((a, x) => a + x, 0);
+  $("#st-due-sum").textContent = "Dziś " + fut[0] + " · w ciągu tygodnia " + week +
+    " · nowych w zapasie " + by[0];
+
+  // Kategorie: tylko te ruszone, od najlepiej opanowanych.
+  const cats = CATS.map(c => {
+    const ws = all.filter(w => w.c === c);
+    return { c, total: ws.length, done: ws.filter(w => STATE_OF(w) > 0).length };
+  }).filter(x => x.done).sort((a, b) => b.done / b.total - a.done / a.total || b.done - a.done).slice(0, 12);
+  const cw = $("#st-cats"); cw.innerHTML = "";
+  cats.forEach(x => {
+    const row = document.createElement("div"); row.className = "catbar";
+    const top = document.createElement("div"); top.className = "top";
+    const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = x.c;
+    const vl = document.createElement("span"); vl.className = "vl"; vl.textContent = x.done + " / " + x.total;
+    top.append(nm, vl);
+    const tr = document.createElement("span"); tr.className = "tr";
+    const i = document.createElement("i"); i.style.width = (x.done / x.total * 100) + "%";
+    i.title = x.c + ": " + x.done + " z " + x.total;
+    tr.appendChild(i);
+    row.append(top, tr); cw.appendChild(row);
+  });
+  if(!cats.length) cw.innerHTML = '<p class="meta">Zacznij naukę, a tu pojawi się podział na kategorie.</p>';
+
+  // Najtrudniejsze słowa
+  const hard = all.filter(isLeech).sort((a, b) => srs[b.it].l - srs[a.it].l).slice(0, 15);
+  const tb = $("#st-hard"); tb.innerHTML = "";
+  hard.forEach(w => {
+    const tr = document.createElement("tr");
+    const a = document.createElement("td"); a.className = "it"; a.textContent = w.it;
+    const b = document.createElement("td"); b.textContent = w.pl;
+    const c = document.createElement("td"); c.className = "num-col"; c.textContent = srs[w.it].l;
+    tr.append(a, b, c); tb.appendChild(tr);
+  });
+  $("#st-hard-none").hidden = hard.length > 0;
+  tb.parentNode.hidden = hard.length === 0;
+}
 
 /* ---------- most do modułu synchronizacji ---------- */
 window.ITApp = {
