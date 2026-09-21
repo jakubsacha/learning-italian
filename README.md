@@ -11,13 +11,16 @@ tablica wyników działają na Supabase.
 
 ## Jak działa nauka
 
-Są dwie zakładki na tę samą dzienną kolejkę:
+Trzy zakładki prowadzą naukę:
 
-- **Nauka** — ćwiczenia się przeplatają (fiszka, quiz, pisanie, słuch, luka w zdaniu)
-- **Fiszki** — wyłącznie klasyczne karty
+- **Nauka** — dzienna kolejka, ćwiczenia się przeplatają (fiszka, quiz, pisanie, słuch, luka)
+- **Fiszki** — ta sama dzienna kolejka, ale wyłącznie klasyczne karty
+- **Trudne** — trening na żądanie: same słowa, na których się wykładasz
 
-Wybór zakładki zapamiętuje się między wizytami. Postęp jest wspólny: karta zrobiona
-w jednym trybie znika z kolejki w drugim.
+Nauka i Fiszki dzielą kolejkę — karta zrobiona w jednym trybie znika w drugim.
+Trudne to osobna lista (do 20 słów, od największej liczby wpadek), niezależna od terminów
+powtórek; wyniki liczą się normalnie do harmonogramu i do dziennego licznika.
+Przy zakładce widać, ile takich słów masz. Wybór zakładki zapamiętuje się między wizytami.
 
 Zakładka **Nauka** to jedna sesja dziennie, w której ćwiczenia się przeplatają
 (*interleaving* — przypominanie w różnych formach utrwala lepiej niż jedna forma w kółko).

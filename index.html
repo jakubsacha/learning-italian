@@ -257,6 +257,7 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
   <div class="tabs" role="tablist">
     <button role="tab" data-tab="flash" aria-selected="true">Nauka</button>
     <button role="tab" data-tab="cards" aria-selected="false">Fiszki</button>
+    <button role="tab" data-tab="hard" aria-selected="false" id="tab-hard">Trudne</button>
     <button role="tab" data-tab="quiz" aria-selected="false">Quiz</button>
     <button role="tab" data-tab="sent" aria-selected="false">Zdania</button>
     <button role="tab" data-tab="list" aria-selected="false">Słowa</button>
@@ -350,7 +351,7 @@ dialog.auth::backdrop{background:rgba(6,18,15,.45)}
     </div>
 
     <div class="done-box" id="f-done" hidden>
-      <b>Na dziś zrobione 🎉</b>
+      <b id="f-done-title">Na dziś zrobione 🎉</b>
       <p class="meta" id="f-done-msg"></p>
       <div class="hard-list" id="f-hard" hidden></div>
       <button class="btn ghost" id="f-extra">Ucz się dalej poza planem</button>
@@ -541,18 +542,19 @@ if(savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
 
 /* ---------- zakładki ---------- */
 // "Nauka" i "Fiszki" to ta sama dzienna kolejka, różnią się tylko formą pytań.
-const PANEL_OF = { flash:"flash", cards:"flash", quiz:"quiz", sent:"sent", list:"list" };
+const PANEL_OF = { flash:"flash", cards:"flash", hard:"flash", quiz:"quiz", sent:"sent", list:"list" };
 document.querySelectorAll('[role="tab"]').forEach(b => b.onclick = () => {
   const t = b.dataset.tab, panel = PANEL_OF[t];
   document.querySelectorAll('[role="tab"]').forEach(x => x.setAttribute("aria-selected", x===b));
   ["flash","quiz","sent","list"].forEach(x => $("#p-"+x).hidden = (x !== panel));
-  if(panel === "flash"){
-    const want = (t === "cards");
-    if(want !== cardMode){
-      cardMode = want; save("it250.cardmode", cardMode);
-      if(current){ queue.unshift(current); current = null; }   // przerysuj bieżącą kartę
-      nextCard();
-    }
+  if(panel === "flash" && t !== kind){
+    const sameQueue = (kind !== "hard" && t !== "hard");        // mix <-> cards to ta sama kolejka
+    kind = t === "flash" ? "mix" : t;
+    cardMode = kind === "cards";
+    save("it250.kind", kind);
+    if(sameQueue && current){ queue.unshift(current); current = null; }
+    else { queue = []; current = null; sessDone = 0; extra = false; hardBuilt = false; }
+    nextCard();
   }
   if(t==="quiz") newQuestion();
   if(t==="sent") newSentence();
@@ -670,7 +672,9 @@ const newLeft  = () => Math.max(0, newLimit - day.n);
 
 let queue = [], current = null, flipped = false, extra = false, sessDone = 0;
 let shownToday = new Set();   // żeby dociągane trudne słowa nie wracały w kółko
-let cardMode = load("it250.cardmode", false), mode = "card";
+let kind = load("it250.kind", "mix");     // mix | cards | hard
+let hardBuilt = false;                    // trening trudnych budujemy raz na wejście
+let cardMode = kind === "cards", mode = "card";
 
 // Zdania, w których da się schować to słowo.
 const SENT_FOR = (() => {
@@ -864,6 +868,12 @@ function settleChoice(wrap, btn, ok, verdictSel, nextSel, verdictText){
 }
 
 function buildQueue(){
+  if(kind === "hard"){     // trening na żądanie: same słowa, na których się wykładasz
+    if(hardBuilt) return;  // bez tego lista odbudowywałaby się w kółko — wpadki nie znikają
+    hardBuilt = true;
+    queue = pool().filter(isLeech).sort((a, b) => srs[b.it].l - srs[a.it].l).slice(0, 20);
+    return;
+  }
   const fresh = newWords().slice(0, extra ? 10 : newLeft());
   const due = dueWords();
   // Słowa, na których się wykładasz, dorzucamy do sesji także przed terminem.
@@ -909,6 +919,18 @@ function showDone(){
   $("#f-session").hidden = true;
   $("#f-done").hidden = false;
   showView("none"); $("#f-actions").hidden = true;
+  $("#f-extra").hidden = kind === "hard";
+  if(kind === "hard"){
+    const any = pool().some(isLeech);
+    $("#f-done-title").textContent = any ? "Trudne przerobione 🎉" : "Nie ma trudnych słów";
+    $("#f-done-msg").textContent = any
+      ? "Wróć tu jutro — albo po prostu ucz się dalej w zakładce Nauka."
+      : "Tu trafiają słowa, na których pomylisz się co najmniej trzy razy. Na razie pusto.";
+    $("#f-hard").hidden = true;
+    updateBar();
+    return;
+  }
+  $("#f-done-title").textContent = "Na dziś zrobione 🎉";
   const soonest = pool().filter(w => srs[w.it]).map(w => srs[w.it].d).sort((a,b) => a-b)[0];
   const left = newWords().length;
   const msg = [];
@@ -1016,7 +1038,7 @@ function updateBar(){
   const total = sessDone + left;
 
   $("#f-left").textContent = left
-    ? "Zostało " + left + " " + plural(left, "karta", "karty", "kart")
+    ? (kind === "hard" ? "Trening trudnych: " : "Zostało ") + left + " " + plural(left, "karta", "karty", "kart")
     : "Sesja skończona";
   $("#f-of").textContent = sessDone + " / " + total;
   $("#f-bar").style.width = (total ? sessDone / total * 100 : 100) + "%";
@@ -1028,6 +1050,8 @@ function updateBar(){
   const p = pool();
   const mature = p.filter(w => srs[w.it] && srs[w.it].i >= 21).length;
   const st = streak();
+  const nHard = pool().filter(isLeech).length;
+  $("#tab-hard").textContent = nHard ? "Trudne " + nHard : "Trudne";
   $("#f-stat").textContent =
     "Dziś " + (days[dayKey()] || 0) + " " + plural(days[dayKey()] || 0, "fiszka", "fiszki", "fiszek") +
     " · nowe " + Math.min(day.n, newLimit) + "/" + newLimit +
@@ -1213,8 +1237,8 @@ window.ITApp = {
 
 /* ---------- start ---------- */
 $("#foot-count").textContent = WORDS.length + " haseł, wprowadzanych wg częstotliwości w mówionym włoskim";
-if(cardMode){
-  document.querySelectorAll('[role="tab"]').forEach(x => x.setAttribute("aria-selected", x.dataset.tab === "cards"));
+if(kind !== "mix"){
+  document.querySelectorAll('[role="tab"]').forEach(x => x.setAttribute("aria-selected", x.dataset.tab === kind));
 }
 renderChips(); nextCard(); newQuestion(); newSentence(); renderList();
 </script>
