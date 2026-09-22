@@ -22,12 +22,21 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Ta sama bramka co w CI: nie wystawiamy czegoś, co się nie kompiluje.
+      - run: npm run check
+      - run: npm run unit
+      - run: npm run build
       # Wymaga włączonego Pages (Settings → Pages → Source: GitHub Actions).
       # enablement: true nie zadziała — GITHUB_TOKEN nie ma prawa utworzyć
       # witryny Pages ("Resource not accessible by integration").
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4
