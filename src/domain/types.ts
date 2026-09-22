@@ -133,6 +133,15 @@ export type Phase =
 
 /* ---------- sesja ---------- */
 
+/** Dlaczego sesja się skończyła — każdy powód ma inny ekran końcowy. */
+export type DoneReason =
+  /** Dzienna kolejka wyczerpana. */
+  | "daily-finished"
+  /** Trening trudnych przerobiony do końca. */
+  | "hard-finished"
+  /** Nie ma ani jednego trudnego słowa, więc nie było czego trenować. */
+  | "no-leeches";
+
 /** Czym jest bieżąca sesja: dzienna kolejka, same fiszki, albo trening trudnych. */
 export type SessionKind = "mix" | "cards" | "hard";
 
@@ -150,7 +159,7 @@ export type Session =
   | {
       readonly status: "done";
       readonly kind: SessionKind;
-      readonly reason: "daily-finished" | "no-leeches";
+      readonly reason: DoneReason;
       readonly nextDue: Days | null;
       readonly newInReserve: number;
     };
