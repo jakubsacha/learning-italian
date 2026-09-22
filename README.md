@@ -209,6 +209,26 @@ Zakładki układają się w siatkę 3×2 na telefonie i w jeden rząd od 600 px 
 Nauka jest na górze ekranu; konto, wspólny cel i tablica siedzą pod sesją, nad stopką —
 widzisz je, gdy skończysz, a nie zanim zaczniesz.
 
+## Testy
+
+Zestaw testów Playwrighta opisuje zachowanie aplikacji: harmonogram powtórek, licznik
+sesji, formy ćwiczeń, trudne słowa, statystyki, synchronizację i układ na wąskich
+ekranach. Uruchamiają się na Chrome desktopowym i mobilnym (`Pixel 7`), bo tylko te
+przeglądarki są wspierane.
+
+```sh
+npm ci
+npx playwright install chromium
+npm test
+```
+
+Serwer statyczny na czas testów bierze katalog z `APP_DIR` (domyślnie katalog główny),
+więc po ewentualnym przejściu na build wystarczy wskazać `dist` — testy zostają te same.
+Testy chodzą też w CI przy każdym pull requeście (`.github/workflows/ci.yml`).
+
+Plik `tests/app-globals.d.ts` deklaruje to, czego testy dotykają wewnątrz aplikacji;
+przy okazji jest to spis jej publicznej powierzchni.
+
 ## Lokalnie
 
 ```sh
