@@ -1,12 +1,41 @@
 # Włoski na co dzień
 
 Aplikacja do nauki włoskiego dla osób mówiących po polsku: fiszki z powtórkami rozłożonymi
-w czasie, quiz, układanie zdań i słownik. Statyczne pliki, bez backendu; konta i wspólna
+w czasie, quiz, układanie zdań i słownik. Strona statyczna, bez backendu; konta i wspólna
 tablica wyników działają na Supabase.
 
-- `index.html` — interfejs i logika nauki
-- `data.js` — słownictwo (1914 haseł) i zdania (186)
-- `sync.js`, `config.js` — logowanie i synchronizacja
+Napisana w TypeScripcie i Svelte 5, budowana Vitem do statycznych plików.
+
+## Architektura
+
+Strzałka zależności wskazuje do środka: `domain/` nie importuje niczego spoza `domain/`.
+
+| Katalog | Co tam jest | Co wolno mu importować |
+| --- | --- | --- |
+| `src/domain/` | harmonogram, kolejka, dobór ćwiczeń, sesja, statystyki, scalanie | tylko siebie |
+| `src/data/` | słownictwo (1914 haseł) i zdania (186) jako typowany moduł | `domain`, `storage` |
+| `src/ports/` | czego aplikacja potrzebuje od świata: zapis, zegar, mowa, chmura | `domain` |
+| `src/adapters/` | jak to jest zrobione: `localStorage`, Web Speech, Supabase | `ports` |
+| `src/storage/` | granica danych: dekodery, migracje, klucze zapisu | `domain`, `ports` |
+| `src/app/` | stan aplikacji (runes) — spina domenę z portami | wszystko powyżej |
+| `src/ui/` | komponenty Svelte, wyłącznie prezentacja | `app`, typy z `domain` |
+| `src/main.ts` | start: składa porty z adapterami i montuje interfejs | wszystko |
+
+Domena jest czysta — zero DOM, zero `fetch`, zero `localStorage`, zegar i losowość
+wstrzykiwane — więc da się ją przetestować bez przeglądarki. Stąd 112 testów
+jednostkowych chodzących w ułamku sekundy.
+
+Typy są ustawione tak, żeby stanów niepoprawnych nie dało się wyrazić: `Exercise`,
+`Session`, `Phase` i `Sync` to unie rozróżniane po polu, a nie zbiory luźnych flag.
+Skalary mają marki (`DayNumber` to nie `Days`), więc pomyłka jednostek nie kompiluje się.
+Włączone `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
+`noPropertyAccessFromIndexSignature` i `verbatimModuleSyntax`; `any` nie występuje.
+
+Miejsce na LLM jest przewidziane: wejdzie jako kolejny port (`Tutor`), więc domena nigdy
+nie dowie się o HTTP ani o kluczach. Strona statyczna nie może trzymać klucza API, więc
+docelowo pośredniczyć będzie funkcja brzegowa Supabase.
+
+- `src/` — kod aplikacji (podział wyżej)
 - `supabase.sql` — schemat bazy
 
 ## Jak działa nauka
@@ -87,7 +116,7 @@ z każdą powtórką: 2 → 4 → 9 → 19 → 40 dni przy quizie, 2 → 6 → 1
 
 Słowo liczy się jako **utrwalone**, gdy jego odstęp sięgnie 21 dni.
 Nowe słowa wchodzą **w kolejności częstotliwości w mówionym włoskim** (pole `o`
-w `data.js`), policzonej z korpusu dialogów filmowych OpenSubtitles 2018
+w `src/data/words.json`), policzonej z korpusu dialogów filmowych OpenSubtitles 2018
 ([hermitdave/FrequencyWords](https://github.com/hermitdave/FrequencyWords)).
 Wyjątek: zwroty grzecznościowe idą przodem, bo czysta frekwencja zaczynałaby naukę
 od `e`, `non`, `di` — słów częstych, ale bezużytecznych jako pierwsze fiszki.
@@ -130,7 +159,7 @@ Ciemny motyw ma własne kroki ramp, sprawdzone na ciemnym tle, a nie odwrócone 
 ## Wspólny cel i tablica
 
 Po zalogowaniu na górze jest **wspólny cel dzienny**: suma kart zrobionych przez wszystkich
-(domyślnie 40, zmienisz w `config.js` przez `window.DAILY_GOAL`). Pasek pokazuje, ile brakuje,
+(domyślnie 40, zmienisz w `src/config.ts` przez `DAILY_GOAL`). Pasek pokazuje, ile brakuje,
 a **wspólna seria** liczy dni pod rząd, w których cel został wyrobiony razem — łamie się,
 gdy któregoś dnia nie wyjdzie. Pod spodem widać wkład każdej osoby.
 
@@ -158,7 +187,8 @@ https://jakubsacha.github.io/learning-italian/
 ## Deploy
 
 Publikacja odbywa się automatycznie przez GitHub Actions (`.github/workflows/pages.yml`)
-przy każdym pushu na `main`.
+przy każdym pushu na `main`: workflow sprawdza typy, uruchamia testy jednostkowe,
+buduje `dist/` i to wystawia. Nie wystawiamy czegoś, co się nie kompiluje.
 
 Jednorazowo, zanim pierwszy deploy się powiedzie:
 **Settings → Pages → Build and deployment → Source: GitHub Actions**.
@@ -180,12 +210,12 @@ Konfiguracja raz, w Supabase:
 3. **Authentication → Sign In / Providers → Email**: włącz, a **wyłącz „Confirm email”**.
    Bez tego rejestracja utknie na potwierdzeniu, którego nikt nie odbierze.
 4. **Project Settings → API Keys**: skopiuj `Project URL` i **Publishable key**
-   (`sb_publishable_...`) do `config.js`. Ten klucz jest publiczny z założenia — trafia
+   (`sb_publishable_...`) do `src/config.ts`. Ten klucz jest publiczny z założenia — trafia
    do źródła strony i może leżeć w repo, bo dostępu do danych pilnuje RLS.
    Starszy klucz `anon` też zadziała, ale Supabase oznacza go już jako legacy.
 
 Jak to działa pod spodem: nazwa jest zamieniana na adres `nazwa@learning-italian.app`
-(domena z `config.js`), bo Supabase Auth wymaga e-maila. Na ten adres nic nie leci.
+(domena z `src/config.ts`), bo Supabase Auth wymaga e-maila. Na ten adres nic nie leci.
 
 Zasady scalania postępu przy logowaniu:
 
@@ -193,8 +223,7 @@ Zasady scalania postępu przy logowaniu:
 - ta sama osoba na swoim urządzeniu — stan lokalny i zdalny scalają się (wyższy poziom wygrywa);
 - inna osoba w tej przeglądarce — obowiązuje stan z serwera, żeby nie przejąć cudzych wyników.
 
-Bez wypełnionego `config.js` aplikacja działa dokładnie jak wcześniej: lokalnie,
-bez logowania.
+Bez wypełnionego `src/config.ts` aplikacja działa lokalnie, bez logowania.
 
 ## Wygląd
 
@@ -209,8 +238,41 @@ Zakładki układają się w siatkę 3×2 na telefonie i w jeden rząd od 600 px 
 Nauka jest na górze ekranu; konto, wspólny cel i tablica siedzą pod sesją, nad stopką —
 widzisz je, gdy skończysz, a nie zanim zaczniesz.
 
+## Testy
+
+Dwie warstwy:
+
+- **jednostkowe (Vitest)** — cała domena bez przeglądarki: harmonogram i wagi dowodu,
+  budowa kolejki, drabinka form pytań, maszyna stanu sesji, dekodery zapisu i migracja
+  ze starego formatu, scalanie postępu, statystyki, spójność materiału. 112 testów, < 1 s.
+- **end-to-end (Playwright)** — zachowanie w przeglądarce: licznik sesji, sterowanie
+  klawiaturą, wymowa, trudne słowa, statystyki, logowanie i układ na wąskich ekranach.
+  96 testów na Chrome desktopowym i mobilnym (`Pixel 7`) — tylko te przeglądarki są wspierane.
+
+```sh
+npm ci
+npx playwright install chromium
+npm run check   # tsc × 2 + svelte-check
+npm run unit    # testy jednostkowe
+npm test        # build + testy end-to-end
+```
+
+Testy end-to-end chodzą po **zbudowanej** stronie, a nie po źródłach. Paczka do testów
+powstaje w trybie `test` i różni się od produkcyjnej jedną gałęzią: zamiast klienta
+Supabase wstaje atrapa chmury trzymana w pamięci strony (`src/adapters/fake-sync.ts`),
+dzięki czemu testy nie dotykają sieci. W zwykłym budowaniu ta gałąź jest martwa
+i Vite ją usuwa.
+
+Zaczepienia testowe w interfejsie są dwa: `data-view` mówi, które ćwiczenie jest na
+ekranie, a `data-word` / `data-ok` podają poprawną odpowiedź, żeby test mógł jej udzielić.
+Poza tym testy klikają to samo, co człowiek.
+
+Testy chodzą też w CI przy każdym pull requeście (`.github/workflows/ci.yml`).
+
 ## Lokalnie
 
 ```sh
-python3 -m http.server 8000   # http://localhost:8000
+npm ci
+npm run dev       # http://localhost:5173
+npm run build     # statyczne pliki w dist/
 ```
