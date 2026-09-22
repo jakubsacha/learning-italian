@@ -1,0 +1,92 @@
+/* Warstwa na wspólny arkusz: cieplejsze kolory, większe litery, mniej rzeczy
+   do klikania. Reszta wyglądu jest ta sama co w kursie głównym. */
+
+:root {
+  --bg: #fff8f2;
+  --accent: #ff8a3d;
+  --accent-dark: #e4701f;
+  --ring: #ffd9bd;
+}
+
+:root[data-theme="dark"] {
+  --bg: #241b14;
+  --ring: #5a3a22;
+}
+
+.kid-wrap h1 {
+  font-size: 1.25rem;
+}
+
+.top .score {
+  font-size: 1.05rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Gwiazdki sesji: dziecko widzi, ile zostało, bez czytania liczb. */
+.stars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  font-size: 1.15rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stars span {
+  opacity: 0.35;
+}
+
+.stars span.done {
+  opacity: 1;
+}
+
+.card.flash.kid .word {
+  font-size: clamp(2rem, 11vw, 3.2rem);
+}
+
+.card.flash.kid .pron {
+  font-size: 1rem;
+  opacity: 0.75;
+}
+
+.card.flash.kid .trans {
+  font-size: clamp(1.4rem, 7vw, 2rem);
+}
+
+/* Trzy oceny, jedna pod drugą: pełna szerokość pod palec i żadnego ucinania
+   napisów, bo wspólny arkusz układa oceny w cztery wąskie kolumny. */
+.kid-grades {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.kid-grades .btn {
+  min-height: 58px;
+  font-size: 1.15rem;
+  padding: 12px 16px;
+}
+
+.kid-grades .btn span {
+  white-space: normal;
+}
+
+.kid-done b {
+  font-size: 1.3rem;
+}
+
+td .mark {
+  font-size: 0.95rem;
+}
+
+/* Na telefonie dwie zakładki nie potrzebują siatki 3x2. */
+.kid-wrap .tabs {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Słówka Marty to cztery krótkie tabelki, więc niech przewija się cała strona,
+   a nie każda z nich osobno w swoim okienku. */
+.kid-wrap .card.scroll {
+  max-height: none;
+  overflow: visible;
+}

@@ -31,6 +31,8 @@ export type FormContext = {
   readonly cardsOnly: boolean;
   /** Czy da się odtworzyć wymowę — bez głosu nie ma ćwiczenia ze słuchu. */
   readonly canListen: boolean;
+  /** Czy to słowo nadaje się do wpisania z klawiatury. */
+  readonly canType: boolean;
   readonly sentences: readonly Sentence[];
 };
 
@@ -50,7 +52,7 @@ export function chooseForm(ctx: FormContext, rng: Rng): Form {
   if (ctx.canListen) forms.push({ kind: "listen" });
   if (review.reps >= 2) forms.push({ kind: "choice", direction: "pl-it" });
   // Produkcja bije rozpoznawanie, więc trafia na listę dwa razy.
-  if (review.reps >= 3) forms.push({ kind: "type" }, { kind: "type" });
+  if (review.reps >= 3 && ctx.canType) forms.push({ kind: "type" }, { kind: "type" });
   if (review.reps >= 3 && ctx.sentences.length > 0) forms.push({ kind: "cloze" }, { kind: "cloze" });
   return pick(forms, rng);
 }

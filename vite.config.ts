@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { defineConfig } from "vite";
 
@@ -11,5 +12,12 @@ export default defineConfig({
     target: "es2022",
     outDir: "dist",
     sourcemap: true,
+    rollupOptions: {
+      // Dwie strony: kurs włoski w katalogu głównym i angielski Marty w /marta/.
+      input: {
+        main: resolve(import.meta.dirname, "index.html"),
+        marta: resolve(import.meta.dirname, "marta/index.html"),
+      },
+    },
   },
 });

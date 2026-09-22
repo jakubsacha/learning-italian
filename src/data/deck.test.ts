@@ -39,6 +39,21 @@ describe("materiał kursu", () => {
     }
   });
 
+  /**
+   * Luka jest wyszukiwana zwykłym `indexOf`, więc gdyby jej litery trafiły się
+   * wcześniej w innym wyrazie, zdanie rozpadłoby się w złym miejscu.
+   */
+  it("każda luka stoi jako osobne słowo, a nie w środku innego", () => {
+    for (const sentence of DECK.sentences) {
+      const low = sentence.it.toLowerCase();
+      const at = low.indexOf(sentence.gap.toLowerCase());
+      const before = at === 0 ? " " : low[at - 1]!;
+      const after = low[at + sentence.gap.length] ?? " ";
+      expect(/\p{L}/u.test(before), sentence.it + " ← " + sentence.gap).toBe(false);
+      expect(/\p{L}/u.test(after), sentence.it + " → " + sentence.gap).toBe(false);
+    }
+  });
+
   it("zdania dopasowują się do słów z kursu", () => {
     const withSentence = DECK.words.filter((w) => sentencesFor(w).length > 0);
     expect(withSentence.length).toBeGreaterThan(80);

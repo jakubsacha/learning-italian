@@ -40,7 +40,7 @@ const theme = asText(store.read(KEYS.theme));
 if (theme !== null) document.documentElement.setAttribute("data-theme", theme);
 
 const clock = systemClock;
-const speech = webSpeech(window.speechSynthesis);
+const speech = webSpeech(window.speechSynthesis, "it-IT");
 
 const cloudRef: { current: Cloud | null } = { current: null };
 const app = new Learning({

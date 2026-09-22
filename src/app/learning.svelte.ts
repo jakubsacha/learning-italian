@@ -172,6 +172,7 @@ export class Learning {
     return {
       sentencesFor,
       canListen: this.#env.speech.available,
+      canType: () => true,
       rng: systemRng,
     };
   }

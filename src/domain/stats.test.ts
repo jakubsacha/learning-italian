@@ -105,7 +105,7 @@ describe("statystyki słów", () => {
 });
 
 describe("pasek sesji", () => {
-  const deps = { sentencesFor: () => [], canListen: false, rng: firstRng };
+  const deps = { sentencesFor: () => [], canListen: false, canType: () => true, rng: firstRng };
 
   it("mianownik stoi w miejscu, licznik rośnie dopiero po zaliczeniu", () => {
     const state = input({ newLimit: 4 });

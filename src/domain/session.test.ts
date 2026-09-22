@@ -6,7 +6,7 @@ import { asDayNumber } from "./types";
 import type { Session } from "./types";
 import { TODAY, firstRng, input, progressOf, review, word, words } from "./fixtures";
 
-const deps: Deps = { sentencesFor: () => [], canListen: false, rng: firstRng };
+const deps: Deps = { sentencesFor: () => [], canListen: false, canType: () => true, rng: firstRng };
 
 const active = (session: Session) => {
   if (session.status !== "active") throw new Error("spodziewano się czynnej sesji");

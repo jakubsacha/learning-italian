@@ -10,6 +10,7 @@ const ctx = (over: Partial<Parameters<typeof chooseForm>[0]> = {}) => {
     progress: progressOf([[w, review({ reps: 5 })]]),
     cardsOnly: false,
     canListen: true,
+    canType: true,
     sentences: [],
     ...over,
   };
@@ -127,5 +128,17 @@ describe("składanie ćwiczenia", () => {
     const big = words(100);
     const known = progressOf(big.slice(0, 9).map((w) => [w, review()]));
     expect(distractorPool(big, known)).toHaveLength(9);
+  });
+});
+
+describe("wpisywanie tam, gdzie ma sens", () => {
+  it("słowo wyłączone z wpisywania nigdy nie dostaje tej formy", () => {
+    const w = word("non vedo l'ora", 0);
+    const noTyping = ctx({
+      word: w,
+      progress: progressOf([[w, review({ reps: 9 })]]),
+      canType: false,
+    });
+    expect(formsOf(noTyping)).not.toContain("type");
   });
 });

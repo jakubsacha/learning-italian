@@ -131,6 +131,7 @@
       direction={current.direction}
       choices={current.choices}
       phase={session.phase}
+      foreign="włosku"
       onpick={pick}
       onnext={next}
     />
@@ -157,6 +158,7 @@
       word={current.word}
       accepted={current.accepted}
       phase={session.phase}
+      foreign="włosku"
       onanswer={typed}
       onnext={next}
     />

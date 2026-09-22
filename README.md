@@ -36,7 +36,30 @@ nie dowie się o HTTP ani o kluczach. Strona statyczna nie może trzymać klucza
 docelowo pośredniczyć będzie funkcja brzegowa Supabase.
 
 - `src/` — kod aplikacji (podział wyżej)
+- `src/marta/` — podstrona z angielskim dla dziecka (patrz niżej)
 - `supabase.sql` — schemat bazy
+
+## Podstrona dla Marty — angielski
+
+`/marta/` to druga strona zbudowana z tego samego rdzenia: **cała domena jest wspólna**,
+więc powtórki rozłożone w czasie, wagi dowodu, dobór formy pytania i maszyna stanu sesji
+działają tam bez jednej linijki zmiany. Różni się materiał, zapis i wygląd.
+
+- **Materiał**: odmiana czasownika *be* (formy pełne, skrócone, przeczenia, pytania),
+  rodzina, kilka przymiotników do budowania zdań i garść zwrotów — 70 haseł i 24 zdania
+  z luką. Nowe słówka dosypuje się w `src/marta/words.json`, zdania w `sentences.json`.
+- **Zapis** ma własne klucze (`marta.*`), więc nauka taty i córki mieszkają w jednej
+  przeglądarce i nic sobie nie nadpisują. Konta w chmurze tu nie ma i nie będzie.
+- **Interfejs** jest prostszy: dwie zakładki, większe litery, **trzy oceny zamiast czterech**
+  („Nie wiem / Prawie / Umiem!"), a postęp sesji to gwiazdki, nie procenty.
+- **Sześć nowych słówek dziennie** — mało i codziennie bije dużo raz w tygodniu.
+- **Wpisywanie z klawiatury** dostają tylko krótkie, jednowyrazowe hasła: ośmiolatka nie ma
+  przepisywać „What is your name?" litera po literze, żeby zaliczyć kartę.
+- Syntezator mowy dostaje `en-GB` zamiast `it-IT`.
+
+Zdania z luką są szukane zwykłym `indexOf`, więc luka `is` w zdaniu „This is my family."
+trafiłaby w środek słowa „This". Pilnuje tego test — i to on wyłapał, że „My parents are…"
+nie nadaje się na lukę `are`, bo „parents" zawiera te litery.
 
 ## Jak działa nauka
 
@@ -244,10 +267,11 @@ Dwie warstwy:
 
 - **jednostkowe (Vitest)** — cała domena bez przeglądarki: harmonogram i wagi dowodu,
   budowa kolejki, drabinka form pytań, maszyna stanu sesji, dekodery zapisu i migracja
-  ze starego formatu, scalanie postępu, statystyki, spójność materiału. 112 testów, < 1 s.
+  ze starego formatu, scalanie postępu, statystyki, spójność obu materiałów. < 1 s.
 - **end-to-end (Playwright)** — zachowanie w przeglądarce: licznik sesji, sterowanie
   klawiaturą, wymowa, trudne słowa, statystyki, logowanie i układ na wąskich ekranach.
-  96 testów na Chrome desktopowym i mobilnym (`Pixel 7`) — tylko te przeglądarki są wspierane.
+  Chrome desktopowy i mobilny (`Pixel 7`) — tylko te przeglądarki są wspierane. Osobny
+  zestaw pilnuje podstrony Marty, w tym tego, że oba postępy nie mieszają się w zapisie.
 
 ```sh
 npm ci

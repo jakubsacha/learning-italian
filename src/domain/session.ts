@@ -28,6 +28,8 @@ export type Deps = {
   readonly sentencesFor: (word: Word) => readonly Sentence[];
   /** Bez działającego syntezatora nie ma ćwiczeń ze słuchu. */
   readonly canListen: boolean;
+  /** Czy dane słowo nadaje się do wpisania — np. jednowyrazowe, bez wielosłowia. */
+  readonly canType: (word: Word) => boolean;
   readonly rng: Rng;
 };
 
@@ -93,6 +95,7 @@ const exerciseFor = (word: Word, kind: SessionKind, input: QueueInput, deps: Dep
       progress: input.progress,
       cardsOnly: kind === "cards",
       canListen: deps.canListen,
+      canType: deps.canType(word),
       sentences,
     },
     deps.rng,

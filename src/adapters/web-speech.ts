@@ -9,17 +9,23 @@ import type { Speech } from "../ports/speech.js";
 /** Trochę wolniej niż normalnie — przy nauce liczy się wyraźność, nie tempo. */
 const RATE = 0.9;
 
-const italian = (voices: readonly SpeechSynthesisVoice[]): SpeechSynthesisVoice | null =>
-  voices.find((v) => v.lang.toLowerCase().startsWith("it")) ?? null;
+const forLanguage = (
+  voices: readonly SpeechSynthesisVoice[],
+  lang: string,
+): SpeechSynthesisVoice | null => {
+  const prefix = lang.slice(0, 2).toLowerCase();
+  return voices.find((v) => v.lang.toLowerCase().startsWith(prefix)) ?? null;
+};
 
-export function webSpeech(synth: SpeechSynthesis | undefined): Speech {
+/** `lang` to kod BCP 47: "it-IT" dla włoskiego, "en-GB" dla angielskiego. */
+export function webSpeech(synth: SpeechSynthesis | undefined, lang: string): Speech {
   if (synth === undefined) {
     return { available: false, say: () => {}, onChange: () => {} };
   }
-  let voice = italian(synth.getVoices());
+  let voice = forLanguage(synth.getVoices(), lang);
   const listeners: (() => void)[] = [];
   synth.addEventListener("voiceschanged", () => {
-    voice = italian(synth.getVoices());
+    voice = forLanguage(synth.getVoices(), lang);
     for (const listener of listeners) listener();
   });
   return {
@@ -32,7 +38,7 @@ export function webSpeech(synth: SpeechSynthesis | undefined): Speech {
         synth.cancel();
         // "scusi / scusa" czytane z ukośnikiem brzmi jak literowanie.
         const utterance = new SpeechSynthesisUtterance(text.replace(/\s*\/\s*/g, ", "));
-        utterance.lang = "it-IT";
+        utterance.lang = lang;
         utterance.rate = RATE;
         if (voice !== null) utterance.voice = voice;
         synth.speak(utterance);

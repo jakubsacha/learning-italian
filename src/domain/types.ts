@@ -33,7 +33,10 @@ export type Level = 1 | 2 | 3;
 
 export type Word = {
   readonly id: WordId;
-  /** Postać włoska — dokładnie to, co widać na karcie i co czyta syntezator. */
+  /**
+   * Postać w języku obcym — dokładnie to, co widać na karcie i co czyta
+   * syntezator. Włoska w kursie głównym, angielska na podstronie Marty.
+   */
   readonly it: string;
   /** Wymowa zapisana polską fonetyką. */
   readonly pr: string;

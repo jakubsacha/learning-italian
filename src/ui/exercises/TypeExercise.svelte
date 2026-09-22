@@ -7,10 +7,12 @@
     word: Word;
     accepted: readonly string[];
     phase: Phase;
+    /** Nazwa języka w miejscowniku: „włosku", „angielsku". */
+    foreign: string;
     onanswer: (outcome: TypedOutcome) => void;
     onnext: () => void;
   };
-  let { word, accepted, phase, onanswer, onnext }: Props = $props();
+  let { word, accepted, phase, foreign, onanswer, onnext }: Props = $props();
 
   let guess = $state("");
   let outcome = $state<TypedOutcome | null>(null);
@@ -36,7 +38,7 @@
 </script>
 
 <div class="card ask" data-view="type" data-word={word.it}>
-  <div class="ask-lead">Napisz po włosku</div>
+  <div class="ask-lead">Napisz po {foreign}</div>
   <div class="ask-main">{word.pl}</div>
   <div class="ask-sub">{word.it.includes("/") ? "wystarczy jedna z form" : ""}</div>
 </div>
@@ -52,8 +54,8 @@
     autocapitalize="none"
     autocorrect="off"
     spellcheck="false"
-    placeholder="wpisz po włosku…"
-    aria-label="Odpowiedź po włosku"
+    placeholder="wpisz po {foreign}…"
+    aria-label="Odpowiedź po {foreign}"
     disabled={answered}
   />
   {#if !answered}

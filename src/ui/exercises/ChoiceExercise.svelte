@@ -8,16 +8,18 @@
     direction: "it-pl" | "pl-it";
     choices: readonly Choice[];
     phase: Phase;
+    /** Nazwa języka w miejscowniku: „włosku", „angielsku". */
+    foreign: string;
     onpick: (choice: Choice) => void;
     onnext: () => void;
   };
-  let { word, direction, choices, phase, onpick, onnext }: Props = $props();
+  let { word, direction, choices, phase, foreign, onpick, onnext }: Props = $props();
 
   const askItalian = $derived(direction === "pl-it");
 </script>
 
 <div class="card ask" data-view="choice" data-word={word.it}>
-  <div class="ask-lead">{askItalian ? "Jak to powiedzieć po włosku" : "Co to znaczy"}</div>
+  <div class="ask-lead">{askItalian ? "Jak to powiedzieć po " + foreign : "Co to znaczy"}</div>
   <div class="ask-main">{askItalian ? word.pl : word.it}</div>
   <div class="ask-sub">{askItalian ? "" : "[" + word.pr + "]"}</div>
 </div>
