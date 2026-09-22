@@ -5,15 +5,15 @@ const PORT = 8777;
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
+  forbidOnly: !!process.env['CI'],
   retries: 0,
-  reporter: process.env.CI ? [["github"], ["list"]] : [["list"]],
+  reporter: process.env['CI'] ? [["github"], ["list"]] : [["list"]],
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "retain-on-failure",
     // Furtka dla środowisk z przeglądarką poza katalogiem Playwrighta.
-    ...(process.env.CHROMIUM_PATH
-      ? { launchOptions: { executablePath: process.env.CHROMIUM_PATH } }
+    ...(process.env['CHROMIUM_PATH']
+      ? { launchOptions: { executablePath: process.env['CHROMIUM_PATH'] } }
       : {}),
   },
   projects: [
@@ -23,7 +23,7 @@ export default defineConfig({
   webServer: {
     command: `node tests/server.mjs`,
     url: `http://localhost:${PORT}/index.html`,
-    reuseExistingServer: !process.env.CI,
-    env: { PORT: String(PORT), APP_DIR: process.env.APP_DIR ?? "." },
+    reuseExistingServer: !process.env['CI'],
+    env: { PORT: String(PORT), APP_DIR: process.env['APP_DIR'] ?? "." },
   },
 });
