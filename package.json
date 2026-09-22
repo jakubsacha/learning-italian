@@ -6,13 +6,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.tests.json",
+    "check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.tests.json && svelte-check --threshold error",
     "unit": "vitest run",
-    "test": "playwright test",
-    "test:built": "APP_DIR=dist playwright test"
+    "test": "vite build --base=/ --mode test --outDir dist-test && playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0",
+    "@supabase/supabase-js": "^2.116.0",
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tsconfig/svelte": "^5.0.8",
     "@types/node": "^26.6.2",

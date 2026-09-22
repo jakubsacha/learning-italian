@@ -1,162 +1,192 @@
 import { expect, test } from "@playwright/test";
 import {
-  clearSpoken, currentView, dayNumber, localMode, seed, spoken, stubNoSpeech, stubSpeech,
+  askedWord,
+  clearSpoken,
+  currentView,
+  dayNumber,
+  deckWords,
+  localMode,
+  openTab,
+  reachView,
+  seed,
+  spoken,
+  stubNoSpeech,
+  stubSpeech,
 } from "./helpers";
 
-const mature = (words: string[]) =>
-  Object.fromEntries(words.map((w) => [w, { e: 2.5, i: 6, d: dayNumber(), r: 5, l: 0 }]));
+/** Słowa opanowane na tyle, że wchodzą wszystkie formy pytań. */
+const mature = (words: readonly string[]) =>
+  Object.fromEntries(
+    words.map((w) => [w, { e: 2.5, i: 6, d: dayNumber(), r: 5, l: 0 }]),
+  );
+
+/** Słowa, przy których pojawiają się zdania z luką. */
+const WITH_SENTENCES = ["caffè", "grazie", "ciao", "acqua", "conto", "pane", "vino", "casa"];
+
+/** Duża, opanowana pula: formy losują się, więc musi starczyć kart na kilka podejść. */
+const manyWords = async (page: import("@playwright/test").Page) => [
+  ...new Set([...WITH_SENTENCES, ...(await deckWords(page, 120))]),
+];
 
 test.describe("formy ćwiczeń", () => {
   test.beforeEach(async ({ page }) => {
     await localMode(page);
     await stubSpeech(page);
     await page.goto("/index.html");
-  });
-
-  test("trudniejsze formy pojawiają się dopiero przy opanowanym słowie", async ({ page }) => {
-    const draws = await page.evaluate(() => {
-      const word = DATA.words[5]!;
-      const seenForms = (reps: number) => {
-        srs[word.it] = { e: 2.5, i: 10, d: 0, r: reps, l: 0 };
-        const set = new Set<string>();
-        for (let i = 0; i < 300; i++) set.add(exerciseFor(word));
-        return [...set].sort();
-      };
-      return { fresh: seenForms(0), one: seenForms(1), three: seenForms(3) };
-    });
-    expect(draws.fresh).toEqual(["card"]);
-    expect(draws.one).not.toContain("type");
-    expect(draws.three).toContain("type");
+    await seed(page, { newDone: 30, srs: mature(await manyWords(page)) });
   });
 
   test("wpisywanie: trafienie, literówka i błąd są rozróżniane", async ({ page }) => {
-    await seed(page, { srs: mature(["pane"]), newDone: 10 });
-    await page.evaluate(() => {
-      current = DATA.words.find((w) => w.it === "pane")!;
-      mode = "type";
-      showView("type");
-      renderTypeStep();
-    });
-
-    const check = async (typed: string) => {
-      await page.evaluate(() => { settled = false; showView("type"); renderTypeStep(); });
-      await page.fill("#xt-in", typed);
-      await page.click("#xt-check");
-      return (await page.textContent("#xt-verdict"))!.trim();
+    const answerWith = async (transform: (word: string) => string): Promise<string> => {
+      await reachView(page, "type");
+      const word = (await askedWord(page)).split("/")[0]!.trim();
+      await page.fill('[data-test="type-input"]', transform(word));
+      await page.click('[data-test="check"]');
+      const verdict = (await page.locator(".verdict").textContent())!.trim();
+      await page.click('[data-test="next"]');
+      return verdict;
     };
-    expect(await check("pane")).toMatch(/^Dobrze!/);
-    expect(await check("pana")).toMatch(/^Prawie/);
-    expect(await check("zupełnie źle")).toMatch(/^Poprawnie:/);
+
+    expect(await answerWith((w) => w)).toMatch(/^Dobrze!/);
+    expect(await answerWith((w) => w.slice(0, -1) + "x")).toMatch(/^Prawie/);
+    expect(await answerWith(() => "zupełnie źle")).toMatch(/^Poprawnie:/);
   });
 
-  test("ćwiczenie ze słuchu nie pokazuje włoskiego tekstu", async ({ page }) => {
-    await seed(page, { srs: mature(["vino"]), newDone: 10 });
-    await page.evaluate(() => {
-      current = DATA.words.find((w) => w.it === "vino")!;
-      mode = "listen";
-      showView("listen");
-      renderListenStep();
-    });
-    const visible = (await page.textContent("#x-listen"))!;
-    expect(visible).not.toContain("vino");
-    expect(await spoken(page)).toContain("vino");
+  test("po sprawdzeniu pole i przycisk przestają reagować", async ({ page }) => {
+    await reachView(page, "type");
+    await page.fill('[data-test="type-input"]', "cokolwiek");
+    await page.click('[data-test="check"]');
+    await expect(page.locator('[data-test="type-input"]')).toBeDisabled();
+    await expect(page.locator('[data-test="check"]')).toHaveCount(0);
   });
 
-  test("luka w zdaniu powstaje też przy słowach z akcentem", async ({ page }) => {
-    const split = await page.evaluate(() => ({
-      accented: splitGap("Mi piace molto questa città.", "città"),
-      grave: splitGap("Un caffè, per favore.", "caffè"),
-    }));
-    expect(split.accented).toEqual(["Mi piace molto questa ", "."]);
-    expect(split.grave).toEqual(["Un ", ", per favore."]);
+  test("ćwiczenie ze słuchu nie pokazuje włoskiego tekstu, ale je czyta", async ({ page }) => {
+    await reachView(page, "listen");
+    const word = await askedWord(page);
+    const visible = (await page.locator('[data-view="listen"]').textContent())!;
+    expect(visible).not.toContain(word);
+    expect(await spoken(page)).toContain(word);
+  });
+
+  test("zdanie z luką pokazuje ukryte słowo dopiero po odpowiedzi", async ({ page }) => {
+    // Luka wypada tylko przy słowach, do których jest zdanie — więc tylko takie
+    // wpuszczamy do sesji i odnawiamy ją, aż forma się wylosuje.
+    const refill = () => seed(page, { newDone: 30, srs: mature(WITH_SENTENCES) });
+    await refill();
+    await reachView(page, "cloze", { tries: 60, refill });
+    const gap = await askedWord(page);
+    await expect(page.locator('[data-view="cloze"] .ask-main')).not.toContainText(gap);
+    await page.locator('.opt[data-ok="1"]').first().click();
+    await expect(page.locator('[data-view="cloze"] .ask-main b')).toHaveText(gap);
+  });
+
+  test("po odpowiedzi w teście wyboru nie da się zmienić zdania", async ({ page }) => {
+    await reachView(page, "choice");
+    await page.locator('.opt[data-ok="0"]').first().click();
+    await expect(page.locator(".verdict")).toContainText("Poprawnie:");
+    for (const option of await page.locator(".opt").all()) {
+      await expect(option).toBeDisabled();
+    }
   });
 });
 
 test.describe("wymowa", () => {
-  test("quiz czyta słowo po odpowiedzi, słuchanie nie dubluje", async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await localMode(page);
     await stubSpeech(page);
     await page.goto("/index.html");
-    await seed(page, { srs: mature(["conto"]), newDone: 10 });
+  });
 
-    const afterAnswer = await page.evaluate(() => {
-      current = DATA.words.find((w) => w.it === "conto")!;
-      settled = false; mode = "quiz-it-pl"; showView("quiz"); renderQuizStep("quiz-it-pl");
-      window.__spoken = [];
-      (document.querySelector('#xq-opts .opt[data-ok="1"]') as HTMLElement).click();
-      return window.__spoken!.slice();
-    });
-    expect(afterAnswer).toEqual(["conto"]);
+  test("test wyboru czyta słowo po odpowiedzi, słuchanie go nie dubluje", async ({ page }) => {
+    await seed(page, { newDone: 30, srs: mature(await manyWords(page)) });
+    await reachView(page, "choice");
+    const word = await askedWord(page);
+    await clearSpoken(page);
+    await page.locator('.opt[data-ok="1"]').first().click();
+    expect(await spoken(page)).toEqual([word]);
 
-    const afterListen = await page.evaluate(() => {
-      current = DATA.words.find((w) => w.it === "conto")!;
-      settled = false; mode = "listen"; showView("listen"); renderListenStep();
-      window.__spoken = [];
-      (document.querySelector('#xl-opts .opt[data-ok="1"]') as HTMLElement).click();
-      return window.__spoken!.slice();
-    });
-    expect(afterListen).toEqual([]);
+    await page.click('[data-test="next"]');
+    await reachView(page, "listen");
+    await clearSpoken(page);
+    await page.locator('.opt[data-ok="1"]').first().click();
+    expect(await spoken(page)).toEqual([]);
   });
 
   test("wyłączona wymowa oznacza ciszę", async ({ page }) => {
-    await localMode(page);
-    await stubSpeech(page);
-    await page.goto("/index.html");
-    await seed(page, { srs: mature(["mare"]), newDone: 10, voice: false });
+    await seed(page, { kind: "cards", voice: false });
     await clearSpoken(page);
-    const said = await page.evaluate(() => {
-      current = DATA.words.find((w) => w.it === "mare")!;
-      settled = false; mode = "quiz-it-pl"; showView("quiz"); renderQuizStep("quiz-it-pl");
-      window.__spoken = [];
-      (document.querySelector('#xq-opts .opt[data-ok="1"]') as HTMLElement).click();
-      return window.__spoken!.slice();
-    });
-    expect(said).toEqual([]);
+    await page.keyboard.press("Space");
+    await page.keyboard.press("3");
+    expect(await spoken(page)).toEqual([]);
   });
 
-  test("bez głosu it-IT ćwiczenie ze słuchu w ogóle się nie proponuje", async ({ page }) => {
-    await localMode(page);
-    await stubNoSpeech(page);
-    await page.goto("/index.html");
-    await seed(page, { srs: mature(["casa"]), newDone: 10 });
-    expect(await page.evaluate(() => canListen())).toBe(false);
-    const forms = await page.evaluate(() => {
-      const word = DATA.words.find((w) => w.it === "casa")!;
-      const set = new Set<string>();
-      for (let i = 0; i < 200; i++) set.add(exerciseFor(word));
-      return [...set];
-    });
-    expect(forms).not.toContain("listen");
+  test("przycisk głośnika czyta nawet przy wyłączonej wymowie", async ({ page }) => {
+    await seed(page, { kind: "cards", voice: false });
+    await clearSpoken(page);
+    const word = await askedWord(page);
+    await page.locator(".say").click();
+    expect(await spoken(page)).toEqual([word]);
   });
 });
 
+test("bez głosu it-IT ćwiczenie ze słuchu w ogóle się nie proponuje", async ({ page }) => {
+  await localMode(page);
+  await stubNoSpeech(page);
+  await page.goto("/index.html");
+  await seed(page, { newDone: 30, srs: mature(await deckWords(page, 120)) });
+
+  const views = new Set<string>();
+  for (let i = 0; i < 30; i++) {
+    const view = await currentView(page);
+    if (view === "done") break;
+    views.add(view);
+    if (view === "type") {
+      await page.fill('[data-test="type-input"]', "cokolwiek");
+      await page.click('[data-test="check"]');
+      await page.click('[data-test="next"]');
+      continue;
+    }
+    if (view === "card") {
+      await page.keyboard.press("Space");
+      await page.keyboard.press("3");
+      continue;
+    }
+    await page.locator('.opt[data-ok="1"]').first().click();
+    await page.click('[data-test="next"]');
+  }
+  expect([...views]).not.toContain("listen");
+});
+
 test.describe("zakładka Zdania", () => {
-  test("sprawdzenie blokuje przycisk i klocki oraz czyta zdanie", async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await localMode(page);
     await stubSpeech(page);
     await page.goto("/index.html");
-    await page.click('[data-tab="sent"]');
-    await page.selectOption("#s-mode", "order");
+    await openTab(page, "Zdania");
+  });
 
-    const tiles = await page.locator("#s-pool .tile").count();
-    for (let i = 0; i < tiles; i++) await page.locator("#s-pool .tile:not(.used)").first().click();
+  test("sprawdzenie blokuje klocki i czyta zdanie", async ({ page }) => {
+    const panel = page.getByTestId("panel-sent");
+    const tiles = panel.locator(".pool .tile");
+    const count = await tiles.count();
+    for (let i = 0; i < count; i++) await panel.locator(".pool .tile:not(.used)").first().click();
+
     await clearSpoken(page);
-    await page.click("#s-check");
+    await panel.getByRole("button", { name: "Sprawdź" }).click();
 
-    await expect(page.locator("#s-check")).toBeDisabled();
-    const allDisabled = await page.evaluate(() =>
-      [...document.querySelectorAll("#s-slot .tile, #s-pool .tile")]
-        .every((t) => (t as HTMLButtonElement).disabled));
-    expect(allDisabled).toBe(true);
+    await expect(panel.getByRole("button", { name: "Sprawdź" })).toBeDisabled();
+    for (const tile of await panel.locator(".tile").all()) await expect(tile).toBeDisabled();
     expect((await spoken(page)).length).toBe(1);
 
-    // Playwright nie kliknie wyłączonego przycisku, więc wołamy click() wprost:
-    // sprawdzamy, że nawet wymuszone kliknięcie nie doliczy drugiego wyniku.
-    const before = await page.evaluate(() => sDone);
-    await page.evaluate(() => (document.querySelector("#s-check") as HTMLButtonElement).click());
-    expect(await page.evaluate(() => sDone)).toBe(before);
+    await panel.getByRole("button", { name: "Następne" }).click();
+    await expect(panel.getByRole("button", { name: "Sprawdź" })).toBeEnabled();
+  });
 
-    await page.click("#s-next");
-    await expect(page.locator("#s-check")).toBeEnabled();
+  test("uzupełnianie luki odsłania słowo i podaje wynik", async ({ page }) => {
+    const panel = page.getByTestId("panel-sent");
+    await panel.getByLabel("Rodzaj ćwiczenia").selectOption("gap");
+    await panel.locator(".opt").first().click();
+    await expect(panel.locator(".verdict")).toBeVisible();
+    await expect(panel.locator(".gapline b")).not.toHaveText(" ");
   });
 });

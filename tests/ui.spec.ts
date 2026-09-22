@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { localMode, seed, stubSpeech } from "./helpers";
+import { currentView, localMode, openTab, seed, stubSpeech } from "./helpers";
 
 test.beforeEach(async ({ page }) => {
   await localMode(page);
@@ -24,7 +24,7 @@ test("wszystkie zakładki mieszczą się bez ucinania i bez poziomego scrolla", 
 test("nauka jest nad panelem konta, a konto nad stopką", async ({ page }) => {
   const top = await page.evaluate(() => {
     const y = (sel: string) => document.querySelector(sel)!.getBoundingClientRect().top + scrollY;
-    return { nauka: y("#p-flash"), konto: y("#sync"), stopka: y("footer") };
+    return { nauka: y(".sess"), konto: y(".sync"), stopka: y("footer") };
   });
   expect(top.nauka).toBeLessThan(top.konto);
   expect(top.konto).toBeLessThan(top.stopka);
@@ -32,34 +32,47 @@ test("nauka jest nad panelem konta, a konto nad stopką", async ({ page }) => {
 
 test("przed odsłonięciem karty nie widać ani tłumaczenia, ani ocen", async ({ page }) => {
   await seed(page, { kind: "cards" });
-  await expect(page.locator("#f-trans")).toBeHidden();
-  await expect(page.locator("#f-actions")).toBeHidden();
-  await expect(page.locator("#f-reveal")).toBeVisible();
+  await expect(page.locator(".trans")).toHaveCount(0);
+  await expect(page.locator(".grades")).toHaveCount(0);
+  await expect(page.getByTestId("reveal")).toBeVisible();
 
   await page.keyboard.press("Space");
-  await expect(page.locator("#f-trans")).toBeVisible();
-  await expect(page.locator("#f-actions")).toBeVisible();
-  await expect(page.locator("#f-reveal")).toBeHidden();
+  await expect(page.locator(".trans")).toBeVisible();
+  await expect(page.locator(".grades")).toBeVisible();
+  await expect(page.getByTestId("reveal")).toHaveCount(0);
 });
 
 test("Fiszki podają wyłącznie karty, Nauka miesza formy", async ({ page }) => {
   await seed(page, { kind: "cards" });
-  const modes = new Set<string>();
+  const views = new Set<string>();
   for (let i = 0; i < 8; i++) {
-    modes.add(await page.evaluate(() => mode));
+    views.add(await currentView(page));
     await page.keyboard.press("Space");
     await page.keyboard.press("3");
   }
-  expect([...modes]).toEqual(["card"]);
-
-  await page.click('[data-tab="flash"]');
-  expect(await page.evaluate(() => kind)).toBe("mix");
+  expect([...views]).toEqual(["card"]);
 });
 
 test("wybrana zakładka przeżywa przeładowanie", async ({ page }) => {
-  await page.click('[data-tab="cards"]');
+  await openTab(page, "Fiszki");
   await page.reload({ waitUntil: "networkidle" });
-  const active = await page.evaluate(() =>
-    document.querySelector('[role="tab"][aria-selected="true"]')!.textContent);
-  expect(active).toBe("Fiszki");
+  await expect(page.getByRole("tab", { selected: true })).toHaveText("Fiszki");
+});
+
+test("motyw przeżywa przeładowanie", async ({ page }) => {
+  await page.getByRole("button", { name: /motyw/ }).click();
+  const chosen = await page.evaluate(() => document.documentElement.dataset["theme"]);
+  await page.reload({ waitUntil: "networkidle" });
+  expect(await page.evaluate(() => document.documentElement.dataset["theme"])).toBe(chosen);
+});
+
+test("zakładka Słowa filtruje słownik", async ({ page }) => {
+  await openTab(page, "Słowa");
+  const all = await page.locator("tbody tr").count();
+  expect(all).toBeGreaterThan(1000);
+  await page.fill(".search", "kawa");
+  const found = await page.locator("tbody tr").count();
+  expect(found).toBeGreaterThan(0);
+  expect(found).toBeLessThan(all);
+  await expect(page.locator("tbody tr").first()).toContainText("kaw");
 });

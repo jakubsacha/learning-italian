@@ -9,6 +9,7 @@ export default defineConfig({
   retries: 0,
   reporter: process.env['CI'] ? [["github"], ["list"]] : [["list"]],
   use: {
+    testIdAttribute: "data-test",
     baseURL: `http://localhost:${PORT}`,
     trace: "retain-on-failure",
     // Furtka dla środowisk z przeglądarką poza katalogiem Playwrighta.
@@ -24,6 +25,6 @@ export default defineConfig({
     command: `node tests/server.mjs`,
     url: `http://localhost:${PORT}/index.html`,
     reuseExistingServer: !process.env['CI'],
-    env: { PORT: String(PORT), APP_DIR: process.env['APP_DIR'] ?? "." },
+    env: { PORT: String(PORT), APP_DIR: process.env['APP_DIR'] ?? "dist-test" },
   },
 });
