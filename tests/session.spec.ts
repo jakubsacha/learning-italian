@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
 test("nowy użytkownik dostaje najczęstsze słowa, zaczynając od zwrotów grzecznościowych", async ({
   page,
 }) => {
-  await seed(page, { kind: "cards" });
+  await seed(page, { kind: "mix" });
   const words: string[] = [];
   for (let i = 0; i < 6; i++) {
     words.push((await page.textContent(WORD))!.trim());
@@ -25,7 +25,7 @@ test("nowy użytkownik dostaje najczęstsze słowa, zaczynając od zwrotów grze
 });
 
 test("licznik pokazuje karty, nie odpowiedzi: „Nie wiem” nie zawyża sumy", async ({ page }) => {
-  await seed(page, { kind: "cards", limit: 10 });
+  await seed(page, { kind: "mix", limit: 10 });
   await expect(page.getByTestId("count")).toHaveText("0 / 10");
 
   for (let i = 0; i < 3; i++) {
@@ -41,7 +41,7 @@ test("licznik pokazuje karty, nie odpowiedzi: „Nie wiem” nie zawyża sumy", 
 });
 
 test("dzienny limit nowych słów jest przestrzegany", async ({ page }) => {
-  await seed(page, { kind: "cards", limit: 5 });
+  await seed(page, { kind: "mix", limit: 5 });
   await expect(page.getByTestId("count")).toHaveText("0 / 5");
   for (let i = 0; i < 5; i++) await answerCorrectly(page);
   expect(await currentView(page)).toBe("done");
@@ -51,7 +51,7 @@ test("dzienny limit nowych słów jest przestrzegany", async ({ page }) => {
 test("skład kolejki jest rozpisany na powtórki, trudne i nowe", async ({ page }) => {
   const today = dayNumber();
   await seed(page, {
-    kind: "cards",
+    kind: "mix",
     newDone: 8,
     limit: 10,
     srs: {
@@ -66,7 +66,7 @@ test("skład kolejki jest rozpisany na powtórki, trudne i nowe", async ({ page 
 test("następnego dnia wracają powtórki, a limit nowych się zeruje", async ({ page }) => {
   const today = dayNumber();
   await seed(page, {
-    kind: "cards",
+    kind: "mix",
     newDone: 10,
     limit: 10,
     srs: Object.fromEntries(
@@ -86,7 +86,7 @@ test("następnego dnia wracają powtórki, a limit nowych się zeruje", async ({
 });
 
 test("po wyczerpaniu kolejki można uczyć się poza planem", async ({ page }) => {
-  await seed(page, { kind: "cards", limit: 5 });
+  await seed(page, { kind: "mix", limit: 5 });
   for (let i = 0; i < 5; i++) await answerCorrectly(page);
   expect(await currentView(page)).toBe("done");
   await page.getByTestId("more").click();
@@ -94,7 +94,7 @@ test("po wyczerpaniu kolejki można uczyć się poza planem", async ({ page }) =
 });
 
 test("postęp przeżywa przeładowanie strony", async ({ page }) => {
-  await seed(page, { kind: "cards", limit: 10 });
+  await seed(page, { kind: "mix", limit: 10 });
   for (let i = 0; i < 3; i++) await answerCorrectly(page);
   await expect(page.getByTestId("count")).toHaveText("3 / 10");
 

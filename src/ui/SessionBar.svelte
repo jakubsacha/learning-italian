@@ -6,6 +6,12 @@
   type Props = { summary: SessionSummary; kind: SessionKind };
   let { summary, kind }: Props = $props();
 
+  const LEAD: Readonly<Record<SessionKind, string>> = {
+    mix: "Zostało ",
+    review: "Utrwalanie: ",
+    new: "Nowe słowa: ",
+  };
+
   const mix = $derived(
     [
       summary.again > 0 ? reviews(summary.again) : "",
@@ -21,7 +27,7 @@
   <div class="sess-top">
     <span class="sess-left" data-test="left">
       {#if summary.left > 0}
-        {kind === "hard" ? "Trening trudnych: " : "Zostało "}{cards(summary.left)}
+        {LEAD[kind]}{cards(summary.left)}
       {:else}
         Sesja skończona
       {/if}

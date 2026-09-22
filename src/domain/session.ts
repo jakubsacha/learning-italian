@@ -17,7 +17,7 @@ import { assertNever } from "./types.js";
 import { asDays } from "./types.js";
 import { EVIDENCE, evidenceOf, schedule } from "./scheduler.js";
 import type { TypedOutcome } from "./text.js";
-import { buildQueue, leechWords, newWords, type QueueInput } from "./queue.js";
+import { buildQueue, newWords, type QueueInput } from "./queue.js";
 import type { Rng } from "./random.js";
 import { buildExercise, chooseForm } from "./exercise.js";
 
@@ -70,30 +70,32 @@ export function gradeAnswer(exercise: Exercise, answer: Answer): Graded {
   }
 }
 
-const finish = (kind: SessionKind, input: QueueInput): Session => {
+/**
+ * Koniec sesji. `started` mówi, czy cokolwiek było na ekranie — pusta runda
+ * utrwalania to co innego niż runda przerobiona do końca.
+ */
+const finish = (kind: SessionKind, input: QueueInput, started: boolean): Session => {
   const dues = input.pool
     .map((w) => input.progress.get(w.id)?.due)
     .filter((d): d is DayNumber => d !== undefined)
     .sort((a, b) => a - b);
   const soonest = dues[0];
-  const anyLeech = leechWords(input).length > 0;
-  return {
+  const common = {
     status: "done",
-    kind,
-    reason:
-      kind === "hard" ? (anyLeech ? "hard-finished" : "no-leeches") : "daily-finished",
     nextDue: soonest === undefined ? null : asDays(soonest - input.today),
     newInReserve: newWords(input).length,
-  };
+  } as const;
+  return kind === "mix"
+    ? { ...common, kind, reason: "daily-finished" }
+    : { ...common, kind, reason: started ? "batch-finished" : "empty" };
 };
 
-const exerciseFor = (word: Word, kind: SessionKind, input: QueueInput, deps: Deps): Exercise => {
+const exerciseFor = (word: Word, input: QueueInput, deps: Deps): Exercise => {
   const sentences = deps.sentencesFor(word);
   const form = chooseForm(
     {
       word,
       progress: input.progress,
-      cardsOnly: kind === "cards",
       canListen: deps.canListen,
       canType: deps.canType(word),
       sentences,
@@ -111,15 +113,16 @@ const activate = (
   kind: SessionKind,
   queue: readonly Word[],
   passed: number,
+  started: boolean,
   input: QueueInput,
   deps: Deps,
 ): Session => {
   const [head, ...rest] = queue;
-  if (head === undefined) return finish(kind, input);
+  if (head === undefined) return finish(kind, input, started);
   return {
     status: "active",
     kind,
-    current: exerciseFor(head, kind, input, deps),
+    current: exerciseFor(head, input, deps),
     phase: { phase: "question" },
     queue: rest,
     passed,
@@ -128,21 +131,21 @@ const activate = (
 
 /** Nowa sesja: buduje kolejkę i wystawia pierwsze ćwiczenie. */
 export function startSession(kind: SessionKind, input: QueueInput, deps: Deps): Session {
-  return activate(kind, buildQueue(kind, input, deps.rng), 0, input, deps);
+  return activate(kind, buildQueue(kind, input, deps.rng), 0, false, input, deps);
 }
 
 /**
- * Przejście do następnego ćwiczenia. Gdy kolejka pusta, próbujemy zbudować ją
- * jeszcze raz — poza treningiem trudnych, bo tam wpadki nie znikają po odpowiedzi
- * i lista odbudowywałaby się bez końca.
+ * Przejście do następnego ćwiczenia. Gdy kolejka pusta, dzienna sesja próbuje
+ * zbudować się jeszcze raz. Utrwalanie i nowe słowa to paczki: po ostatniej karcie
+ * kończą się, zamiast dosypywać w nieskończoność — kolejną rundę bierzesz sam.
  */
 export function advance(session: Session, input: QueueInput, deps: Deps): Session {
   if (session.status === "done") return session;
   if (session.queue.length > 0) {
-    return activate(session.kind, session.queue, session.passed, input, deps);
+    return activate(session.kind, session.queue, session.passed, true, input, deps);
   }
-  const refilled = session.kind === "hard" ? [] : buildQueue(session.kind, input, deps.rng);
-  return activate(session.kind, refilled, session.passed, input, deps);
+  const refilled = session.kind === "mix" ? buildQueue(session.kind, input, deps.rng) : [];
+  return activate(session.kind, refilled, session.passed, true, input, deps);
 }
 
 export type AnswerResult = {

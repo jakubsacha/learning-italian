@@ -30,7 +30,7 @@ test("trudne słowa są dociągane przed terminem, ale nie wracają po przełado
   page,
 }) => {
   await seed(page, {
-    kind: "cards",
+    kind: "mix",
     newDone: 30,
     srs: leeches(["ciao", "sì", "no", "grazie", "prego"]),
   });
@@ -46,29 +46,17 @@ test("trudne słowa są dociągane przed terminem, ale nie wracają po przełado
 
 test("dociąganie trudnych jest ograniczone do pięciu na sesję", async ({ page }) => {
   const words = await deckWords(page, 9);
-  await seed(page, { kind: "cards", newDone: 30, srs: leeches(words) });
+  await seed(page, { kind: "mix", newDone: 30, srs: leeches(words) });
   await expect(page.getByTestId("left")).toHaveText("Zostało 5 kart");
 });
 
-test("zakładka Trudne ma własną kolejkę i sensowny stan pusty", async ({ page }) => {
-  await seed(page, { kind: "hard" });
-  expect(await currentView(page)).toBe("done");
-  await expect(page.locator('[data-view="done"] b')).toHaveText("Nie ma trudnych słów");
-  await expect(page.getByTestId("more")).toHaveCount(0);
-
-  await seed(page, { kind: "hard", srs: leeches(["ciao", "sì", "no"]) });
-  await expect(page.getByTestId("left")).toHaveText("Trening trudnych: 3 karty");
-  for (let i = 0; i < 3; i++) await answerCorrectly(page);
-  await expect(page.locator('[data-view="done"] b')).toHaveText(/Trudne przerobione/);
-});
-
-test("licznik przy zakładce pokazuje, ile słów sprawia kłopot", async ({ page }) => {
-  await seed(page, { kind: "cards", srs: leeches(["ciao", "sì", "no"]) });
-  await expect(page.getByRole("tab", { name: /Trudne/ })).toHaveText("Trudne 3");
+test("trudne słowa wchodzą do rundy utrwalania także przed terminem", async ({ page }) => {
+  await seed(page, { kind: "review", newDone: 30, srs: leeches(["ciao", "sì", "no"]) });
+  await expect(page.getByTestId("left")).toHaveText("Utrwalanie: 3 karty");
 });
 
 test("ekran końca dnia wymienia słowa, na których się wykładasz", async ({ page }) => {
-  await seed(page, { kind: "cards", newDone: 30, srs: leeches(["ciao", "sì"], 0) });
+  await seed(page, { kind: "mix", newDone: 30, srs: leeches(["ciao", "sì"], 0) });
   for (let i = 0; i < 2; i++) await answerCorrectly(page);
   await expect(page.getByTestId("leeches")).toContainText("Najczęściej się wykładasz na:");
   // lista nie może wylądować w przycisku oceny (był taki błąd)

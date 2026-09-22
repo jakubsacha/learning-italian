@@ -23,7 +23,7 @@ export type Seed = {
   days?: Record<string, number>;
   newDone?: number;
   seen?: string[];
-  kind?: "mix" | "cards" | "hard";
+  kind?: "mix" | "review" | "new";
   limit?: number;
   voice?: boolean;
 };
@@ -149,7 +149,8 @@ export async function answerCorrectly(page: Page, grade: "2" | "3" | "4" = "3"):
 
 /** Przełącza zakładkę po widocznej nazwie. */
 export const openTab = (page: Page, name: string | RegExp): Promise<void> =>
-  page.getByRole("tab", { name }).click();
+  // Dokładnie: „Słowa" i „Nowe słowa" to dwie różne zakładki.
+  page.getByRole("tab", typeof name === "string" ? { name, exact: true } : { name }).click();
 
 /**
  * Odpowiada poprawnie, aż na ekranie pojawi się szukana forma ćwiczenia.

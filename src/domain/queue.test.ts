@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HARD_IN_SESSION, HARD_SESSION_SIZE, buildQueue, newLeft } from "./queue";
+import { HARD_IN_SESSION, NEW_BATCH, REVIEW_BATCH, buildQueue, newLeft } from "./queue";
 import { asDayNumber, asDays } from "./types";
 import { TODAY, firstRng, input, progressOf, review, words } from "./fixtures";
 
@@ -81,15 +81,74 @@ describe("kolejka dzienna", () => {
     );
   });
 
-  it("trening trudnych podaje wyłącznie trudne, najwyżej dwadzieścia", () => {
-    const pool = words(30);
-    const progress = progressOf(pool.map((w, i) => [w, review({ lapses: i < 25 ? 3 : 0 })]));
-    const queue = buildQueue("hard", input({ pool, progress }), firstRng);
-    expect(queue).toHaveLength(HARD_SESSION_SIZE);
-    expect(queue.every((w) => (progress.get(w.id)?.lapses ?? 0) >= 3)).toBe(true);
+});
+
+describe("utrwalanie", () => {
+  it("podaje wyłącznie słowa, które już znasz", () => {
+    const pool = words(10);
+    const progress = progressOf(pool.slice(0, 4).map((w) => [w, review({ due: TODAY })]));
+    const queue = buildQueue("review", input({ pool, progress }), firstRng);
+    expect(ids(queue).sort()).toEqual(["slowo0", "slowo1", "slowo2", "slowo3"]);
   });
 
-  it("trening trudnych bez trudnych słów daje pustą kolejkę", () => {
-    expect(buildQueue("hard", input(), firstRng)).toEqual([]);
+  it("bez znanych słów daje pustą rundę", () => {
+    expect(buildQueue("review", input(), firstRng)).toEqual([]);
+  });
+
+  it("w dniu bez zaległości dopełnia rundę słowami z najbliższym terminem", () => {
+    const pool = words(30);
+    const progress = progressOf(
+      pool.map((w, i) => [w, review({ due: asDayNumber(TODAY + 1 + i) })]),
+    );
+    const queue = buildQueue("review", input({ pool, progress }), firstRng);
+    expect(queue).toHaveLength(REVIEW_BATCH);
+    // najbliższe terminy wchodzą, najdalsze zostają na później
+    expect(ids(queue)).toContain("slowo0");
+    expect(ids(queue)).not.toContain("slowo29");
+  });
+
+  it("zaległe i trudne mają pierwszeństwo przed resztą", () => {
+    const pool = words(40);
+    const progress = progressOf(
+      pool.map((w, i) => [
+        w,
+        i === 39
+          ? review({ due: asDayNumber(TODAY - 3) }) // zaległe
+          : i === 38
+            ? review({ due: asDayNumber(TODAY + 90), lapses: 5 }) // trudne, daleko
+            : review({ due: asDayNumber(TODAY + 1 + i) }),
+      ]),
+    );
+    const queue = ids(buildQueue("review", input({ pool, progress }), firstRng));
+    expect(queue).toContain("slowo39");
+    expect(queue).toContain("slowo38");
+  });
+
+  it("nie rośnie ponad rundę nawet przy dużej zaległości", () => {
+    const pool = words(60);
+    const progress = progressOf(pool.map((w) => [w, review({ due: asDayNumber(TODAY - 1) })]));
+    expect(buildQueue("review", input({ pool, progress }), firstRng)).toHaveLength(REVIEW_BATCH);
+  });
+});
+
+describe("nowe słowa", () => {
+  it("podaje paczkę najczęstszych słów, których jeszcze nie znasz", () => {
+    const pool = words(30);
+    const progress = progressOf([[pool[0]!, review()]]);
+    const queue = buildQueue("new", input({ pool, progress }), firstRng);
+    expect(queue).toHaveLength(NEW_BATCH);
+    expect(ids(queue)[0]).toBe("slowo1");
+    expect(ids(queue)).not.toContain("slowo0");
+  });
+
+  it("działa także po wyczerpaniu dziennego limitu — sam o nie prosisz", () => {
+    expect(buildQueue("new", input({ newDone: 99 }), firstRng)).toHaveLength(NEW_BATCH);
+  });
+
+  it("nie miesza w nich powtórek", () => {
+    const pool = words(20);
+    const progress = progressOf(pool.slice(0, 5).map((w) => [w, review({ due: TODAY })]));
+    const queue = buildQueue("new", input({ pool, progress }), firstRng);
+    expect(queue.every((w) => !progress.has(w.id))).toBe(true);
   });
 });

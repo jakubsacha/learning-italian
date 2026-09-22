@@ -113,7 +113,7 @@ test.describe("wymowa", () => {
   });
 
   test("wyłączona wymowa oznacza ciszę", async ({ page }) => {
-    await seed(page, { kind: "cards", voice: false });
+    await seed(page, { kind: "mix", voice: false });
     await clearSpoken(page);
     await page.keyboard.press("Space");
     await page.keyboard.press("3");
@@ -121,7 +121,7 @@ test.describe("wymowa", () => {
   });
 
   test("przycisk głośnika czyta nawet przy wyłączonej wymowie", async ({ page }) => {
-    await seed(page, { kind: "cards", voice: false });
+    await seed(page, { kind: "mix", voice: false });
     await clearSpoken(page);
     const word = await askedWord(page);
     await page.locator(".say").click();

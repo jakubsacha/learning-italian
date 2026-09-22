@@ -123,30 +123,51 @@ describe("przebieg sesji", () => {
     });
   });
 
-  it("trening trudnych bez trudnych słów mówi to wprost", () => {
-    expect(startSession("hard", input(), deps)).toMatchObject({ reason: "no-leeches" });
-  });
-
-  it("trening trudnych nie odbudowuje się w kółko po przerobieniu listy", () => {
-    const pool = words(2);
-    const progress = progressOf(pool.map((w) => [w, review({ lapses: 4 })]));
-    const state = input({ pool, progress, newDone: 99 });
-    let session = startSession("hard", state, deps);
-    for (let i = 0; i < 2; i++) {
-      const result = answer(active(session), { via: "self", grade: "good" }, state);
-      session = advance(result!.session, state, deps);
-    }
-    expect(session).toMatchObject({ status: "done", reason: "hard-finished" });
-  });
-
-  it("zakładka Fiszki podaje karty, choćby słowa były dawno opanowane", () => {
-    const pool = words(4);
-    const state = input({
-      pool,
-      newDone: 99,
-      progress: progressOf(pool.map((w) => [w, review({ reps: 9 })])),
+  it("pusta runda utrwalania mówi, że nie było czego podać", () => {
+    expect(startSession("review", input(), deps)).toMatchObject({
+      status: "done",
+      kind: "review",
+      reason: "empty",
     });
-    const session = active(startSession("cards", state, { ...deps, canListen: true }));
+  });
+
+  it("runda utrwalania kończy się po ostatniej karcie, zamiast dosypywać w kółko", () => {
+    const pool = words(2);
+    const progress = progressOf(pool.map((w) => [w, review({ due: TODAY })]));
+    let state = input({ pool, progress, newDone: 99 });
+    let session = startSession("review", state, deps);
+    for (let i = 0; i < 2; i++) {
+      const result = answer(active(session), { via: "self", grade: "good" }, state)!;
+      // Po ocenie oba słowa wciąż są znane — kolejka mogłaby się odbudować bez końca.
+      state = input({ ...state, progress: new Map([...state.progress, [result.word.id, result.review]]) });
+      session = advance(result.session, state, deps);
+    }
+    expect(session).toMatchObject({ status: "done", kind: "review", reason: "batch-finished" });
+  });
+
+  it("nowe słowa zawsze zaczynają od fiszki", () => {
+    const session = active(startSession("new", input(), { ...deps, canListen: true }));
     expect(session.current.kind).toBe("card");
+  });
+
+  it("paczka nowych słów się kończy, a nie przechodzi w powtórki", () => {
+    const pool = words(3);
+    let state = input({ pool });
+    let session = startSession("new", state, deps);
+    for (let i = 0; i < 3; i++) {
+      const result = answer(active(session), { via: "self", grade: "good" }, state)!;
+      state = input({ pool, progress: new Map([...state.progress, [result.word.id, result.review]]) });
+      session = advance(result.session, state, deps);
+    }
+    expect(session).toMatchObject({ status: "done", kind: "new", reason: "batch-finished" });
+  });
+
+  it("gdy nowych słów zabrakło, paczka jest pusta", () => {
+    const pool = words(2);
+    const progress = progressOf(pool.map((w) => [w, review()]));
+    expect(startSession("new", input({ pool, progress }), deps)).toMatchObject({
+      reason: "empty",
+      newInReserve: 0,
+    });
   });
 });

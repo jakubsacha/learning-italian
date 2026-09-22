@@ -136,7 +136,7 @@ describe("pasek sesji", () => {
   });
 
   it("skończona sesja to sto procent i zero kart", () => {
-    const done = startSession("hard", input(), deps);
+    const done = startSession("review", input(), deps);
     expect(summarise(done, new Map())).toMatchObject({ left: 0, percent: 100 });
   });
 });

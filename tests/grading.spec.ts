@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   await localMode(page);
   await stubSpeech(page);
   await page.goto("/index.html");
-  await seed(page, { kind: "cards" });
+  await seed(page, { kind: "mix" });
 });
 
 test("cztery oceny mają różne, opisane odstępy", async ({ page }) => {
@@ -51,7 +51,7 @@ test("„Nie wiem” cofa słowo do nauki i dokłada wpadkę", async ({ page }) 
 
 test("zła odpowiedź w quizie cofa słowo do powtórki", async ({ page }) => {
   await seed(page, {
-    kind: "cards",
+    kind: "mix",
     srs: Object.fromEntries(
       ["ciao", "sì", "no", "grazie", "prego", "salve", "buongiorno", "buonasera", "piacere"].map(
         (w) => [w, { e: 2.5, i: 20, d: 0, r: 6, l: 0 }],

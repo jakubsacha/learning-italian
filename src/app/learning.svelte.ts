@@ -140,11 +140,6 @@ export class Learning {
     ),
   );
 
-  /** Ile słów czeka w treningu trudnych — liczba przy zakładce. */
-  readonly leechCount = $derived.by(
-    () => this.pool.filter((w) => (this.#progress.get(w.id)?.lapses ?? 0) >= 3).length,
-  );
-
   /** Najwyższy poziom, jakiego dotknąłeś — stąd dobór zdań w zakładce Zdania. */
   readonly level = $derived.by<Level>(() => {
     let top: Level = 1;
@@ -196,19 +191,15 @@ export class Learning {
     this.speak();
   }
 
-  /** Przełączenie zakładki. Nauka i Fiszki dzielą kolejkę, trudne mają własną. */
+  /**
+   * Przełączenie zakładki. Każdy rodzaj sesji ma własną kolejkę, więc zmiana
+   * zakładki zaczyna nową sesję. Postęp słów się nie gubi — zapisuje się przy
+   * każdej odpowiedzi, a nie na końcu sesji.
+   */
   setKind(kind: SessionKind): void {
     if (kind === this.#kind) return;
-    const sameQueue = this.#kind !== "hard" && kind !== "hard";
     this.#kind = kind;
     saveKind(this.#env.store, kind);
-    if (sameQueue && this.#session.status === "active") {
-      // Ta sama kolejka, inna forma pytania: bieżące słowo wraca na początek.
-      const word = this.#session.current.word;
-      this.#session = { ...this.#session, queue: [word, ...this.#session.queue] };
-      this.next();
-      return;
-    }
     this.#extra = false;
     this.restart();
   }

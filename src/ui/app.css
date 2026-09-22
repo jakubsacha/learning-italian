@@ -72,12 +72,18 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .btn:disabled{opacity:.45;cursor:default;box-shadow:none;transform:none}
 
 /* --- zakładki --- */
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;
+/* Dwa rzędy: trzy zakładki nauki szerzej na górze, cztery narzędzia pod spodem.
+   Jeden rząd siedmiu nie mieści „UTRWALANIE" nawet na komputerze, bo strona ma
+   stałą maksymalną szerokość. Siatka ma 12 kolumn, żeby oba rzędy dzieliły się
+   równo; min-width:0 nie pozwala jej rozepchnąć strony, gdy napis się nie mieści. */
+.tabs{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;
   padding:4px 0 10px;border-bottom:2px solid var(--line);margin-bottom:14px}
-@media (min-width:600px){ .tabs{grid-template-columns:repeat(7,1fr)} }
-.tabs button{padding:9px 3px;border-radius:12px;font-size:.72rem;
-  font-weight:800;color:var(--muted);white-space:nowrap;text-transform:uppercase;
-  letter-spacing:.03em;border:2px solid transparent}
+.tabs button{grid-column:span 3;min-width:0;padding:9px 3px;border-radius:12px;
+  font-size:.72rem;font-weight:800;color:var(--muted);white-space:nowrap;
+  text-transform:uppercase;letter-spacing:.03em;border:2px solid transparent}
+.tabs button.primary{grid-column:span 4}
+/* Najwęższe telefony: musi stać po regule bazowej, inaczej ona wygrywa. */
+@media (max-width:360px){ .tabs button{font-size:.64rem;letter-spacing:0} }
 .tabs button[aria-selected="true"]{background:var(--blue-soft);color:var(--blue-dark);
   border-color:var(--blue)}
 .panel{margin-top:4px}

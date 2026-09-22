@@ -65,14 +65,18 @@ nie nadaje się na lukę `are`, bo „parents" zawiera te litery.
 
 Trzy zakładki prowadzą naukę:
 
-- **Nauka** — dzienna kolejka, ćwiczenia się przeplatają (fiszka, quiz, pisanie, słuch, luka)
-- **Fiszki** — ta sama dzienna kolejka, ale wyłącznie klasyczne karty
-- **Trudne** — trening na żądanie: same słowa, na których się wykładasz
+- **Nauka** — dzienna kolejka: powtórki, które wypadają na dziś, plus nowe słowa do limitu;
+  ćwiczenia się przeplatają (fiszka, quiz, pisanie, słuch, luka)
+- **Utrwalanie** — tylko słowa, które już znasz: najpierw zaległe, potem te, na których
+  się wykładasz, a w dniu bez zaległości — te z najbliższym terminem. Runda ma 20 kart,
+  po niej można wziąć następną
+- **Nowe słowa** — paczka 10 kolejnych słów w kolejności częstotliwości, same fiszki.
+  Działa także po wyczerpaniu dziennego limitu, bo sam o nie prosisz; wprowadzone tu słowa
+  liczą się do limitu, więc Nauka tego dnia nie dokłada już nowych
 
-Nauka i Fiszki dzielą kolejkę — karta zrobiona w jednym trybie znika w drugim.
-Trudne to osobna lista (do 20 słów, od największej liczby wpadek), niezależna od terminów
-powtórek; wyniki liczą się normalnie do harmonogramu i do dziennego licznika.
-Przy zakładce widać, ile takich słów masz. Wybór zakładki zapamiętuje się między wizytami.
+Każda zakładka ma własną kolejkę, więc przełączenie zaczyna nową sesję. Postęp słów
+zapisuje się przy każdej odpowiedzi, więc nic się przy tym nie gubi.
+Wybór zakładki zapamiętuje się między wizytami.
 
 Zakładka **Nauka** to jedna sesja dziennie, w której ćwiczenia się przeplatają
 (*interleaving* — przypominanie w różnych formach utrwala lepiej niż jedna forma w kółko).
@@ -103,7 +107,6 @@ Lista słów pokazanych danego dnia jest zapisywana, więc dociągnięte trudne 
 nie wracają po odświeżeniu strony.
 
 Każda forma karmi ten sam harmonogram: dobra odpowiedź to „Umiem", zła to „Jeszcze nie".
-Mieszanie można wyłączyć w Ustawieniach (zostaną same fiszki).
 Zakładki Quiz i Zdania działają dalej jako swobodne ćwiczenie, bez wpływu na terminy.
 
 Nie ma celu „przerób wszystko dziś". Każdego dnia dostajesz **10 nowych słów**

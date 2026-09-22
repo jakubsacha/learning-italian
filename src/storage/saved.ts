@@ -49,7 +49,9 @@ export const DEFAULT_LIMIT: NewLimit = 10;
 
 export type Theme = "light" | "dark";
 const THEMES: readonly Theme[] = ["light", "dark"];
-const KINDS: readonly SessionKind[] = ["mix", "cards", "hard"];
+// Starsze wersje zapisywały tu "cards" i "hard". Takie wartości nie przejdą
+// dekodera i wracamy do zwykłej nauki — nic się nie wysypie.
+const KINDS: readonly SessionKind[] = ["mix", "review", "new"];
 
 /** Licznik przypisany do dnia. Poza swoim dniem nie znaczy nic i wraca do zera. */
 export type DayScoped<T> = { readonly key: DateKey; readonly value: T };

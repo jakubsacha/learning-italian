@@ -30,7 +30,7 @@ test("rejestracja zajmuje nazwę i zabiera ze sobą dotychczasowy postęp", asyn
   const db = { users: [] as unknown[], rows: [] as unknown[] };
   await cloudMode(page, db);
   await page.goto("/index.html");
-  await seed(page, { kind: "cards" });
+  await seed(page, { kind: "mix" });
 
   for (let i = 0; i < 3; i++) {
     await page.keyboard.press("Space");

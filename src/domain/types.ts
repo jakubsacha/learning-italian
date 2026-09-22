@@ -136,17 +136,31 @@ export type Phase =
 
 /* ---------- sesja ---------- */
 
-/** Dlaczego sesja się skończyła — każdy powód ma inny ekran końcowy. */
-export type DoneReason =
-  /** Dzienna kolejka wyczerpana. */
-  | "daily-finished"
-  /** Trening trudnych przerobiony do końca. */
-  | "hard-finished"
-  /** Nie ma ani jednego trudnego słowa, więc nie było czego trenować. */
-  | "no-leeches";
+/**
+ * Czym jest bieżąca sesja: dzienna kolejka mieszająca powtórki z nowymi,
+ * samo utrwalanie tego, co już znasz, albo same nowe słowa.
+ */
+export type SessionKind = "mix" | "review" | "new";
 
-/** Czym jest bieżąca sesja: dzienna kolejka, same fiszki, albo trening trudnych. */
-export type SessionKind = "mix" | "cards" | "hard";
+type Done = {
+  readonly status: "done";
+  readonly nextDue: Days | null;
+  readonly newInReserve: number;
+};
+
+/**
+ * Powód końca zależy od rodzaju sesji i typy to wymuszają: dzienna kolejka
+ * kończy się tylko wyczerpaniem planu, a paczka utrwalania albo nowych słów
+ * albo została przerobiona, albo nie było czego podać. Kombinacji „dzienna
+ * sesja pusta" czy „paczka zrobiona na dziś" nie da się zapisać.
+ */
+export type SessionDone =
+  | (Done & { readonly kind: "mix"; readonly reason: "daily-finished" })
+  | (Done & {
+      readonly kind: "review" | "new";
+      /** `empty`: nic jeszcze nie znasz albo wszystko już wprowadzone. */
+      readonly reason: "batch-finished" | "empty";
+    });
 
 export type Session =
   | {
@@ -159,13 +173,7 @@ export type Session =
       /** Karty zaliczone w tej sesji — "Nie wiem" nie zalicza. */
       readonly passed: number;
     }
-  | {
-      readonly status: "done";
-      readonly kind: SessionKind;
-      readonly reason: DoneReason;
-      readonly nextDue: Days | null;
-      readonly newInReserve: number;
-    };
+  | SessionDone;
 
 /* ---------- konto i synchronizacja ---------- */
 

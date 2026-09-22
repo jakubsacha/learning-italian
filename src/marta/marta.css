@@ -84,6 +84,10 @@ td .mark {
   grid-template-columns: 1fr 1fr;
 }
 
+.kid-wrap .tabs button {
+  grid-column: auto;
+}
+
 /* Słówka Marty to cztery krótkie tabelki, więc niech przewija się cała strona,
    a nie każda z nich osobno w swoim okienku. */
 .kid-wrap .card.scroll {

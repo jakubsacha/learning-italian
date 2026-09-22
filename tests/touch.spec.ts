@@ -7,7 +7,7 @@ test.describe("podpowiedzi klawiszy", () => {
     await localMode(page);
     await stubSpeech(page);
     await page.goto("/index.html");
-    await seed(page, { kind: "cards" });
+    await seed(page, { kind: "mix" });
   });
 
   const shown = (page: import("@playwright/test").Page) =>

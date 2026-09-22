@@ -27,8 +27,6 @@ const STARTER_POOL = 40;
 export type FormContext = {
   readonly word: Word;
   readonly progress: Progress;
-  /** Zakładka "Fiszki": wyłącznie karty. */
-  readonly cardsOnly: boolean;
   /** Czy da się odtworzyć wymowę — bez głosu nie ma ćwiczenia ze słuchu. */
   readonly canListen: boolean;
   /** Czy to słowo nadaje się do wpisania z klawiatury. */
@@ -38,8 +36,8 @@ export type FormContext = {
 
 export function chooseForm(ctx: FormContext, rng: Rng): Form {
   const review = ctx.progress.get(ctx.word.id);
-  // W trybie Fiszki i dla słów dopiero poznawanych zawsze karta.
-  if (ctx.cardsOnly || review === undefined || review.reps < 1) return { kind: "card" };
+  // Słowo dopiero poznawane zawsze dostaje kartę — najpierw trzeba je zobaczyć.
+  if (review === undefined || review.reps < 1) return { kind: "card" };
 
   if (isLeech(review)) {
     const easy: [Form, ...Form[]] = ctx.canListen

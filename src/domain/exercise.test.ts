@@ -8,7 +8,6 @@ const ctx = (over: Partial<Parameters<typeof chooseForm>[0]> = {}) => {
   return {
     word: w,
     progress: progressOf([[w, review({ reps: 5 })]]),
-    cardsOnly: false,
     canListen: true,
     canType: true,
     sentences: [],
@@ -30,10 +29,6 @@ describe("dobór formy pytania", () => {
   it("nowe słowo zawsze dostaje kartę", () => {
     const w = word("ciao", 0);
     expect(chooseForm(ctx({ word: w, progress: new Map() }), firstRng)).toEqual({ kind: "card" });
-  });
-
-  it("zakładka Fiszki podaje wyłącznie karty, niezależnie od stażu słowa", () => {
-    expect(formsOf(ctx({ cardsOnly: true }))).toEqual(["card"]);
   });
 
   it("po pierwszej powtórce dochodzi rozpoznawanie, ale jeszcze nie produkcja", () => {

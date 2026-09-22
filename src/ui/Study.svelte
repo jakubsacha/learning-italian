@@ -1,11 +1,11 @@
 <!--
-  Zakładki Nauka / Fiszki / Trudne. Jedna sesja, pięć form pytania i ekran
+  Zakładki Nauka / Utrwalanie / Nowe słowa. Jedna sesja, pięć form pytania i ekran
   końcowy. Który widok jest na ekranie, wynika wprost z rodzaju ćwiczenia —
   nie ma już pięciu atrybutów `hidden`, które mogły sobie przeczyć.
 -->
 <script lang="ts">
   import type { Learning } from "../app/learning.svelte.js";
-  import type { Choice, Grade } from "../domain/types.js";
+  import type { Choice, Grade, SessionDone } from "../domain/types.js";
   import type { TypedOutcome } from "../domain/text.js";
   import { LIMITS, type NewLimit } from "../storage/saved.js";
   import { assertNever } from "../domain/types.js";
@@ -64,6 +64,55 @@
     app.answer({ via: "typed", outcome });
   }
 
+  type DoneScreen = {
+    readonly title: string;
+    readonly message: string;
+    /** Co robi przycisk pod spodem; `null` — nie ma czego dać. */
+    readonly action: { readonly label: string; readonly run: () => void } | null;
+    /** Czy pokazać listę słów, na których się wykładasz. */
+    readonly leeches: boolean;
+  };
+
+  function doneScreen(done: SessionDone): DoneScreen {
+    const next = done.nextDue === null ? "" : "Następne powtórki: " + whenLabel(done.nextDue) + ". ";
+    const reserve =
+      done.newInReserve > 0
+        ? "Nowych słów w zapasie: " + done.newInReserve + "."
+        : "Wszystkie słowa już wprowadzone.";
+    const again = { label: "Jeszcze jedna runda", run: () => app.restart() };
+    if (done.kind === "mix") {
+      return {
+        title: "Na dziś zrobione 🎉",
+        message: next + reserve,
+        action: { label: "Ucz się dalej poza planem", run: () => app.studyMore() },
+        leeches: true,
+      };
+    }
+    if (done.kind === "review") {
+      return done.reason === "empty"
+        ? {
+            title: "Nie masz jeszcze czego utrwalać",
+            message: "Tu wracają słowa, które już poznałeś. Zacznij od zakładki Nowe słowa albo Nauka.",
+            action: null,
+            leeches: false,
+          }
+        : { title: "Runda utrwalania zrobiona 🎉", message: next, action: again, leeches: true };
+    }
+    return done.reason === "empty" || done.newInReserve === 0
+      ? {
+          title: "Wszystkie słowa już wprowadzone 🎉",
+          message: "Wracaj do nich w zakładce Utrwalanie.",
+          action: null,
+          leeches: false,
+        }
+      : {
+          title: "Paczka nowych słów za Tobą 🎉",
+          message: reserve,
+          action: { label: "Kolejne słowa", run: () => app.restart() },
+          leeches: false,
+        };
+  }
+
   /** Czy właśnie czekamy z werdyktem na ekranie. */
   const settled = $derived(session.status === "active" && session.phase.phase === "answered");
 
@@ -77,7 +126,7 @@
     if (session.status === "done") {
       if (event.code === "Space" || event.code === "Enter") {
         event.preventDefault();
-        if (session.kind !== "hard") app.studyMore();
+        doneScreen(session).action?.run();
       }
       return;
     }
@@ -166,27 +215,11 @@
     {assertNever(current)}
   {/if}
 {:else}
+  {@const screen = doneScreen(session)}
   <div class="done-box" data-view="done">
-    <b
-      >{session.reason === "no-leeches"
-        ? "Nie ma trudnych słów"
-        : session.reason === "hard-finished"
-          ? "Trudne przerobione 🎉"
-          : "Na dziś zrobione 🎉"}</b
-    >
-    <p class="meta">
-      {#if session.reason === "no-leeches"}
-        Tu trafiają słowa, na których pomylisz się co najmniej trzy razy. Na razie pusto.
-      {:else if session.reason === "hard-finished"}
-        Wróć tu jutro — albo po prostu ucz się dalej w zakładce Nauka.
-      {:else}
-        {#if session.nextDue !== null}Następne powtórki: {whenLabel(session.nextDue)}.{/if}
-        {session.newInReserve > 0
-          ? "Nowych słów w zapasie: " + session.newInReserve + "."
-          : "Wszystkie słowa już wprowadzone."}
-      {/if}
-    </p>
-    {#if session.kind !== "hard" && app.stats.hardest.length > 0}
+    <b>{screen.title}</b>
+    <p class="meta">{screen.message}</p>
+    {#if screen.leeches && app.stats.hardest.length > 0}
       <div class="hard-list" data-test="leeches">
         Najczęściej się wykładasz na:
         {#each app.stats.hardest.slice(0, 6) as entry, i (entry.word.id)}{i > 0
@@ -194,8 +227,10 @@
             : " "}<b>{entry.word.it}</b> ({entry.word.pl}){/each}
       </div>
     {/if}
-    {#if session.kind !== "hard"}
-      <button class="btn ghost" data-test="more" onclick={() => app.studyMore()}>Ucz się dalej poza planem</button>
+    {#if screen.action !== null}
+      <button class="btn ghost" data-test="more" onclick={screen.action.run}>
+        {screen.action.label}
+      </button>
     {/if}
   </div>
 {/if}

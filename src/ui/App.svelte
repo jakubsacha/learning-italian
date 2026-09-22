@@ -15,20 +15,30 @@
   type Props = { app: Learning; cloud: Cloud; store: KeyValueStore; now: Date };
   let { app, cloud, store, now }: Props = $props();
 
-  type Tab = "flash" | "cards" | "hard" | "quiz" | "sent" | "list" | "stats";
+  type Tab = "mix" | "review" | "new" | "quiz" | "sent" | "list" | "stats";
   // Rodzaj sesji jest zapamiętany, więc zakładka wraca tam, gdzie ją zostawiłeś.
   // Celowo czytamy tylko wartość początkową: dalej zakładką steruje `select`.
   // svelte-ignore state_referenced_locally
-  let tab = $state<Tab>(app.kind === "cards" ? "cards" : app.kind === "hard" ? "hard" : "flash");
+  let tab = $state<Tab>(app.kind);
 
-  /** Nauka, Fiszki i Trudne to ten sam panel — różnią się rodzajem sesji. */
-  const STUDY_TABS = { flash: "mix", cards: "cards", hard: "hard" } as const;
+  /** Nauka, Utrwalanie i Nowe słowa to ten sam panel — różnią się rodzajem sesji. */
+  const isStudy = (t: Tab): t is "mix" | "review" | "new" =>
+    t === "mix" || t === "review" || t === "new";
 
   function select(next: Tab): void {
     tab = next;
-    const kind = STUDY_TABS[next as keyof typeof STUDY_TABS];
-    if (kind !== undefined) app.setKind(kind);
+    if (isStudy(next)) app.setKind(next);
   }
+
+  const TABS: readonly (readonly [Tab, string])[] = [
+    ["mix", "Nauka"],
+    ["review", "Utrwalanie"],
+    ["new", "Nowe słowa"],
+    ["quiz", "Quiz"],
+    ["sent", "Zdania"],
+    ["list", "Słowa"],
+    ["stats", "Postęp"],
+  ];
 
   function toggleTheme(): void {
     const current = document.documentElement.getAttribute("data-theme");
@@ -59,8 +69,13 @@
   </header>
 
   <div class="tabs" role="tablist">
-    {#each [["flash", "Nauka"], ["cards", "Fiszki"], ["hard", app.leechCount > 0 ? "Trudne " + app.leechCount : "Trudne"], ["quiz", "Quiz"], ["sent", "Zdania"], ["list", "Słowa"], ["stats", "Postęp"]] as const as [id, label] (id)}
-      <button role="tab" aria-selected={tab === id} onclick={() => select(id)}>{label}</button>
+    {#each TABS as [id, label] (id)}
+      <button
+        role="tab"
+        class:primary={isStudy(id)}
+        aria-selected={tab === id}
+        onclick={() => select(id)}>{label}</button
+      >
     {/each}
   </div>
 
@@ -81,8 +96,8 @@
     </div>
   </details>
 
-  <section class="panel" data-test="panel-study" hidden={tab !== "flash" && tab !== "cards" && tab !== "hard"}>
-    <Study {app} {now} active={tab === "flash" || tab === "cards" || tab === "hard"} />
+  <section class="panel" data-test="panel-study" hidden={!isStudy(tab)}>
+    <Study {app} {now} active={isStudy(tab)} />
   </section>
 
   {#if tab === "quiz"}
