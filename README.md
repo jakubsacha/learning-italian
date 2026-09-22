@@ -109,6 +109,24 @@ więc do tego progu jeszcze trochę brakuje.
 
 Uwaga: tłumaczenia i fonetyka są pisane bez weryfikacji native speakera.
 
+## Zakładka Postęp
+
+Statystyki liczone z lokalnego stanu powtórek:
+
+- **kafelki** — utrwalone, poznane, seria dni
+- **ile kursu za Tobą** — ile z 1914 haseł w ogóle ruszyłeś
+- **podział poznanych** — utrwalone / młode / w nauce (pasek liczony wśród poznanych,
+  bo na tle całego kursu 93% byłoby szare i nic by nie było widać)
+- **aktywność** — 30 dni wstecz, **plan powtórek** — 14 dni w przód
+- **kategorie** z największym pokryciem i **najtrudniejsze słowa** z liczbą wpadek
+
+Progi stanów: w nauce < 7 dni odstępu, młode 7–20, utrwalone od 21 dni.
+
+Trzy odcienie zieleni dobrane walidatorem z poradnika wizualizacji, nie na oko:
+rozróżnialność ΔE 19,5 przy protanopii i 20,0 przy normalnym widzeniu (próg 15).
+Każdy segment ma podpis z liczbą, więc kolor nigdy nie jest jedynym nośnikiem informacji.
+Ciemny motyw ma własne kroki ramp, sprawdzone na ciemnym tle, a nie odwrócone mechanicznie.
+
 ## Wspólny cel i tablica
 
 Po zalogowaniu na górze jest **wspólny cel dzienny**: suma kart zrobionych przez wszystkich
