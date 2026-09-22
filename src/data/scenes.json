@@ -1,0 +1,876 @@
+[
+{
+"id": "capire",
+"icon": "🗣️",
+"title": "Kiedy nie rozumiesz",
+"lines": [
+{
+"who": "oni",
+"it": "Buongiorno, posso aiutarla?",
+"pl": "Dzień dobry, mogę panu/pani pomóc?"
+},
+{
+"who": "ty",
+"it": "Mi scusi, non ho capito.",
+"pl": "Przepraszam, nie zrozumiałem/am."
+},
+{
+"who": "ty",
+"it": "Può ripetere, per favore?",
+"pl": "Może pan/pani powtórzyć?"
+},
+{
+"who": "ty",
+"it": "Può parlare più piano?",
+"pl": "Może pan/pani mówić wolniej?"
+},
+{
+"who": "oni",
+"it": "Certo. Di dov'è?",
+"pl": "Oczywiście. Skąd pan/pani jest?"
+},
+{
+"who": "ty",
+"it": "Vengo dalla Polonia.",
+"pl": "Jestem z Polski."
+},
+{
+"who": "ty",
+"it": "Parlo solo un po' di italiano.",
+"pl": "Mówię tylko trochę po włosku."
+},
+{
+"who": "oni",
+"it": "Parla inglese?",
+"pl": "Mówi pan/pani po angielsku?"
+},
+{
+"who": "ty",
+"it": "Come si dice in italiano?",
+"pl": "Jak to się mówi po włosku?"
+},
+{
+"who": "ty",
+"it": "Che cosa significa?",
+"pl": "Co to znaczy?"
+},
+{
+"who": "ty",
+"it": "Può scriverlo, per favore?",
+"pl": "Może pan/pani to zapisać?"
+},
+{
+"who": "oni",
+"it": "Nessun problema.",
+"pl": "Żaden problem."
+},
+{
+"who": "ty",
+"it": "Grazie, è molto gentile.",
+"pl": "Dziękuję, to bardzo miłe z pana/pani strony."
+}
+]
+},
+{
+"id": "conoscere",
+"icon": "👋",
+"title": "Poznajemy się",
+"lines": [
+{
+"who": "ty",
+"it": "Ciao, come ti chiami?",
+"pl": "Cześć, jak masz na imię?"
+},
+{
+"who": "oni",
+"it": "Mi chiamo Giulia. E tu?",
+"pl": "Mam na imię Giulia. A ty?"
+},
+{
+"who": "ty",
+"it": "Piacere di conoscerti.",
+"pl": "Miło cię poznać."
+},
+{
+"who": "oni",
+"it": "Di dove sei?",
+"pl": "Skąd jesteś?"
+},
+{
+"who": "ty",
+"it": "Io vengo dalla Polonia. E tu?",
+"pl": "Ja jestem z Polski. A ty?"
+},
+{
+"who": "oni",
+"it": "Io sono di Roma. Sei qui in vacanza?",
+"pl": "Ja jestem z Rzymu. Jesteś tu na wakacjach?"
+},
+{
+"who": "ty",
+"it": "Sì, sono qui per una settimana.",
+"pl": "Tak, jestem tu na tydzień."
+},
+{
+"who": "oni",
+"it": "Ti piace l'Italia?",
+"pl": "Podobają ci się Włochy?"
+},
+{
+"who": "ty",
+"it": "Mi piace moltissimo.",
+"pl": "Bardzo mi się podobają."
+},
+{
+"who": "oni",
+"it": "Che lavoro fai?",
+"pl": "Czym się zajmujesz?"
+},
+{
+"who": "ty",
+"it": "Lavoro nell'informatica.",
+"pl": "Pracuję w IT."
+},
+{
+"who": "oni",
+"it": "Parli bene l'italiano!",
+"pl": "Dobrze mówisz po włosku!"
+},
+{
+"who": "ty",
+"it": "Grazie, sto ancora imparando.",
+"pl": "Dzięki, wciąż się uczę."
+},
+{
+"who": "ty",
+"it": "Ci vediamo domani?",
+"pl": "Widzimy się jutro?"
+},
+{
+"who": "oni",
+"it": "Volentieri! A domani.",
+"pl": "Chętnie! Do jutra."
+}
+]
+},
+{
+"id": "bar",
+"icon": "☕",
+"title": "W barze",
+"lines": [
+{
+"who": "oni",
+"it": "Buongiorno, cosa prende?",
+"pl": "Dzień dobry, co podać?"
+},
+{
+"who": "ty",
+"it": "Un caffè e un cornetto, per favore.",
+"pl": "Poproszę kawę i rogalika."
+},
+{
+"who": "oni",
+"it": "Il cornetto vuoto o alla crema?",
+"pl": "Rogalik bez nadzienia czy z kremem?"
+},
+{
+"who": "ty",
+"it": "Alla crema, grazie.",
+"pl": "Z kremem, dziękuję."
+},
+{
+"who": "ty",
+"it": "Posso avere anche un bicchiere d'acqua?",
+"pl": "Mogę dostać też szklankę wody?"
+},
+{
+"who": "oni",
+"it": "Frizzante o naturale?",
+"pl": "Gazowana czy niegazowana?"
+},
+{
+"who": "ty",
+"it": "Naturale, per favore.",
+"pl": "Niegazowana, poproszę."
+},
+{
+"who": "oni",
+"it": "Al banco o al tavolo?",
+"pl": "Przy barze czy przy stoliku?"
+},
+{
+"who": "ty",
+"it": "Al banco, grazie.",
+"pl": "Przy barze, dziękuję."
+},
+{
+"who": "ty",
+"it": "Quanto le devo?",
+"pl": "Ile płacę?"
+},
+{
+"who": "oni",
+"it": "Sono tre euro e cinquanta.",
+"pl": "Trzy euro pięćdziesiąt."
+},
+{
+"who": "ty",
+"it": "Posso pagare con la carta?",
+"pl": "Mogę zapłacić kartą?"
+},
+{
+"who": "oni",
+"it": "Sì, certo. Ecco lo scontrino.",
+"pl": "Tak, oczywiście. Proszę, paragon."
+}
+]
+},
+{
+"id": "ristorante",
+"icon": "🍝",
+"title": "W restauracji",
+"lines": [
+{
+"who": "ty",
+"it": "Buonasera, un tavolo per due, per favore.",
+"pl": "Dobry wieczór, stolik dla dwóch osób, poproszę."
+},
+{
+"who": "oni",
+"it": "Avete prenotato?",
+"pl": "Mają państwo rezerwację?"
+},
+{
+"who": "ty",
+"it": "No, non abbiamo prenotato.",
+"pl": "Nie, nie mamy rezerwacji."
+},
+{
+"who": "oni",
+"it": "Prego, accomodatevi.",
+"pl": "Proszę, niech państwo siadają."
+},
+{
+"who": "ty",
+"it": "Possiamo vedere il menù?",
+"pl": "Możemy zobaczyć menu?"
+},
+{
+"who": "oni",
+"it": "Ecco a voi. Da bere?",
+"pl": "Proszę bardzo. Coś do picia?"
+},
+{
+"who": "ty",
+"it": "Una bottiglia d'acqua e due bicchieri di vino rosso.",
+"pl": "Butelkę wody i dwa kieliszki czerwonego wina."
+},
+{
+"who": "ty",
+"it": "Che cosa ci consiglia?",
+"pl": "Co nam pan/pani poleca?"
+},
+{
+"who": "oni",
+"it": "Oggi il pesce è freschissimo.",
+"pl": "Dziś ryba jest bardzo świeża."
+},
+{
+"who": "ty",
+"it": "Per me una pasta al pomodoro.",
+"pl": "Dla mnie makaron z pomidorami."
+},
+{
+"who": "ty",
+"it": "Ho un'allergia alle noci.",
+"pl": "Mam alergię na orzechy."
+},
+{
+"who": "oni",
+"it": "Va bene, lo dico al cuoco.",
+"pl": "Dobrze, przekażę kucharzowi."
+},
+{
+"who": "ty",
+"it": "Il conto, per favore.",
+"pl": "Poproszę rachunek."
+},
+{
+"who": "oni",
+"it": "Pagate insieme o separati?",
+"pl": "Płacą państwo razem czy osobno?"
+},
+{
+"who": "ty",
+"it": "Insieme, grazie. Era tutto buonissimo.",
+"pl": "Razem, dziękuję. Wszystko było pyszne."
+}
+]
+},
+{
+"id": "strada",
+"icon": "🧭",
+"title": "Pytanie o drogę",
+"lines": [
+{
+"who": "ty",
+"it": "Scusi, dov'è la stazione?",
+"pl": "Przepraszam, gdzie jest dworzec?"
+},
+{
+"who": "oni",
+"it": "Vada sempre dritto e poi giri a destra.",
+"pl": "Proszę iść cały czas prosto, a potem skręcić w prawo."
+},
+{
+"who": "ty",
+"it": "È lontano da qui?",
+"pl": "Czy to daleko stąd?"
+},
+{
+"who": "oni",
+"it": "No, sono cinque minuti a piedi.",
+"pl": "Nie, to pięć minut pieszo."
+},
+{
+"who": "ty",
+"it": "C'è una fermata dell'autobus qui vicino?",
+"pl": "Czy jest tu w pobliżu przystanek autobusowy?"
+},
+{
+"who": "oni",
+"it": "Sì, è dietro l'angolo.",
+"pl": "Tak, zaraz za rogiem."
+},
+{
+"who": "ty",
+"it": "Quale autobus va in centro?",
+"pl": "Który autobus jedzie do centrum?"
+},
+{
+"who": "oni",
+"it": "Il numero tre, ogni dieci minuti.",
+"pl": "Trójka, co dziesięć minut."
+},
+{
+"who": "ty",
+"it": "Dove posso comprare il biglietto?",
+"pl": "Gdzie mogę kupić bilet?"
+},
+{
+"who": "oni",
+"it": "In tabaccheria, lì a sinistra.",
+"pl": "W kiosku, tam po lewej."
+},
+{
+"who": "ty",
+"it": "Non so dove sono.",
+"pl": "Nie wiem, gdzie jestem."
+},
+{
+"who": "ty",
+"it": "Può mostrarmelo sulla mappa?",
+"pl": "Może mi pan/pani pokazać na mapie?"
+},
+{
+"who": "oni",
+"it": "Siamo qui, vicino alla piazza.",
+"pl": "Jesteśmy tutaj, przy placu."
+}
+]
+},
+{
+"id": "negozio",
+"icon": "🛍️",
+"title": "Na zakupach",
+"lines": [
+{
+"who": "oni",
+"it": "Buongiorno, cerca qualcosa?",
+"pl": "Dzień dobry, czegoś pan/pani szuka?"
+},
+{
+"who": "ty",
+"it": "Sto solo guardando, grazie.",
+"pl": "Tylko się rozglądam, dziękuję."
+},
+{
+"who": "ty",
+"it": "Quanto costa questa borsa?",
+"pl": "Ile kosztuje ta torba?"
+},
+{
+"who": "oni",
+"it": "Costa quaranta euro.",
+"pl": "Kosztuje czterdzieści euro."
+},
+{
+"who": "ty",
+"it": "È un po' troppo cara.",
+"pl": "Jest trochę za droga."
+},
+{
+"who": "ty",
+"it": "Avete qualcosa di più economico?",
+"pl": "Macie coś tańszego?"
+},
+{
+"who": "ty",
+"it": "Posso provare questa maglietta?",
+"pl": "Mogę przymierzyć tę koszulkę?"
+},
+{
+"who": "oni",
+"it": "Certo, il camerino è lì.",
+"pl": "Oczywiście, przymierzalnia jest tam."
+},
+{
+"who": "ty",
+"it": "Avete una taglia più grande?",
+"pl": "Macie większy rozmiar?"
+},
+{
+"who": "oni",
+"it": "Mi dispiace, è l'ultima.",
+"pl": "Przykro mi, to ostatnia."
+},
+{
+"who": "ty",
+"it": "Va bene, la prendo.",
+"pl": "Dobrze, biorę ją."
+},
+{
+"who": "oni",
+"it": "Vuole un sacchetto?",
+"pl": "Chce pan/pani torbę?"
+},
+{
+"who": "ty",
+"it": "No, grazie, ho la mia borsa.",
+"pl": "Nie, dziękuję, mam swoją torbę."
+},
+{
+"who": "ty",
+"it": "A che ora chiudete?",
+"pl": "O której zamykacie?"
+},
+{
+"who": "oni",
+"it": "Chiudiamo alle otto di sera.",
+"pl": "Zamykamy o ósmej wieczorem."
+}
+]
+},
+{
+"id": "hotel",
+"icon": "🏨",
+"title": "W hotelu",
+"lines": [
+{
+"who": "ty",
+"it": "Buonasera, ho una prenotazione.",
+"pl": "Dobry wieczór, mam rezerwację."
+},
+{
+"who": "oni",
+"it": "A che nome, prego?",
+"pl": "Na jakie nazwisko?"
+},
+{
+"who": "ty",
+"it": "Il mio cognome è Nowak.",
+"pl": "Moje nazwisko to Nowak."
+},
+{
+"who": "oni",
+"it": "Perfetto. Mi dà un documento, per favore?",
+"pl": "Świetnie. Poproszę jakiś dokument."
+},
+{
+"who": "ty",
+"it": "A che ora è la colazione?",
+"pl": "O której jest śniadanie?"
+},
+{
+"who": "oni",
+"it": "Dalle sette alle dieci.",
+"pl": "Od siódmej do dziesiątej."
+},
+{
+"who": "ty",
+"it": "C'è il wi-fi in camera?",
+"pl": "Czy w pokoju jest wi-fi?"
+},
+{
+"who": "oni",
+"it": "Sì, la password è sul biglietto.",
+"pl": "Tak, hasło jest na karteczce."
+},
+{
+"who": "ty",
+"it": "L'aria condizionata non funziona.",
+"pl": "Klimatyzacja nie działa."
+},
+{
+"who": "oni",
+"it": "Mando subito qualcuno.",
+"pl": "Zaraz kogoś przyślę."
+},
+{
+"who": "ty",
+"it": "Posso lasciare qui le valigie?",
+"pl": "Mogę zostawić tu walizki?"
+},
+{
+"who": "ty",
+"it": "A che ora devo lasciare la camera?",
+"pl": "O której muszę zwolnić pokój?"
+},
+{
+"who": "oni",
+"it": "Entro le undici, per favore.",
+"pl": "Do jedenastej, proszę."
+}
+]
+},
+{
+"id": "treno",
+"icon": "🚆",
+"title": "Dworzec i pociąg",
+"lines": [
+{
+"who": "ty",
+"it": "Un biglietto per Firenze, per favore.",
+"pl": "Poproszę bilet do Florencji."
+},
+{
+"who": "oni",
+"it": "Solo andata o andata e ritorno?",
+"pl": "W jedną stronę czy w obie?"
+},
+{
+"who": "ty",
+"it": "Andata e ritorno, per domani.",
+"pl": "W obie strony, na jutro."
+},
+{
+"who": "ty",
+"it": "A che ora parte il prossimo treno?",
+"pl": "O której odjeżdża następny pociąg?"
+},
+{
+"who": "oni",
+"it": "Parte alle nove e un quarto.",
+"pl": "Odjeżdża kwadrans po dziewiątej."
+},
+{
+"who": "ty",
+"it": "Da quale binario parte?",
+"pl": "Z którego peronu odjeżdża?"
+},
+{
+"who": "oni",
+"it": "Dal binario sei.",
+"pl": "Z peronu szóstego."
+},
+{
+"who": "ty",
+"it": "Devo cambiare treno?",
+"pl": "Muszę się przesiadać?"
+},
+{
+"who": "oni",
+"it": "No, è un treno diretto.",
+"pl": "Nie, to pociąg bezpośredni."
+},
+{
+"who": "ty",
+"it": "Scusi, questo posto è libero?",
+"pl": "Przepraszam, czy to miejsce jest wolne?"
+},
+{
+"who": "oni",
+"it": "No, è occupato.",
+"pl": "Nie, jest zajęte."
+},
+{
+"who": "ty",
+"it": "Il treno è in ritardo?",
+"pl": "Czy pociąg jest opóźniony?"
+},
+{
+"who": "oni",
+"it": "Sì, di circa venti minuti.",
+"pl": "Tak, o jakieś dwadzieścia minut."
+}
+]
+},
+{
+"id": "museo",
+"icon": "🎫",
+"title": "Bilety i zwiedzanie",
+"lines": [
+{
+"who": "ty",
+"it": "Due biglietti, per favore.",
+"pl": "Poproszę dwa bilety."
+},
+{
+"who": "oni",
+"it": "Interi o ridotti?",
+"pl": "Normalne czy ulgowe?"
+},
+{
+"who": "ty",
+"it": "C'è uno sconto per gli studenti?",
+"pl": "Jest zniżka dla studentów?"
+},
+{
+"who": "oni",
+"it": "Sì, con la tessera universitaria.",
+"pl": "Tak, z legitymacją studencką."
+},
+{
+"who": "ty",
+"it": "A che ora chiude il museo?",
+"pl": "O której zamykają muzeum?"
+},
+{
+"who": "oni",
+"it": "Alle sei, ma l'ultimo ingresso è alle cinque.",
+"pl": "O szóstej, ale ostatnie wejście jest o piątej."
+},
+{
+"who": "ty",
+"it": "Si possono fare foto?",
+"pl": "Można robić zdjęcia?"
+},
+{
+"who": "oni",
+"it": "Sì, ma senza flash.",
+"pl": "Tak, ale bez lampy błyskowej."
+},
+{
+"who": "ty",
+"it": "C'è una visita guidata in inglese?",
+"pl": "Jest zwiedzanie z przewodnikiem po angielsku?"
+},
+{
+"who": "oni",
+"it": "Sì, ogni ora.",
+"pl": "Tak, co godzinę."
+},
+{
+"who": "ty",
+"it": "Dov'è il bagno?",
+"pl": "Gdzie jest toaleta?"
+},
+{
+"who": "oni",
+"it": "In fondo al corridoio.",
+"pl": "Na końcu korytarza."
+}
+]
+},
+{
+"id": "telefono",
+"icon": "📞",
+"title": "Umawianie się",
+"lines": [
+{
+"who": "oni",
+"it": "Pronto?",
+"pl": "Halo?"
+},
+{
+"who": "ty",
+"it": "Ciao, sono io!",
+"pl": "Cześć, to ja!"
+},
+{
+"who": "oni",
+"it": "Ciao! Come va?",
+"pl": "Cześć! Jak leci?"
+},
+{
+"who": "ty",
+"it": "Bene, grazie. Hai tempo stasera?",
+"pl": "Dobrze, dzięki. Masz czas dziś wieczorem?"
+},
+{
+"who": "oni",
+"it": "Sì, perché?",
+"pl": "Tak, a co?"
+},
+{
+"who": "ty",
+"it": "Andiamo a mangiare una pizza?",
+"pl": "Pójdziemy na pizzę?"
+},
+{
+"who": "oni",
+"it": "Volentieri! A che ora?",
+"pl": "Chętnie! O której?"
+},
+{
+"who": "ty",
+"it": "Alle otto va bene?",
+"pl": "Może być o ósmej?"
+},
+{
+"who": "oni",
+"it": "Perfetto. Dove ci vediamo?",
+"pl": "Świetnie. Gdzie się spotykamy?"
+},
+{
+"who": "ty",
+"it": "Davanti al ristorante.",
+"pl": "Przed restauracją."
+},
+{
+"who": "ty",
+"it": "Scusa, arrivo un po' in ritardo.",
+"pl": "Przepraszam, trochę się spóźnię."
+},
+{
+"who": "oni",
+"it": "Non ti preoccupare, ti aspetto.",
+"pl": "Nie martw się, poczekam na ciebie."
+}
+]
+},
+{
+"id": "farmacia",
+"icon": "💊",
+"title": "W aptece",
+"lines": [
+{
+"who": "ty",
+"it": "Buongiorno, ho mal di testa.",
+"pl": "Dzień dobry, boli mnie głowa."
+},
+{
+"who": "oni",
+"it": "Da quanto tempo?",
+"pl": "Od jak dawna?"
+},
+{
+"who": "ty",
+"it": "Da ieri sera.",
+"pl": "Od wczoraj wieczorem."
+},
+{
+"who": "oni",
+"it": "Ha anche la febbre?",
+"pl": "Ma pan/pani też gorączkę?"
+},
+{
+"who": "ty",
+"it": "No, ma mi fa male anche la gola.",
+"pl": "Nie, ale boli mnie też gardło."
+},
+{
+"who": "oni",
+"it": "Le do qualcosa per il dolore.",
+"pl": "Dam panu/pani coś przeciwbólowego."
+},
+{
+"who": "ty",
+"it": "Quante volte al giorno devo prenderlo?",
+"pl": "Ile razy dziennie mam to brać?"
+},
+{
+"who": "oni",
+"it": "Due volte al giorno, dopo i pasti.",
+"pl": "Dwa razy dziennie, po posiłkach."
+},
+{
+"who": "ty",
+"it": "Serve la ricetta?",
+"pl": "Potrzebna jest recepta?"
+},
+{
+"who": "oni",
+"it": "No, è un farmaco da banco.",
+"pl": "Nie, to lek bez recepty."
+},
+{
+"who": "ty",
+"it": "Ho bisogno di un medico.",
+"pl": "Potrzebuję lekarza."
+},
+{
+"who": "oni",
+"it": "Il pronto soccorso è in fondo alla strada.",
+"pl": "Izba przyjęć jest na końcu ulicy."
+}
+]
+},
+{
+"id": "problema",
+"icon": "🆘",
+"title": "Coś poszło nie tak",
+"lines": [
+{
+"who": "ty",
+"it": "Mi può aiutare, per favore?",
+"pl": "Może mi pan/pani pomóc?"
+},
+{
+"who": "ty",
+"it": "Ho perso il portafoglio.",
+"pl": "Zgubiłem/am portfel."
+},
+{
+"who": "oni",
+"it": "Dove l'ha perso?",
+"pl": "Gdzie pan/pani go zgubił/a?"
+},
+{
+"who": "ty",
+"it": "Credo sull'autobus.",
+"pl": "Chyba w autobusie."
+},
+{
+"who": "oni",
+"it": "Deve fare una denuncia alla polizia.",
+"pl": "Musi pan/pani to zgłosić na policji."
+},
+{
+"who": "ty",
+"it": "Dov'è il commissariato più vicino?",
+"pl": "Gdzie jest najbliższy posterunek policji?"
+},
+{
+"who": "ty",
+"it": "C'è un errore nel conto.",
+"pl": "W rachunku jest błąd."
+},
+{
+"who": "oni",
+"it": "Mi scusi, controllo subito.",
+"pl": "Przepraszam, zaraz sprawdzę."
+},
+{
+"who": "ty",
+"it": "Non abbiamo ordinato questo.",
+"pl": "Tego nie zamawialiśmy."
+},
+{
+"who": "ty",
+"it": "La mia valigia non è arrivata.",
+"pl": "Moja walizka nie dotarła."
+},
+{
+"who": "oni",
+"it": "Compili questo modulo, per favore.",
+"pl": "Proszę wypełnić ten formularz."
+},
+{
+"who": "ty",
+"it": "Chiamate un'ambulanza!",
+"pl": "Wezwijcie karetkę!"
+}
+]
+}
+]

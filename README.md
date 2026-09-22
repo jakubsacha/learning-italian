@@ -151,6 +151,50 @@ Quiz i zdania trzymają się materiału, który już wprowadziłeś.
 
 Zła odpowiedź w quizie cofa słowo do powtórki — tak samo jak „Jeszcze nie" na fiszce.
 
+## Rozmówki
+
+Zakładka **Rozmówki** uczy całych zdań. Dwanaście sytuacji — od „Kiedy nie rozumiesz"
+i „Poznajemy się" przez bar, restaurację, drogę, zakupy, hotel, pociąg i muzeum po
+umawianie się, aptekę i „Coś poszło nie tak" — razem 158 kwestii w dialogach. Na końcu
+jest jeszcze grupa **Zdania z kursu**: 186 zdań z dawnej zakładki Zdania, więc nic
+nie przepadło.
+
+**Każda kwestia to osobna karta w powtórkach**, z własnym terminem, tak jak słowo.
+Kwestie mają mówcę i to on decyduje, jak się ich uczysz:
+
+- **Twoje kwestie** ćwiczysz aż do mówienia z głowy;
+- **kwestie rozmówcy** — do rozumienia ze słuchu. Nikt nie musi umieć powiedzieć
+  „Il cornetto vuoto o alla crema?", ale trzeba to zrozumieć.
+
+| Forma | Co robisz | Kto ocenia | Waga |
+| --- | --- | --- | --- |
+| czytanie | widzisz i słyszysz włoskie, odsłaniasz znaczenie | Ty | ×1,00 |
+| słuchanie | słyszysz zdanie, wybierasz znaczenie z czterech | program | ×0,85 |
+| rozsypanka | widzisz polskie, układasz włoskie z klocków | program | ×0,95 |
+| mówienie | widzisz polskie, mówisz na głos, odsłaniasz i słyszysz | Ty | ×1,00 |
+| dyktando | słyszysz zdanie, zapisujesz je | program | ×1,20 |
+
+Nowa kwestia zawsze zaczyna od czytania. Po pierwszej powtórce dochodzi słuchanie
+i — dla Twoich kwestii — rozsypanka; po drugiej mówienie i dyktando. Mówienie i rozsypanka
+nigdy nie trafiają się kwestiom rozmówcy. W dyktandzie liczy się literówka jedna na
+kilkanaście znaków, a zgubiony akcent w ogóle nie jest błędem.
+
+Dziennie wchodzi **5 nowych kwestii** (do zmiany: 3–10), w kolejności dialogu — rozmowę
+łatwiej zapamiętać po kolei niż w rozsypce. Nowe przychodzą z wybranej sytuacji, a gdy ta
+się skończy, z następnej. Powtórki są przed nowymi.
+
+Kliknięcie sytuacji otwiera ją jako **dialog**: swoje kwestie widzisz po polsku — spróbuj
+powiedzieć je na głos, zanim odsłonisz włoskie — a kwestie rozmówcy po włosku, jak
+w prawdziwej rozmowie. Każdą można odsłuchać.
+
+Odpowiedzi w rozmówkach liczą się do dziennego licznika, serii i wspólnego celu. Postęp
+kwestii **zostaje na razie w przeglądarce** — synchronizacja z chmurą wymaga jednej nowej
+kolumny w bazie.
+
+Uwaga: dialogi są pisane bez weryfikacji native speakera. Tam, gdzie włoski zmienia
+formę zależnie od płci mówiącego (*sono stanco/stanca*), kwestie są dobrane tak, żeby
+pasowały każdemu.
+
 ## Materiał
 
 1914 haseł, z czego **30% to zwroty wielowyrazowe** — bo płynność bierze się z gotowych

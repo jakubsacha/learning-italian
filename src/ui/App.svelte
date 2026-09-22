@@ -6,16 +6,17 @@
   import { KEYS, type Theme } from "../storage/saved.js";
   import Study from "./Study.svelte";
   import Quiz from "./Quiz.svelte";
-  import Sentences from "./Sentences.svelte";
+  import Phrases from "./phrases/Phrases.svelte";
+  import type { Phrasebook } from "../app/phrasebook.svelte.js";
   import WordList from "./WordList.svelte";
   import Stats from "./Stats.svelte";
   import Sync from "./Sync.svelte";
   import { withCount } from "../domain/text.js";
 
-  type Props = { app: Learning; cloud: Cloud; store: KeyValueStore; now: Date };
-  let { app, cloud, store, now }: Props = $props();
+  type Props = { app: Learning; book: Phrasebook; cloud: Cloud; store: KeyValueStore; now: Date };
+  let { app, book, cloud, store, now }: Props = $props();
 
-  type Tab = "mix" | "review" | "new" | "quiz" | "sent" | "list" | "stats";
+  type Tab = "mix" | "review" | "new" | "phrases" | "quiz" | "list" | "stats";
   // Rodzaj sesji jest zapamiętany, więc zakładka wraca tam, gdzie ją zostawiłeś.
   // Celowo czytamy tylko wartość początkową: dalej zakładką steruje `select`.
   // svelte-ignore state_referenced_locally
@@ -30,14 +31,19 @@
     if (isStudy(next)) app.setKind(next);
   }
 
-  const TABS: readonly (readonly [Tab, string])[] = [
-    ["mix", "Nauka"],
-    ["review", "Utrwalanie"],
-    ["new", "Nowe słowa"],
-    ["quiz", "Quiz"],
-    ["sent", "Zdania"],
-    ["list", "Słowa"],
-    ["stats", "Postęp"],
+  /**
+   * Szerokość w dwunastu kolumnach paska: górny rząd to trzy zakładki nauki po 4,
+   * dolny sumuje się do 12 według długości napisu — „ROZMÓWKI" potrzebuje więcej
+   * miejsca niż „QUIZ", a na 320 px liczy się każdy piksel.
+   */
+  const TABS: readonly (readonly [Tab, string, number])[] = [
+    ["mix", "Nauka", 4],
+    ["review", "Utrwalanie", 4],
+    ["new", "Nowe słowa", 4],
+    ["phrases", "Rozmówki", 4],
+    ["quiz", "Quiz", 2],
+    ["list", "Słowa", 3],
+    ["stats", "Postęp", 3],
   ];
 
   function toggleTheme(): void {
@@ -69,17 +75,18 @@
   </header>
 
   <div class="tabs" role="tablist">
-    {#each TABS as [id, label] (id)}
+    {#each TABS as [id, label, span] (id)}
       <button
         role="tab"
-        class:primary={isStudy(id)}
+        style="grid-column:span {span}"
         aria-selected={tab === id}
         onclick={() => select(id)}>{label}</button
       >
     {/each}
   </div>
 
-  <details class="filters">
+  <!-- Filtr kategorii dotyczy słów; rozmówki mają swoje sytuacje. -->
+  <details class="filters" hidden={tab === "phrases"}>
     <summary>Zakres materiału — <span>{filterInfo}</span></summary>
     <div class="chips">
       {#each app.deck.categories as category (category)}
@@ -100,10 +107,13 @@
     <Study {app} {now} active={isStudy(tab)} />
   </section>
 
+  <!-- Też zostaje w drzewie: przełączenie zakładki nie przerywa rozpoczętej sesji. -->
+  <section class="panel" data-test="panel-phrases" hidden={tab !== "phrases"}>
+    <Phrases {book} {now} active={tab === "phrases"} />
+  </section>
+
   {#if tab === "quiz"}
     <section class="panel" data-test="panel-quiz"><Quiz {app} /></section>
-  {:else if tab === "sent"}
-    <section class="panel" data-test="panel-sent"><Sentences {app} /></section>
   {:else if tab === "list"}
     <section class="panel" data-test="panel-list"><WordList {app} /></section>
   {:else if tab === "stats"}

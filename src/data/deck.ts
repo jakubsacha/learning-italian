@@ -71,9 +71,3 @@ for (const sentence of sentences) {
 
 export const sentencesFor = (word: Word): readonly Sentence[] =>
   byGap.get(word.it.toLowerCase()) ?? [];
-
-/** Najwyższy poziom, jakiego dotknąłeś — zdania rosną razem z materiałem. */
-export function sentencesUpTo(level: Level): readonly Sentence[] {
-  const within = sentences.filter((s) => s.level <= level);
-  return within.length > 0 ? within : sentences;
-}

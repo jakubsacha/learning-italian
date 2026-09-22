@@ -26,7 +26,6 @@ import { dateKeyOf, dayNumberOf } from "../domain/day.js";
 import type {
   DailyCounts,
   DateKey,
-  Level,
   Progress,
   Session,
   SessionKind,
@@ -140,15 +139,6 @@ export class Learning {
     ),
   );
 
-  /** Najwyższy poziom, jakiego dotknąłeś — stąd dobór zdań w zakładce Zdania. */
-  readonly level = $derived.by<Level>(() => {
-    let top: Level = 1;
-    for (const word of this.deck.words) {
-      if (this.#progress.has(word.id) && word.level > top) top = word.level;
-    }
-    return top;
-  });
-
   /* ---------- zapis ---------- */
 
   #input(): QueueInput {
@@ -217,10 +207,6 @@ export class Learning {
     seen.add(result.word.id);
     this.#seen = seen;
 
-    const counts = new Map(this.#counts);
-    counts.set(this.#today, (counts.get(this.#today) ?? 0) + 1);
-    this.#counts = trimHistory(counts);
-
     // Tylko pierwsze zetknięcie liczy się do dziennego limitu, i nie w sesji dodatkowej.
     if (result.wasNew && !this.#extra) {
       this.#newToday += 1;
@@ -228,8 +214,20 @@ export class Learning {
     }
 
     saveProgress(this.#env.store, this.#progress);
-    saveCounts(this.#env.store, this.#counts);
     saveSeen(this.#env.store, { key: this.#today, value: this.#seen });
+    this.countAnswer();
+  }
+
+  /**
+   * Jedna odpowiedź więcej w dzisiejszym wyniku. Liczą się też rozmówki: dzienny
+   * licznik, seria i wspólny cel mierzą wysiłek, a nie to, czy było to słowo, czy zdanie.
+   */
+  countAnswer(): void {
+    this.#rollDay();
+    const counts = new Map(this.#counts);
+    counts.set(this.#today, (counts.get(this.#today) ?? 0) + 1);
+    this.#counts = trimHistory(counts);
+    saveCounts(this.#env.store, this.#counts);
     this.#env.onProgress?.();
   }
 

@@ -156,37 +156,3 @@ test("bez głosu it-IT ćwiczenie ze słuchu w ogóle się nie proponuje", async
   }
   expect([...views]).not.toContain("listen");
 });
-
-test.describe("zakładka Zdania", () => {
-  test.beforeEach(async ({ page }) => {
-    await localMode(page);
-    await stubSpeech(page);
-    await page.goto("/index.html");
-    await openTab(page, "Zdania");
-  });
-
-  test("sprawdzenie blokuje klocki i czyta zdanie", async ({ page }) => {
-    const panel = page.getByTestId("panel-sent");
-    const tiles = panel.locator(".pool .tile");
-    const count = await tiles.count();
-    for (let i = 0; i < count; i++) await panel.locator(".pool .tile:not(.used)").first().click();
-
-    await clearSpoken(page);
-    await panel.getByRole("button", { name: "Sprawdź" }).click();
-
-    await expect(panel.getByRole("button", { name: "Sprawdź" })).toBeDisabled();
-    for (const tile of await panel.locator(".tile").all()) await expect(tile).toBeDisabled();
-    expect((await spoken(page)).length).toBe(1);
-
-    await panel.getByRole("button", { name: "Następne" }).click();
-    await expect(panel.getByRole("button", { name: "Sprawdź" })).toBeEnabled();
-  });
-
-  test("uzupełnianie luki odsłania słowo i podaje wynik", async ({ page }) => {
-    const panel = page.getByTestId("panel-sent");
-    await panel.getByLabel("Rodzaj ćwiczenia").selectOption("gap");
-    await panel.locator(".opt").first().click();
-    await expect(panel.locator(".verdict")).toBeVisible();
-    await expect(panel.locator(".gapline b")).not.toHaveText(" ");
-  });
-});

@@ -72,16 +72,15 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .btn:disabled{opacity:.45;cursor:default;box-shadow:none;transform:none}
 
 /* --- zakładki --- */
-/* Dwa rzędy: trzy zakładki nauki szerzej na górze, cztery narzędzia pod spodem.
-   Jeden rząd siedmiu nie mieści „UTRWALANIE" nawet na komputerze, bo strona ma
-   stałą maksymalną szerokość. Siatka ma 12 kolumn, żeby oba rzędy dzieliły się
-   równo; min-width:0 nie pozwala jej rozepchnąć strony, gdy napis się nie mieści. */
+/* Dwa rzędy: trzy zakładki nauki na górze, cztery pozostałe pod spodem. Jeden
+   rząd siedmiu nie mieści „UTRWALANIE" nawet na komputerze, bo strona ma stałą
+   maksymalną szerokość. Siatka ma 12 kolumn; ile zajmuje która zakładka, mówi
+   App.svelte. min-width:0 nie pozwala rozepchnąć strony, gdy napis się nie mieści. */
 .tabs{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;
   padding:4px 0 10px;border-bottom:2px solid var(--line);margin-bottom:14px}
-.tabs button{grid-column:span 3;min-width:0;padding:9px 3px;border-radius:12px;
+.tabs button{min-width:0;padding:9px 3px;border-radius:12px;
   font-size:.72rem;font-weight:800;color:var(--muted);white-space:nowrap;
   text-transform:uppercase;letter-spacing:.03em;border:2px solid transparent}
-.tabs button.primary{grid-column:span 4}
 /* Najwęższe telefony: musi stać po regule bazowej, inaczej ona wygrywa. */
 @media (max-width:360px){ .tabs button{font-size:.64rem;letter-spacing:0} }
 .tabs button[aria-selected="true"]{background:var(--blue-soft);color:var(--blue-dark);
@@ -348,3 +347,34 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
   .btn.nextq small{display:none}
   .opt{padding-left:16px}
 }
+
+/* --- rozmówki --- */
+.phrase-main{font-size:1.45rem;font-weight:800;line-height:1.3;margin:6px 0 4px}
+.trans.it{color:var(--blue-dark)}
+.phrase-start{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.phrase-start b{font-size:1.1rem}
+.phrase-start label{display:flex;align-items:center;gap:8px}
+.scenes{display:grid;gap:8px}
+.scene-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;
+  border:2px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);font:inherit}
+.scene-row .icon{font-size:1.5rem}
+.scene-row .body{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.scene-row .title{font-weight:800}
+.scene-row .track{display:block;height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.scene-row .track i{display:block;height:100%;background:var(--green)}
+.scene-row .count{font-size:.8rem;font-weight:800;color:var(--muted);text-align:right;
+  display:flex;flex-direction:column}
+.scene-row .count em{font-style:normal;color:var(--blue-dark)}
+.scene-head{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin-bottom:12px}
+.scene-head h2{margin:4px 0 0;font-size:1.3rem}
+.dialog{display:flex;flex-direction:column;gap:8px}
+.line{display:flex;align-items:flex-end;gap:6px;max-width:92%}
+.line.ty{align-self:flex-end;flex-direction:row-reverse}
+.line .bubble{text-align:left;padding:10px 14px;border-radius:16px;border:2px solid var(--line);
+  background:var(--card);color:var(--ink);font:inherit;display:flex;flex-direction:column;gap:4px}
+.line.ty .bubble{background:var(--blue-soft);border-color:var(--blue)}
+.line .main{font-weight:700}
+.line .main.it,.line .sub.it{font-style:italic}
+.line .sub{color:var(--muted);font-size:.9rem}
+.line .mark{font-size:.8rem;align-self:flex-end}
+.say.small{position:static;width:34px;height:34px;font-size:.9rem;flex:none}

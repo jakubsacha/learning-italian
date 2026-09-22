@@ -41,18 +41,32 @@ export const encodeReview = (review: Review): StoredReview => ({
   l: review.lapses,
 });
 
-export function decodeProgress(value: unknown): Progress {
-  const out = new Map<WordId, Review>();
+/**
+ * Postęp dowolnych elementów — słów albo kwestii rozmówek. Klucz dostaje swoją
+ * markę przy dekodowaniu, więc postępu słów nie da się pomylić z postępem zdań.
+ */
+export function decodeReviews<K extends string>(
+  value: unknown,
+  asKey: (raw: string) => K,
+): ReadonlyMap<K, Review> {
+  const out = new Map<K, Review>();
   if (!isRecord(value)) return out;
   for (const [id, entry] of Object.entries(value)) {
     const review = decodeReview(entry);
-    if (review !== null) out.set(asWordId(id), review);
+    if (review !== null) out.set(asKey(id), review);
   }
   return out;
 }
 
-export const encodeProgress = (progress: Progress): Record<string, StoredReview> =>
+export const encodeReviews = (
+  progress: ReadonlyMap<string, Review>,
+): Record<string, StoredReview> =>
   Object.fromEntries([...progress].map(([id, review]) => [id, encodeReview(review)]));
+
+export const decodeProgress = (value: unknown): Progress => decodeReviews(value, asWordId);
+
+export const encodeProgress = (progress: Progress): Record<string, StoredReview> =>
+  encodeReviews(progress);
 
 /** Stary format pudełkowy (Leitner 0..3) — jednorazowa migracja. */
 const LEITNER_INTERVALS = [0, 1, 3, 7] as const;

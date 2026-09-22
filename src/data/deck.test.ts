@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DECK, sentencesFor, sentencesUpTo } from "./deck";
+import { DECK, sentencesFor } from "./deck";
 import { splitGap } from "../domain/text";
 
 describe("materiał kursu", () => {
@@ -59,8 +59,4 @@ describe("materiał kursu", () => {
     expect(withSentence.length).toBeGreaterThan(80);
   });
 
-  it("poziom pierwszy ma z czego budować zdania", () => {
-    expect(sentencesUpTo(1).length).toBeGreaterThan(30);
-    expect(sentencesUpTo(3).length).toBe(DECK.sentences.length);
-  });
 });

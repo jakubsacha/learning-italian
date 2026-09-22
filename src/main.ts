@@ -8,6 +8,7 @@ import App from "./ui/App.svelte";
 import "./ui/app.css";
 import { Learning } from "./app/learning.svelte.js";
 import { Cloud } from "./app/cloud.svelte.js";
+import { Phrasebook } from "./app/phrasebook.svelte.js";
 import { browserStore, memoryStore } from "./storage/stores.js";
 import { systemClock } from "./ports/clock.js";
 import { webSpeech } from "./adapters/web-speech.js";
@@ -50,6 +51,8 @@ const app = new Learning({
   onProgress: () => cloudRef.current?.push(),
 });
 
+const book = new Phrasebook({ store, clock, speech, learning: app });
+
 const cloud = new Cloud({
   learning: app,
   store,
@@ -66,4 +69,4 @@ document.addEventListener("visibilitychange", () => {
 });
 
 const target = document.getElementById("app");
-if (target !== null) mount(App, { target, props: { app, cloud, store, now: clock.now() } });
+if (target !== null) mount(App, { target, props: { app, book, cloud, store, now: clock.now() } });
