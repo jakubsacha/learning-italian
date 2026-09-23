@@ -63,16 +63,21 @@ nie nadaje się na lukę `are`, bo „parents" zawiera te litery.
 
 ## Jak działa nauka
 
-Trzy zakładki prowadzą naukę:
+Cztery zakładki prowadzą naukę:
 
 - **Nauka** — dzienna kolejka: powtórki, które wypadają na dziś, plus nowe słowa do limitu;
   ćwiczenia się przeplatają (fiszka, quiz, pisanie, słuch, luka)
-- **Utrwalanie** — tylko słowa, które już znasz: najpierw zaległe, potem te, na których
+- **Powtórki** — tylko słowa, które już znasz: najpierw zaległe, potem te, na których
   się wykładasz, a w dniu bez zaległości — te z najbliższym terminem. Runda ma 20 kart,
   po niej można wziąć następną
-- **Nowe słowa** — paczka 10 kolejnych słów w kolejności częstotliwości, same fiszki.
+- **Nowe** — paczka 10 kolejnych słów w kolejności częstotliwości, same fiszki.
   Działa także po wyczerpaniu dziennego limitu, bo sam o nie prosisz; wprowadzone tu słowa
   liczą się do limitu, więc Nauka tego dnia nie dokłada już nowych
+- **Trudne** — trening na żądanie: same słowa, na których pomyliłeś się co najmniej trzy
+  razy, od najgorszych, najwyżej 20. Liczba przy zakładce mówi, ile ich jest. Po rundzie nie
+  ma przycisku „jeszcze raz": wpadki nie znikają po dobrej odpowiedzi, więc byłaby to ta
+  sama lista. Trudne słowa wracają też same — do pięciu dziennie w Nauce i zaraz po
+  zaległych w każdej rundzie Powtórek
 
 Każda zakładka ma własną kolejkę, więc przełączenie zaczyna nową sesję. Postęp słów
 zapisuje się przy każdej odpowiedzi, więc nic się przy tym nie gubi.

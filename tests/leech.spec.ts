@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
   answerCorrectly,
+  askedWord,
   currentView,
   dayNumber,
   deckWords,
@@ -50,9 +51,42 @@ test("dociąganie trudnych jest ograniczone do pięciu na sesję", async ({ page
   await expect(page.getByTestId("left")).toHaveText("Zostało 5 kart");
 });
 
-test("trudne słowa wchodzą do rundy utrwalania także przed terminem", async ({ page }) => {
+test("trudne słowa wchodzą do rundy powtórek także przed terminem", async ({ page }) => {
   await seed(page, { kind: "review", newDone: 30, srs: leeches(["ciao", "sì", "no"]) });
-  await expect(page.getByTestId("left")).toHaveText("Utrwalanie: 3 karty");
+  await expect(page.getByTestId("left")).toHaveText("Powtórki: 3 karty");
+});
+
+test("zakładka Trudne ma własną kolejkę i sensowny stan pusty", async ({ page }) => {
+  await seed(page, { kind: "hard" });
+  expect(await currentView(page)).toBe("done");
+  await expect(page.locator('[data-view="done"] b')).toHaveText("Nie ma trudnych słów");
+  await expect(page.getByTestId("more")).toHaveCount(0);
+
+  await seed(page, { kind: "hard", srs: leeches(["ciao", "sì", "no"]) });
+  await expect(page.getByTestId("left")).toHaveText("Trening trudnych: 3 karty");
+  const asked: string[] = [];
+  for (let i = 0; i < 3; i++) {
+    asked.push(await askedWord(page));
+    await answerCorrectly(page);
+  }
+  expect(asked.sort()).toEqual(["ciao", "no", "sì"]);
+  await expect(page.locator('[data-view="done"] b')).toHaveText(/Trudne przerobione/);
+  // bez „jeszcze raz": lista by się nie zmieniła, bo wpadki zostają
+  await expect(page.getByTestId("more")).toHaveCount(0);
+});
+
+test("trening trudnych nie wraca po przeładowaniu do tych samych słów w kółko", async ({ page }) => {
+  await seed(page, { kind: "hard", srs: leeches(["ciao", "sì"]) });
+  for (let i = 0; i < 2; i++) await answerCorrectly(page);
+  expect(await currentView(page)).toBe("done");
+  // Po przeładowaniu trening zaczyna się od nowa — to świadomy wybór, a nie pętla w sesji.
+  await page.reload({ waitUntil: "networkidle" });
+  await expect(page.getByTestId("left")).toHaveText("Trening trudnych: 2 karty");
+});
+
+test("licznik przy zakładce pokazuje, ile słów sprawia kłopot", async ({ page }) => {
+  await seed(page, { kind: "mix", srs: leeches(["ciao", "sì", "no"]) });
+  await expect(page.getByRole("tab", { name: /^Trudne/ })).toHaveText("Trudne 3");
 });
 
 test("ekran końca dnia wymienia słowa, na których się wykładasz", async ({ page }) => {

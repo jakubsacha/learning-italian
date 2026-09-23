@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { localMode, openTab, seed, stubSpeech } from "./helpers";
+import { deckWords, localMode, openTab, seed, stubSpeech } from "./helpers";
 
 test.beforeEach(async ({ page }) => {
   await localMode(page);
@@ -8,6 +8,12 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("wszystkie zakładki mieszczą się bez ucinania i bez poziomego scrolla", async ({ page }) => {
+  // Najszerszy napis w pasku to „TRUDNE 12" — licznik z dwiema cyframi.
+  const words = await deckWords(page, 12);
+  await seed(page, {
+    srs: Object.fromEntries(words.map((w) => [w, { e: 1.5, i: 1, d: 99_999, r: 5, l: 4 }])),
+  });
+  await expect(page.getByRole("tab", { name: /^Trudne/ })).toHaveText("Trudne 12");
   for (const width of [320, 360, 390, 430, 700, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     const state = await page.evaluate(() => ({
@@ -42,23 +48,27 @@ test("przed odsłonięciem karty nie widać ani tłumaczenia, ani ocen", async (
   await expect(page.getByTestId("reveal")).toHaveCount(0);
 });
 
-test("pierwsze trzy zakładki to Nauka, Utrwalanie i Nowe słowa", async ({ page }) => {
+test("górny rząd to cztery zakładki nauki", async ({ page }) => {
   const tabs = await page.getByRole("tab").allTextContents();
-  expect(tabs.slice(0, 3).map((t) => t.trim())).toEqual(["Nauka", "Utrwalanie", "Nowe słowa"]);
+  expect(tabs.slice(0, 4).map((t) => t.trim())).toEqual(["Nauka", "Powtórki", "Nowe", "Trudne"]);
 });
 
 test("wybrana zakładka przeżywa przeładowanie", async ({ page }) => {
-  await openTab(page, "Utrwalanie");
+  await openTab(page, "Powtórki");
   await page.reload({ waitUntil: "networkidle" });
-  await expect(page.getByRole("tab", { selected: true })).toHaveText("Utrwalanie");
+  await expect(page.getByRole("tab", { selected: true })).toHaveText("Powtórki");
 });
 
-test("stary zapis zakładki Fiszki albo Trudne wraca do zwykłej nauki", async ({ page }) => {
-  for (const old of ["cards", "hard"]) {
-    await page.evaluate((k) => localStorage.setItem("it250.kind", JSON.stringify(k)), old);
-    await page.reload({ waitUntil: "networkidle" });
-    await expect(page.getByRole("tab", { selected: true })).toHaveText("Nauka");
-  }
+test("stary zapis zakładki Fiszki wraca do zwykłej nauki", async ({ page }) => {
+  await page.evaluate(() => localStorage.setItem("it250.kind", JSON.stringify("cards")));
+  await page.reload({ waitUntil: "networkidle" });
+  await expect(page.getByRole("tab", { selected: true })).toHaveText("Nauka");
+});
+
+test("zapisana zakładka Trudne wraca po przeładowaniu", async ({ page }) => {
+  await page.evaluate(() => localStorage.setItem("it250.kind", JSON.stringify("hard")));
+  await page.reload({ waitUntil: "networkidle" });
+  await expect(page.getByRole("tab", { selected: true })).toHaveText(/^Trudne/);
 });
 
 test("motyw przeżywa przeładowanie", async ({ page }) => {

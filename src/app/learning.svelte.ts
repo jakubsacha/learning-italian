@@ -36,7 +36,7 @@ import type { QueueInput } from "../domain/queue.js";
 import { advance, answer as answerSession, startSession, type Answer, type Deps } from "../domain/session.js";
 import { statsOf, summarise, trimHistory } from "../domain/stats.js";
 import { systemRng } from "../domain/random.js";
-import { schedule, stateOf } from "../domain/scheduler.js";
+import { isLeech, schedule, stateOf } from "../domain/scheduler.js";
 
 export type LearningEnv = {
   readonly store: KeyValueStore;
@@ -127,6 +127,11 @@ export class Learning {
   });
 
   readonly summary = $derived.by(() => summarise(this.#session, this.#progress));
+
+  /** Ile słów czeka w treningu trudnych — liczba przy zakładce. */
+  readonly leechCount = $derived.by(
+    () => this.pool.filter((w) => isLeech(this.#progress.get(w.id))).length,
+  );
 
   readonly stats = $derived.by(() =>
     statsOf(

@@ -1,5 +1,5 @@
 <!--
-  Zakładki Nauka / Utrwalanie / Nowe słowa. Jedna sesja, pięć form pytania i ekran
+  Zakładki Nauka / Powtórki / Nowe / Trudne. Jedna sesja, pięć form pytania i ekran
   końcowy. Który widok jest na ekranie, wynika wprost z rodzaju ćwiczenia —
   nie ma już pięciu atrybutów `hidden`, które mogły sobie przeczyć.
 -->
@@ -91,17 +91,35 @@
     if (done.kind === "review") {
       return done.reason === "empty"
         ? {
-            title: "Nie masz jeszcze czego utrwalać",
-            message: "Tu wracają słowa, które już poznałeś. Zacznij od zakładki Nowe słowa albo Nauka.",
+            title: "Nie masz jeszcze czego powtarzać",
+            message: "Tu wracają słowa, które już poznałeś. Zacznij od zakładki Nowe albo Nauka.",
             action: null,
             leeches: false,
           }
-        : { title: "Runda utrwalania zrobiona 🎉", message: next, action: again, leeches: true };
+        : { title: "Runda powtórek zrobiona 🎉", message: next, action: again, leeches: true };
+    }
+    if (done.kind === "hard") {
+      // Bez przycisku „jeszcze raz": wpadki nie znikają po dobrej odpowiedzi, więc
+      // kolejna runda byłaby tą samą listą. Trudne wracają same, w Nauce i Powtórkach.
+      return done.reason === "empty"
+        ? {
+            title: "Nie ma trudnych słów",
+            message:
+              "Tu trafiają słowa, na których pomylisz się co najmniej trzy razy. Na razie pusto.",
+            action: null,
+            leeches: false,
+          }
+        : {
+            title: "Trudne przerobione 🎉",
+            message: "Wróć tu jutro — albo po prostu ucz się dalej w zakładce Nauka.",
+            action: null,
+            leeches: false,
+          };
     }
     return done.reason === "empty" || done.newInReserve === 0
       ? {
           title: "Wszystkie słowa już wprowadzone 🎉",
-          message: "Wracaj do nich w zakładce Utrwalanie.",
+          message: "Wracaj do nich w zakładce Powtórki.",
           action: null,
           leeches: false,
         }

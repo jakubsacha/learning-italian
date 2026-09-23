@@ -11,8 +11,10 @@ import { shuffle, type Rng } from "./random.js";
 export const HARD_IN_SESSION = 5;
 /** Ile nowych słów dokłada przycisk "Ucz się dalej". */
 export const EXTRA_BATCH = 10;
-/** Ile znanych słów ma jedna runda utrwalania. */
+/** Ile znanych słów ma jedna runda powtórek. */
 export const REVIEW_BATCH = 20;
+/** Ile słów ma trening trudnych. */
+export const HARD_SESSION_SIZE = 20;
 /** Ile słów ma jedna paczka w zakładce Nowe słowa. */
 export const NEW_BATCH = 10;
 
@@ -58,7 +60,7 @@ export const newLeft = (input: QueueInput): number =>
   Math.max(0, input.newLimit - input.newDone);
 
 /**
- * Runda utrwalania: tylko słowa, które już znasz. Najpierw zaległe powtórki,
+ * Runda powtórek: tylko słowa, które już znasz. Najpierw zaległe powtórki,
  * potem te, na których się wykładasz, a jeśli wciąż mało — te z najbliższym
  * terminem. Dzięki temu runda jest pełna także w dniu bez zaległości.
  */
@@ -80,6 +82,8 @@ function reviewBatch(input: QueueInput): readonly Word[] {
 
 export function buildQueue(kind: SessionKind, input: QueueInput, rng: Rng): readonly Word[] {
   if (kind === "review") return shuffle(reviewBatch(input), rng);
+  // Trening na żądanie: same słowa, na których się wykładasz, od najgorszych.
+  if (kind === "hard") return leechWords(input).slice(0, HARD_SESSION_SIZE);
   // Nowe idą w kolejności częstotliwości i poza dziennym limitem: sam o nie prosisz.
   if (kind === "new") return newWords(input).slice(0, NEW_BATCH);
 

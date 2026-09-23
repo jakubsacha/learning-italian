@@ -82,7 +82,10 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
   font-size:.72rem;font-weight:800;color:var(--muted);white-space:nowrap;
   text-transform:uppercase;letter-spacing:.03em;border:2px solid transparent}
 /* Najwęższe telefony: musi stać po regule bazowej, inaczej ona wygrywa. */
-@media (max-width:360px){ .tabs button{font-size:.64rem;letter-spacing:0} }
+@media (max-width:360px){
+  .tabs{gap:4px}
+  .tabs button{font-size:.62rem;letter-spacing:0;padding:9px 1px}
+}
 .tabs button[aria-selected="true"]{background:var(--blue-soft);color:var(--blue-dark);
   border-color:var(--blue)}
 .panel{margin-top:4px}

@@ -33,11 +33,11 @@ test.describe("Nauka", () => {
   });
 });
 
-test.describe("Utrwalanie", () => {
+test.describe("Powtórki", () => {
   test("podaje tylko słowa, które już znasz", async ({ page }) => {
     const words = await deckWords(page, 4);
     await seed(page, { kind: "review", limit: 30, srs: known(words) });
-    await expect(page.getByTestId("left")).toHaveText("Utrwalanie: 4 karty");
+    await expect(page.getByTestId("left")).toHaveText("Powtórki: 4 karty");
     const asked = new Set<string>();
     for (let i = 0; i < 4; i++) {
       asked.add(await askedWord(page));
@@ -49,16 +49,16 @@ test.describe("Utrwalanie", () => {
   test("bez znanych słów kieruje do nowych, zamiast pokazywać pusty ekran", async ({ page }) => {
     await seed(page, { kind: "review" });
     expect(await currentView(page)).toBe("done");
-    await expect(doneTitle(page)).toHaveText("Nie masz jeszcze czego utrwalać");
+    await expect(doneTitle(page)).toHaveText("Nie masz jeszcze czego powtarzać");
     await expect(page.getByTestId("more")).toHaveCount(0);
   });
 
   test("działa także w dniu bez zaległości i daje kolejną rundę", async ({ page }) => {
     const words = await deckWords(page, 3);
     await seed(page, { kind: "review", srs: known(words, 10) });
-    await expect(page.getByTestId("left")).toHaveText("Utrwalanie: 3 karty");
+    await expect(page.getByTestId("left")).toHaveText("Powtórki: 3 karty");
     for (let i = 0; i < 3; i++) await answerCorrectly(page);
-    await expect(doneTitle(page)).toHaveText(/Runda utrwalania zrobiona/);
+    await expect(doneTitle(page)).toHaveText(/Runda powtórek zrobiona/);
     await page.getByTestId("more").click();
     expect(await currentView(page)).not.toBe("done");
   });
@@ -70,7 +70,7 @@ test.describe("Utrwalanie", () => {
   });
 });
 
-test.describe("Nowe słowa", () => {
+test.describe("Nowe", () => {
   test("podaje paczkę dziesięciu nowych, same fiszki", async ({ page }) => {
     await seed(page, { kind: "new" });
     await expect(page.getByTestId("left")).toHaveText("Nowe słowa: 10 kart");
@@ -113,7 +113,7 @@ test("przełączanie zakładek nie gubi odpowiedzi", async ({ page }) => {
   await seed(page, { kind: "new" });
   const word = await askedWord(page);
   await answerCorrectly(page);
-  await openTab(page, "Utrwalanie");
-  await expect(page.getByTestId("left")).toHaveText("Utrwalanie: 1 karta");
+  await openTab(page, "Powtórki");
+  await expect(page.getByTestId("left")).toHaveText("Powtórki: 1 karta");
   expect(await askedWord(page)).toBe(word);
 });

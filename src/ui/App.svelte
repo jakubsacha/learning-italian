@@ -16,15 +16,15 @@
   type Props = { app: Learning; book: Phrasebook; cloud: Cloud; store: KeyValueStore; now: Date };
   let { app, book, cloud, store, now }: Props = $props();
 
-  type Tab = "mix" | "review" | "new" | "phrases" | "quiz" | "list" | "stats";
+  type Tab = "mix" | "review" | "new" | "hard" | "phrases" | "quiz" | "list" | "stats";
   // Rodzaj sesji jest zapamiętany, więc zakładka wraca tam, gdzie ją zostawiłeś.
   // Celowo czytamy tylko wartość początkową: dalej zakładką steruje `select`.
   // svelte-ignore state_referenced_locally
   let tab = $state<Tab>(app.kind);
 
-  /** Nauka, Utrwalanie i Nowe słowa to ten sam panel — różnią się rodzajem sesji. */
-  const isStudy = (t: Tab): t is "mix" | "review" | "new" =>
-    t === "mix" || t === "review" || t === "new";
+  /** Cztery zakładki nauki to ten sam panel — różnią się rodzajem sesji. */
+  const isStudy = (t: Tab): t is "mix" | "review" | "new" | "hard" =>
+    t === "mix" || t === "review" || t === "new" || t === "hard";
 
   function select(next: Tab): void {
     tab = next;
@@ -32,19 +32,21 @@
   }
 
   /**
-   * Szerokość w dwunastu kolumnach paska: górny rząd to trzy zakładki nauki po 4,
+   * Szerokość w dwunastu kolumnach paska: górny rząd to cztery zakładki nauki po 3,
    * dolny sumuje się do 12 według długości napisu — „ROZMÓWKI" potrzebuje więcej
-   * miejsca niż „QUIZ", a na 320 px liczy się każdy piksel.
+   * miejsca niż „QUIZ", a na 320 px liczy się każdy piksel. Stąd też krótkie nazwy
+   * na górze: „UTRWALANIE" i „NOWE SŁOWA" nie mieszczą się w czwartej części paska.
    */
-  const TABS: readonly (readonly [Tab, string, number])[] = [
-    ["mix", "Nauka", 4],
-    ["review", "Utrwalanie", 4],
-    ["new", "Nowe słowa", 4],
+  const TABS = $derived<readonly (readonly [Tab, string, number])[]>([
+    ["mix", "Nauka", 3],
+    ["review", "Powtórki", 3],
+    ["new", "Nowe", 3],
+    ["hard", app.leechCount > 0 ? "Trudne " + app.leechCount : "Trudne", 3],
     ["phrases", "Rozmówki", 4],
     ["quiz", "Quiz", 2],
     ["list", "Słowa", 3],
     ["stats", "Postęp", 3],
-  ];
+  ]);
 
   function toggleTheme(): void {
     const current = document.documentElement.getAttribute("data-theme");

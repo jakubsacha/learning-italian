@@ -8,8 +8,9 @@
 
   const LEAD: Readonly<Record<SessionKind, string>> = {
     mix: "Zostało ",
-    review: "Utrwalanie: ",
+    review: "Powtórki: ",
     new: "Nowe słowa: ",
+    hard: "Trening trudnych: ",
   };
 
   const mix = $derived(

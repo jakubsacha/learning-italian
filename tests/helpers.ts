@@ -23,7 +23,7 @@ export type Seed = {
   days?: Record<string, number>;
   newDone?: number;
   seen?: string[];
-  kind?: "mix" | "review" | "new";
+  kind?: "mix" | "review" | "new" | "hard";
   limit?: number;
   voice?: boolean;
 };

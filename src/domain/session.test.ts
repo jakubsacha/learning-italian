@@ -123,7 +123,7 @@ describe("przebieg sesji", () => {
     });
   });
 
-  it("pusta runda utrwalania mówi, że nie było czego podać", () => {
+  it("pusta runda powtórek mówi, że nie było czego podać", () => {
     expect(startSession("review", input(), deps)).toMatchObject({
       status: "done",
       kind: "review",
@@ -131,7 +131,7 @@ describe("przebieg sesji", () => {
     });
   });
 
-  it("runda utrwalania kończy się po ostatniej karcie, zamiast dosypywać w kółko", () => {
+  it("runda powtórek kończy się po ostatniej karcie, zamiast dosypywać w kółko", () => {
     const pool = words(2);
     const progress = progressOf(pool.map((w) => [w, review({ due: TODAY })]));
     let state = input({ pool, progress, newDone: 99 });
@@ -143,6 +143,24 @@ describe("przebieg sesji", () => {
       session = advance(result.session, state, deps);
     }
     expect(session).toMatchObject({ status: "done", kind: "review", reason: "batch-finished" });
+  });
+
+  it("trening trudnych bez trudnych słów mówi to wprost", () => {
+    expect(startSession("hard", input(), deps)).toMatchObject({ kind: "hard", reason: "empty" });
+  });
+
+  it("trening trudnych nie odbudowuje się w kółko po przerobieniu listy", () => {
+    const pool = words(2);
+    const progress = progressOf(pool.map((w) => [w, review({ lapses: 4 })]));
+    let state = input({ pool, progress, newDone: 99 });
+    let session = startSession("hard", state, deps);
+    for (let i = 0; i < 2; i++) {
+      const result = answer(active(session), { via: "self", grade: "good" }, state)!;
+      // Dobra odpowiedź nie kasuje wpadek — słowo wciąż jest trudne.
+      state = input({ ...state, progress: new Map([...state.progress, [result.word.id, result.review]]) });
+      session = advance(result.session, state, deps);
+    }
+    expect(session).toMatchObject({ status: "done", kind: "hard", reason: "batch-finished" });
   });
 
   it("nowe słowa zawsze zaczynają od fiszki", () => {

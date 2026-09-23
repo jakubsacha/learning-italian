@@ -72,7 +72,7 @@ export function gradeAnswer(exercise: Exercise, answer: Answer): Graded {
 
 /**
  * Koniec sesji. `started` mówi, czy cokolwiek było na ekranie — pusta runda
- * utrwalania to co innego niż runda przerobiona do końca.
+ * powtórek to co innego niż runda przerobiona do końca.
  */
 const finish = (kind: SessionKind, input: QueueInput, started: boolean): Session => {
   const dues = input.pool
@@ -136,8 +136,10 @@ export function startSession(kind: SessionKind, input: QueueInput, deps: Deps): 
 
 /**
  * Przejście do następnego ćwiczenia. Gdy kolejka pusta, dzienna sesja próbuje
- * zbudować się jeszcze raz. Utrwalanie i nowe słowa to paczki: po ostatniej karcie
- * kończą się, zamiast dosypywać w nieskończoność — kolejną rundę bierzesz sam.
+ * zbudować się jeszcze raz. Powtórki, nowe słowa i trudne to paczki: po ostatniej
+ * karcie kończą się, zamiast dosypywać w nieskończoność. Przy trudnych to wręcz
+ * konieczne — wpadki nie znikają po dobrej odpowiedzi, więc lista odbudowywałaby
+ * się bez końca.
  */
 export function advance(session: Session, input: QueueInput, deps: Deps): Session {
   if (session.status === "done") return session;

@@ -138,9 +138,9 @@ export type Phase =
 
 /**
  * Czym jest bieżąca sesja: dzienna kolejka mieszająca powtórki z nowymi,
- * samo utrwalanie tego, co już znasz, albo same nowe słowa.
+ * same powtórki tego, co już znasz, same nowe słowa albo trening trudnych.
  */
-export type SessionKind = "mix" | "review" | "new";
+export type SessionKind = "mix" | "review" | "new" | "hard";
 
 type Done = {
   readonly status: "done";
@@ -157,8 +157,8 @@ type Done = {
 export type SessionDone =
   | (Done & { readonly kind: "mix"; readonly reason: "daily-finished" })
   | (Done & {
-      readonly kind: "review" | "new";
-      /** `empty`: nic jeszcze nie znasz albo wszystko już wprowadzone. */
+      readonly kind: "review" | "new" | "hard";
+      /** `empty`: nic jeszcze nie znasz, wszystko już wprowadzone albo nie ma trudnych. */
       readonly reason: "batch-finished" | "empty";
     });
 

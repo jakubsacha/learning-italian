@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HARD_IN_SESSION, NEW_BATCH, REVIEW_BATCH, buildQueue, newLeft } from "./queue";
+import { HARD_IN_SESSION, HARD_SESSION_SIZE, NEW_BATCH, REVIEW_BATCH, buildQueue, newLeft } from "./queue";
 import { asDayNumber, asDays } from "./types";
 import { TODAY, firstRng, input, progressOf, review, words } from "./fixtures";
 
@@ -83,7 +83,7 @@ describe("kolejka dzienna", () => {
 
 });
 
-describe("utrwalanie", () => {
+describe("powtórki", () => {
   it("podaje wyłącznie słowa, które już znasz", () => {
     const pool = words(10);
     const progress = progressOf(pool.slice(0, 4).map((w) => [w, review({ due: TODAY })]));
@@ -150,5 +150,26 @@ describe("nowe słowa", () => {
     const progress = progressOf(pool.slice(0, 5).map((w) => [w, review({ due: TODAY })]));
     const queue = buildQueue("new", input({ pool, progress }), firstRng);
     expect(queue.every((w) => !progress.has(w.id))).toBe(true);
+  });
+});
+
+describe("trening trudnych", () => {
+  it("podaje wyłącznie trudne, od największej liczby wpadek, najwyżej dwadzieścia", () => {
+    const pool = words(30);
+    const progress = progressOf(pool.map((w, i) => [w, review({ lapses: i < 25 ? 3 + i : 0 })]));
+    const queue = buildQueue("hard", input({ pool, progress }), firstRng);
+    expect(queue).toHaveLength(HARD_SESSION_SIZE);
+    expect(queue.every((w) => (progress.get(w.id)?.lapses ?? 0) >= 3)).toBe(true);
+    expect(ids(queue)[0]).toBe("slowo24");
+  });
+
+  it("bierze trudne także przed terminem", () => {
+    const pool = words(2);
+    const progress = progressOf(pool.map((w) => [w, review({ lapses: 4, due: asDayNumber(TODAY + 60) })]));
+    expect(buildQueue("hard", input({ pool, progress }), firstRng)).toHaveLength(2);
+  });
+
+  it("bez trudnych słów daje pustą kolejkę", () => {
+    expect(buildQueue("hard", input(), firstRng)).toEqual([]);
   });
 });
