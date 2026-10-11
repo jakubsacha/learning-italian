@@ -1,8 +1,10 @@
-<!-- Powłoka: zakres materiału, trzy zakładki, wynik dnia. -->
+<!-- Powłoka: zakres materiału, pięć zakładek, wynik dnia. -->
 <script lang="ts">
   import type { History } from "../app.svelte.js";
   import Learn from "./Learn.svelte";
+  import Order from "./Order.svelte";
   import Timeline from "./Timeline.svelte";
+  import Sides from "./Sides.svelte";
   import Notes from "./Notes.svelte";
   import { LESSONS, type Scope } from "../facts.js";
   import { LIMITS, type NewLimit } from "../storage.js";
@@ -11,7 +13,14 @@
   type Props = { app: History };
   let { app }: Props = $props();
 
-  type Tab = "learn" | "timeline" | "notes";
+  type Tab = "learn" | "order" | "timeline" | "sides" | "notes";
+  const TABS: readonly (readonly [Tab, string])[] = [
+    ["learn", "Nauka"],
+    ["order", "Kolejność"],
+    ["timeline", "Oś czasu"],
+    ["sides", "Kto z kim"],
+    ["notes", "Ściąga"],
+  ];
   let tab = $state<Tab>("learn");
 
   const SCOPES: readonly (readonly [Scope, string])[] = [
@@ -42,7 +51,7 @@
   </label>
 
   <div class="tabs" role="tablist">
-    {#each [["learn", "Nauka"], ["timeline", "Oś czasu"], ["notes", "Ściąga"]] as const as [id, label] (id)}
+    {#each TABS as [id, label] (id)}
       <button role="tab" aria-selected={tab === id} onclick={() => (tab = id)}>{label}</button>
     {/each}
   </div>
@@ -51,8 +60,12 @@
   <section class="panel" data-test="panel-learn" hidden={tab !== "learn"}>
     <Learn {app} active={tab === "learn"} />
   </section>
-  {#if tab === "timeline"}
+  {#if tab === "order"}
+    <section class="panel" data-test="panel-order"><Order {app} /></section>
+  {:else if tab === "timeline"}
     <section class="panel" data-test="panel-timeline"><Timeline {app} /></section>
+  {:else if tab === "sides"}
+    <section class="panel" data-test="panel-sides"><Sides {app} /></section>
   {:else if tab === "notes"}
     <section class="panel" data-test="panel-notes"><Notes {app} /></section>
   {/if}

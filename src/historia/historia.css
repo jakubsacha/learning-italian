@@ -33,12 +33,17 @@
   min-width: 0;
 }
 
+/* Pięć zakładek: trzy na górze, dwie szersze pod spodem. */
 .history-wrap .tabs {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr);
 }
 
 .history-wrap .tabs button {
-  grid-column: auto;
+  grid-column: span 2;
+}
+
+.history-wrap .tabs button:nth-child(n + 4) {
+  grid-column: span 3;
 }
 
 .fact-q {
@@ -155,4 +160,200 @@
 
 .note .mark {
   font-size: 0.85rem;
+}
+
+.modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--line);
+  margin-bottom: 10px;
+}
+
+.modes button {
+  border: 0;
+  border-radius: 10px;
+  padding: 8px;
+  font: inherit;
+  font-weight: 800;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.modes button[aria-pressed="true"] {
+  background: var(--card);
+  color: var(--ink);
+}
+
+/* Duże klocki osi zdarzeń. */
+.blocks {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  display: grid;
+  gap: 8px;
+}
+
+.blocks.placed {
+  counter-reset: block;
+}
+
+ol.blocks li {
+  counter-increment: block;
+}
+
+.block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--ink);
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  border-left: 8px solid var(--accent);
+  background: var(--card);
+  box-shadow: 0 3px 0 var(--line);
+  cursor: pointer;
+}
+
+.block:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.block-date {
+  font-size: 0.9rem;
+  color: var(--accent-dark);
+}
+
+.block-date.hidden-date {
+  color: var(--muted);
+}
+
+.blocks.placed .block {
+  border-left-color: var(--good);
+  box-shadow: none;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+}
+
+.block.hint {
+  border-color: var(--good);
+  background: var(--good-bg);
+}
+
+.block.shake {
+  border-color: var(--bad);
+  background: var(--bad-bg);
+  animation: shake 0.35s;
+}
+
+@keyframes shake {
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-3px); }
+}
+
+/* Kto z kim. */
+.country {
+  margin: 14px 0;
+  padding: 28px 16px;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  border-radius: 18px;
+  border: 2px solid var(--line);
+  background: var(--card);
+}
+
+.side-buttons {
+  display: grid;
+  gap: 8px;
+}
+
+.side-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 1.05rem;
+}
+
+.side-btn.side-alianci {
+  background: var(--blue);
+  box-shadow: 0 var(--push) 0 var(--blue-dark);
+}
+
+.side-btn.side-os {
+  background: #444;
+  box-shadow: 0 var(--push) 0 #222;
+}
+
+.side-btn.side-neutralne {
+  background: var(--card);
+  color: var(--ink);
+  border: 2px solid var(--line);
+  box-shadow: 0 var(--push) 0 var(--line);
+}
+
+.side-btn:disabled.right {
+  opacity: 1;
+  outline: 4px solid var(--good);
+}
+
+.side-btn:disabled.picked:not(.right) {
+  opacity: 1;
+  outline: 4px solid var(--bad);
+}
+
+.verdict .why {
+  margin: 6px 0 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.sides-cols {
+  display: grid;
+  gap: 8px;
+}
+
+.side-col {
+  border-radius: 14px;
+  border: 2px solid var(--line);
+  border-top: 8px solid var(--line);
+  background: var(--card);
+  padding: 10px 14px;
+}
+
+.side-col h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.side-col ul {
+  margin: 0;
+  padding-left: 18px;
+  columns: 2;
+  font-weight: 600;
+}
+
+.side-col.side-alianci {
+  border-top-color: var(--blue);
+}
+
+.side-col.side-os {
+  border-top-color: #444;
+}
+
+.note.ussr {
+  margin-top: 12px;
+  font-weight: 600;
+  border-style: dashed;
 }

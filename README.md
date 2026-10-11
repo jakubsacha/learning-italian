@@ -77,9 +77,16 @@ Każdy fakt ma numer strony.
   Błędne odpowiedzi są zawsze **tego samego rodzaju** co dobra — data przeciw datom,
   osoba przeciw osobom — bo pytanie o datę z „Westerplatte" do wyboru nic nie sprawdza.
   10 nowych faktów dziennie (do zmiany), powtórki przed nowymi.
+- **Kolejność**: cała oś zdarzeń z zakresu na dużych klockach. „Poznaj" pokazuje ją po kolei
+  (daty można schować i podglądać dotykiem), „Ułóż" każe odtworzyć ją z pamięci — zły klocek
+  od razu się odbija, a po dwóch pomyłkach na jednym kroku dobry się podświetla.
 - **Oś czasu**: cztery wydarzenia do ułożenia od najwcześniejszego. Gdy książka podaje
   tylko miesiąc („w czerwcu 1940 r."), takie wydarzenie nie trafi do rundy z innym
   z tego samego miesiąca — kolejność zawsze da się ustalić z samej książki.
+- **Kto z kim**: państwo na dużej karcie i trzy przyciski — alianci, Oś i jej sojusznicy,
+  neutralne — a po odpowiedzi wyjaśnienie ze strony książki. Na końcu powtórka błędów;
+  „Podział" pokazuje wszystkie trzy grupy naraz. ZSRS jest osobną notką, bo w latach
+  1939–1941 nie pasuje do żadnej grupy. Lista leży w `src/historia/sides.ts`.
 - **Ściąga**: cały materiał pogrupowany jak w podręczniku, z filtrem „tylko najważniejsze".
 - **Zakres**: cały rozdział albo jeden temat.
 

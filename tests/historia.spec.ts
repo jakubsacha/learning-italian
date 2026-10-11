@@ -99,6 +99,61 @@ test("oś czasu: po ułożeniu jest werdykt, wynik i następna runda", async ({ 
   await expect(panel.getByTestId("pool").locator(".tile")).toHaveCount(4);
 });
 
+test("kolejność: poznaj całą oś, potem ułóż ją z pamięci", async ({ page }) => {
+  await seedHistory(page, { scope: 1 });
+  await page.getByRole("tab", { name: "Kolejność" }).click();
+  const panel = page.getByTestId("panel-order");
+  const list = panel.getByTestId("order-list");
+  const labels = (await list.locator(".block-label").allTextContents()).map((l) => l.trim());
+  expect(labels.length).toBeGreaterThan(5);
+  expect(labels[0]).toBe("Prowokacja gliwicka");
+  const first = (await list.locator(".block-date").first().textContent())?.trim() ?? "";
+  expect(first).toMatch(/sierpnia 1939/);
+
+  // daty można schować i podglądać pojedynczo
+  await panel.getByLabel("Pokaż daty").uncheck();
+  await expect(list.locator(".block-date").first()).toHaveText("?");
+  await list.locator(".block").first().click();
+  await expect(list.locator(".block-date").first()).toHaveText(first);
+
+  await panel.getByRole("button", { name: "Ułóż", exact: true }).click();
+  const pool = panel.getByTestId("order-pool");
+  // ostatni klocek na początek to błąd — odbija się i liczy
+  await pool.getByText(labels.at(-1) ?? "", { exact: true }).click();
+  await expect(panel.getByTestId("order-mistakes")).toHaveText("Pomyłki: 1");
+  await pool.getByText(labels.at(-1) ?? "", { exact: true }).click();
+  await expect(pool.locator(".block.hint")).toHaveCount(1);
+  for (const l of labels) await pool.getByText(l, { exact: true }).click();
+  await expect(panel.getByTestId("order-done")).toContainText("Pomyłek po drodze: 2");
+  await expect(panel.getByTestId("order-placed").locator(".block")).toHaveCount(labels.length);
+  await panel.getByTestId("order-again").click();
+  await expect(pool.locator(".block")).toHaveCount(labels.length);
+});
+
+test("kto z kim: werdykt z wyjaśnieniem, wynik i powtórka błędów", async ({ page }) => {
+  await page.getByRole("tab", { name: "Kto z kim" }).click();
+  const panel = page.getByTestId("panel-sides");
+  const total = 27;
+  for (let i = 0; i < total; i++) {
+    await expect(panel.locator(".meta").first()).toContainText(`Państwo ${i + 1} z ${total}`);
+    await panel.getByRole("button", { name: "Alianci" }).click();
+    await expect(panel.getByTestId("sides-verdict")).toContainText(/\(s\. \d+\)/);
+    await panel.getByTestId("sides-next").click();
+  }
+  await expect(panel.getByTestId("sides-done")).toContainText("Dobrze: 14 z 27.");
+  await panel.getByTestId("sides-retry").click();
+  await expect(panel.locator(".meta").first()).toContainText("Państwo 1 z 13");
+  await panel.getByRole("button", { name: "Alianci" }).click();
+  await expect(panel.getByTestId("sides-verdict")).toHaveClass(/no/);
+  await expect(page.getByTestId("stat")).toContainText("Dziś 28 odpowiedzi");
+
+  await panel.getByRole("button", { name: "Podział" }).click();
+  const map = panel.getByTestId("sides-map");
+  await expect(map.locator(".side-os")).toContainText("Węgry");
+  await expect(map.locator(".side-neutralne")).toContainText("Szwecja");
+  await expect(panel.locator(".ussr")).toContainText("ZSRS");
+});
+
 test("ściąga ma cały materiał, a filtr zostawia tylko pogrubione", async ({ page }) => {
   await page.getByRole("tab", { name: "Ściąga" }).click();
   const panel = page.getByTestId("panel-notes");
@@ -121,7 +176,7 @@ test("historia nie miesza się z nauką włoskiego", async ({ page }) => {
 
 test("na telefonie nic nie wystaje poza ekran", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
-  for (const tab of ["Nauka", "Oś czasu", "Ściąga"]) {
+  for (const tab of ["Nauka", "Kolejność", "Oś czasu", "Kto z kim", "Ściąga"]) {
     await page.getByRole("tab", { name: tab }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), tab).toBe(false);
   }

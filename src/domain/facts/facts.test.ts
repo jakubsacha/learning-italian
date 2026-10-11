@@ -7,6 +7,7 @@ import {
   choicesFor,
   chooseFactForm,
   chronological,
+  nextCandidates,
   factSummary,
   isDated,
   learningOrder,
@@ -177,3 +178,35 @@ describe("oś czasu", () => {
     expect(PEOPLE.some(isDated)).toBe(false);
   });
 });
+
+describe("układanie całej osi", () => {
+  const ev = (a: string, when: number) => fact(a, "data", { event: { when, label: a } }) as never;
+
+  it("następne jest zawsze najwcześniejsze z pozostałych", () => {
+    const sep1 = ev("1 IX", 19390901);
+    const sep17 = ev("17 IX", 19390917);
+    const may = ev("10 V 1940", 19400510);
+    expect(nextCandidates([may, sep17, sep1]).map((f: Fact) => f.a)).toEqual(["1 IX"]);
+  });
+
+  it("gdy książka podaje sam miesiąc, przyjmuje każdą nierozstrzygalną kolejność", () => {
+    const june = ev("w czerwcu 1940", 19400600);
+    const june10 = ev("10 VI 1940", 19400610);
+    const june22 = ev("22 VI 1940", 19400622);
+    const july = ev("w lipcu 1940", 19400700);
+    const next = nextCandidates([july, june22, june10, june]).map((f: Fact) => f.a).sort();
+    expect(next).toEqual(["10 VI 1940", "w czerwcu 1940"]);
+    // po 10 czerwca: „w czerwcu" i 22 czerwca — znów obie dobre
+    expect(nextCandidates([july, june22, june]).map((f: Fact) => f.a).sort()).toEqual([
+      "22 VI 1940",
+      "w czerwcu 1940",
+    ]);
+  });
+
+  it("z jednego wydarzenia zostaje ono samo, z pustej listy — nic", () => {
+    const one = ev("x", 19400101);
+    expect(nextCandidates([one])).toEqual([one]);
+    expect(nextCandidates([])).toEqual([]);
+  });
+});
+

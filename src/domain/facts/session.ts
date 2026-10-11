@@ -227,3 +227,16 @@ export const chronological = (events: readonly DatedFact[]): readonly DatedFact[
 /** Ułożone dobrze, gdy kolejność zgadza się co do jednego wydarzenia. */
 export const timelineRight = (placed: readonly DatedFact[]): boolean =>
   placed.every((f, i) => i === 0 || (placed[i - 1]?.event.when ?? 0) < f.event.when);
+
+/**
+ * Które z pozostałych wydarzeń może iść jako następne. Zwykle jedno — to
+ * najwcześniejsze. Gdy książka podaje tylko miesiąc („w czerwcu 1940 r."), a obok
+ * jest konkretny dzień z tego samego miesiąca, kolejności nie da się ustalić
+ * i każde z nich jest dobrą odpowiedzią.
+ */
+export function nextCandidates(remaining: readonly DatedFact[]): readonly DatedFact[] {
+  return remaining.filter(
+    (e) => !remaining.some((f) => f !== e && comparable(f, e) && f.event.when < e.event.when),
+  );
+}
+
