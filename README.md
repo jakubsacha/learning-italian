@@ -37,6 +37,7 @@ docelowo pośredniczyć będzie funkcja brzegowa Supabase.
 
 - `src/` — kod aplikacji (podział wyżej)
 - `src/marta/` — podstrona z angielskim dla dziecka (patrz niżej)
+- `src/historia/` — podstrona z historią (patrz niżej)
 - `supabase.sql` — schemat bazy
 
 ## Podstrona dla Marty — angielski
@@ -60,6 +61,29 @@ działają tam bez jednej linijki zmiany. Różni się materiał, zapis i wyglą
 Zdania z luką są szukane zwykłym `indexOf`, więc luka `is` w zdaniu „This is my family."
 trafiłaby w środek słowa „This". Pilnuje tego test — i to on wyłapał, że „My parents are…"
 nie nadaje się na lukę `are`, bo „parents" zawiera te litery.
+
+## Podstrona z historią — II wojna światowa
+
+`/historia/` to nauka historii dla syna, na tym samym rdzeniu co reszta: powtórki
+rozłożone w czasie, kolejka, zapis z walidacją. Materiał to **126 faktów spisanych ze
+zdjęć podręcznika** (rozdział I, s. 8–21: „Napaść na Polskę", „Podbój Europy przez Hitlera
+i Stalina" i wkładka „Dlaczego Niemcy nie zdobyli Anglii?") — bez faktów spoza książki.
+Każdy fakt ma numer strony.
+
+- **Najważniejsze najpierw.** 63 fakty pogrubione albo czerwone w książce mają gwiazdkę
+  i wchodzą do nauki przed resztą. Przed sprawdzianem najważniejsze są przerobione,
+  zanim przyjdzie czas na ciekawostki z wkładki.
+- **Nauka**: fiszka (pytanie → odpowiedź → „Nie wiem / Prawie / Umiem") i test ABCD.
+  Błędne odpowiedzi są zawsze **tego samego rodzaju** co dobra — data przeciw datom,
+  osoba przeciw osobom — bo pytanie o datę z „Westerplatte" do wyboru nic nie sprawdza.
+  10 nowych faktów dziennie (do zmiany), powtórki przed nowymi.
+- **Oś czasu**: cztery wydarzenia do ułożenia od najwcześniejszego. Gdy książka podaje
+  tylko miesiąc („w czerwcu 1940 r."), takie wydarzenie nie trafi do rundy z innym
+  z tego samego miesiąca — kolejność zawsze da się ustalić z samej książki.
+- **Ściąga**: cały materiał pogrupowany jak w podręczniku, z filtrem „tylko najważniejsze".
+- **Zakres**: cały rozdział albo jeden temat.
+
+Materiał leży w `src/historia/facts.json`; nowe tematy dopisuje się tam.
 
 ## Jak działa nauka
 

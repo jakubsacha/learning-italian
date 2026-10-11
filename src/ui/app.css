@@ -364,7 +364,7 @@ dialog.auth::backdrop{background:rgba(19,31,36,.55)}
 .scene-row .body{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
 .scene-row .title{font-weight:800}
 .scene-row .track{display:block;height:6px;border-radius:6px;background:var(--line);overflow:hidden}
-.scene-row .track i{display:block;height:100%;background:var(--green)}
+.scene-row .track i{display:block;height:100%;background:var(--good)}
 .scene-row .count{font-size:.8rem;font-weight:800;color:var(--muted);text-align:right;
   display:flex;flex-direction:column}
 .scene-row .count em{font-style:normal;color:var(--blue-dark)}
