@@ -1,4 +1,4 @@
-<!-- Konfetti na sukces. Każde nowe `burst` wysypuje świeżą porcję. -->
+<!-- Konfetti na sukces, wspólne dla podstron. Każde nowe `burst` wysypuje świeżą porcję. -->
 <script lang="ts">
   type Props = { burst: number };
   let { burst }: Props = $props();
@@ -24,3 +24,35 @@
     </div>
   {/key}
 {/if}
+
+<style>
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.confetti i {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 16px;
+  border-radius: 3px;
+  animation: fall 1.8s ease-in forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translate(var(--drift), 110vh) rotate(calc(var(--spin) + 540deg));
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+}
+</style>

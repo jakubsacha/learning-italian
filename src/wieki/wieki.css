@@ -1,0 +1,345 @@
+/* „Który to wiek?" — barwy starego pergaminu i duże przyciski pod palec. */
+
+:root,
+:root:not([data-theme="light"]),
+:root[data-theme="dark"] {
+  --ink: #3b2a1a;
+  --muted: #8a7458;
+  --paper: #fff8e7;
+  --gold: #f2b134;
+  --brown: #7b4f2c;
+  --brown-dark: #5a3519;
+  --ok: #3d8b3d;
+  --no: #c0392b;
+}
+
+body {
+  background: #e2c896 radial-gradient(circle at 50% 0, #f6e8c6 0%, #e2c896 70%) fixed;
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.ages {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 14px 16px 40px;
+}
+
+.ages-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ages-top h1 {
+  font-size: clamp(1.3rem, 6.5vw, 1.6rem);
+  color: var(--brown-dark);
+  white-space: nowrap;
+}
+
+.pill {
+  background: var(--paper);
+  border-radius: 99px;
+  padding: 6px 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 #c9a96e;
+}
+
+.modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 16px;
+  background: rgb(91 53 25 / 15%);
+}
+
+.modes button {
+  padding: 9px;
+  border-radius: 12px;
+  font-weight: 800;
+  color: var(--brown-dark);
+}
+
+.modes button[aria-pressed="true"] {
+  background: var(--brown);
+  color: #fff;
+  box-shadow: 0 3px 0 var(--brown-dark);
+}
+
+.famous {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 2px 12px;
+  font-weight: 700;
+  color: var(--brown-dark);
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  color: var(--brown-dark);
+  margin-bottom: 8px;
+}
+
+.streak {
+  border-radius: 99px;
+  padding: 0 10px;
+  background: rgb(255 255 255 / 45%);
+  transition: transform 0.2s;
+}
+
+.streak.hot {
+  background: #ff7043;
+  color: #fff;
+  transform: scale(1.15);
+}
+
+/* Rok na „zwoju" */
+.scroll {
+  background: var(--paper);
+  border-radius: 22px;
+  border: 3px solid #c9a96e;
+  box-shadow: 0 7px 0 #c9a96e;
+  text-align: center;
+  padding: 22px 14px 18px;
+  margin-bottom: 16px;
+}
+
+.year {
+  font-size: clamp(2.4rem, 13vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--brown-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+.what {
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+.ask {
+  margin-top: 4px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.option {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 6px;
+  font-size: clamp(1rem, 5.2vw, 1.25rem);
+  white-space: nowrap;
+  font-weight: 800;
+  color: var(--ink);
+  box-shadow: 0 5px 0 #c9a96e;
+}
+
+.option small {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.option:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.option.ok {
+  background: var(--ok);
+  color: #fff;
+  opacity: 1;
+  box-shadow: 0 5px 0 #2a622a;
+  animation: pop 0.35s;
+}
+
+.option.no {
+  background: var(--no);
+  color: #fff;
+  opacity: 1;
+  box-shadow: 0 5px 0 #8e2a20;
+  animation: shake 0.4s;
+}
+
+.option.ok small,
+.option.no small {
+  color: #fff;
+}
+
+.verdict {
+  margin-top: 14px;
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: var(--paper);
+  border: 3px solid var(--ok);
+}
+
+.verdict.bad {
+  border-color: var(--no);
+}
+
+.verdict > b {
+  font-size: 1.15rem;
+  color: var(--ok);
+}
+
+.verdict.bad > b {
+  color: var(--no);
+}
+
+.verdict p {
+  margin: 4px 0 10px;
+  font-weight: 700;
+}
+
+/* Linijka: trzy wieki obok siebie, bieżący wyróżniony */
+.ruler {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #c9a96e;
+}
+
+.seg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 2px;
+  background: #f3e4c1;
+  font-size: 0.78rem;
+  text-align: center;
+  min-width: 0;
+}
+
+.seg + .seg {
+  border-left: 2px dashed #c9a96e;
+}
+
+.seg b {
+  font-size: 0.9rem;
+}
+
+.seg.here {
+  background: var(--gold);
+}
+
+.seg.here b {
+  font-size: 1.05rem;
+}
+
+.pin {
+  font-style: normal;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.big {
+  width: 100%;
+  min-height: 56px;
+  margin-top: 12px;
+  border-radius: 18px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--brown);
+  box-shadow: 0 5px 0 var(--brown-dark);
+}
+
+.big:active,
+.option:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+.finish {
+  background: var(--paper);
+  border-radius: 22px;
+  border: 3px solid #c9a96e;
+  text-align: center;
+  padding: 20px 16px;
+  font-weight: 700;
+}
+
+.finish h2 {
+  margin: 4px 0;
+  font-size: 1.8rem;
+  color: var(--brown-dark);
+}
+
+.trophy {
+  font-size: 56px;
+  animation: pop 0.6s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.help {
+  margin-top: 18px;
+  background: rgb(255 255 255 / 50%);
+  border-radius: 16px;
+  padding: 10px 14px;
+}
+
+.help summary {
+  font-weight: 800;
+  cursor: pointer;
+  color: var(--brown-dark);
+}
+
+.help ol {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  font-weight: 600;
+}
+
+.help li {
+  margin-bottom: 4px;
+}
+
+.foot {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.6);
+  }
+}
+
+@keyframes shake {
+  25% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option.ok,
+  .option.no,
+  .trophy {
+    animation: none;
+  }
+}

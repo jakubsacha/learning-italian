@@ -8,7 +8,7 @@
   import { again } from "../deck.js";
   import { shuffle, systemRng } from "../../domain/random.js";
   import Picture from "./Picture.svelte";
-  import Confetti from "./Confetti.svelte";
+  import Confetti from "../../ui/Confetti.svelte";
   import { untrack } from "svelte";
 
   type Props = { app: English; active: boolean };

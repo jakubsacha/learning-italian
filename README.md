@@ -39,6 +39,7 @@ docelowo pośredniczyć będzie funkcja brzegowa Supabase.
 - `src/marta/` — podstrona z angielskim dla dziecka (patrz niżej)
 - `src/historia/` — podstrona z historią (patrz niżej)
 - `src/angielski/` — fiszki z angielskiego, Unit 2 (patrz niżej)
+- `src/wieki/` — gra „Który to wiek?" (patrz niżej)
 - `supabase.sql` — schemat bazy
 
 ## Podstrona dla Marty — angielski
@@ -80,6 +81,16 @@ przymiotniki (2.2), pytania o mnie (2.4) i moje rzeczy (2.5) — 39 haseł w `sr
 - Zapis pod kluczami `angielski.*`, nic nie miesza się z resztą. Postęp jest w przeglądarce,
   więc każde dziecko na swoim urządzeniu ma własny — przycisk „📤 Wyślij” udostępnia link
   (na telefonie systemowym „Udostępnij”, gdzie indziej kopiuje go do schowka).
+
+## Gra „Który to wiek?"
+
+`/wieki/` losuje rok, a dziecko wybiera wiek spośród czterech odpowiedzi zapisanych cyframi
+rzymskimi. Złe odpowiedzi to typowe pomyłki: wiek obok (zapomniane „+1" albo dodane przy
+pełnej setce) i — w trybie „Też p.n.e." — ta sama liczba w drugiej erze. Co piąty rok to
+pułapka (1500, 1501…), a z „Słynnymi datami" co czwarty to data z historii (966, 1410,
+753 p.n.e.…). Po odpowiedzi wyjaśnienie krok po kroku i linijka z trzema wiekami.
+Roku zerowego nie ma, więc I wiek to lata 1–100, a I w. p.n.e. — 100–1 p.n.e.
+Logika w `src/wieki/century.ts`, zapis pod kluczami `wieki.*`.
 
 ## Podstrona z historią — II wojna światowa
 
