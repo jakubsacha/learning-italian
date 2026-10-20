@@ -38,6 +38,7 @@ docelowo pośredniczyć będzie funkcja brzegowa Supabase.
 - `src/` — kod aplikacji (podział wyżej)
 - `src/marta/` — podstrona z angielskim dla dziecka (patrz niżej)
 - `src/historia/` — podstrona z historią (patrz niżej)
+- `src/angielski/` — fiszki z angielskiego, Unit 2 (patrz niżej)
 - `supabase.sql` — schemat bazy
 
 ## Podstrona dla Marty — angielski
@@ -61,6 +62,22 @@ działają tam bez jednej linijki zmiany. Różni się materiał, zapis i wyglą
 Zdania z luką są szukane zwykłym `indexOf`, więc luka `is` w zdaniu „This is my family."
 trafiłaby w środek słowa „This". Pilnuje tego test — i to on wyłapał, że „My parents are…"
 nie nadaje się na lukę `are`, bo „parents" zawiera te litery.
+
+## Fiszki z angielskiego — Unit 2
+
+`/angielski/` to fiszki ze słówek z niebieskich ramek w „Wordlist" Unit 2: ubrania (2.1),
+przymiotniki (2.2), pytania o mnie (2.4) i moje rzeczy (2.5) — 39 haseł w `src/angielski/words.ts`.
+
+- **Działy** włącza się i wyłącza przyciskami na górze (ostatniego nie da się wyłączyć);
+  wybór zostaje po przeładowaniu.
+- **Fiszki**: obracana karta, oba kierunki (🇬🇧→🇵🇱 i 🇵🇱→🇬🇧), „Powtórz" odkłada kartę trzy dalej,
+  na końcu konfetti i powtórka trudnych. Klawiatura: spacja odwraca, 1 — powtórz, 2 — umiem.
+- **Gra**: obrazek i polskie słowo, cztery angielskie odpowiedzi z tego samego działu,
+  seria 🔥 i gwiazdki za wynik.
+- **Słówka**: wszystkie kafelki z obrazkami; dotknięcie czyta słowo na głos.
+- **Rysunki** ubrań i rzeczy są własne (`art.ts`), bo emoji nie odróżniają płaszcza od kurtki
+  ani bluzy od swetra; przymiotniki i pytania mają emoji.
+- Zapis pod kluczami `angielski.*`, nic nie miesza się z resztą.
 
 ## Podstrona z historią — II wojna światowa
 

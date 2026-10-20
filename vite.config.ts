@@ -13,12 +13,13 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: true,
     rollupOptions: {
-      // Trzy strony: kurs włoski w katalogu głównym, angielski Marty w /marta/
-      // i historia w /historia/.
+      // Cztery strony: kurs włoski w katalogu głównym, angielski Marty w /marta/,
+      // historia w /historia/ i fiszki z angielskiego (Unit 2) w /angielski/.
       input: {
         main: resolve(import.meta.dirname, "index.html"),
         marta: resolve(import.meta.dirname, "marta/index.html"),
         historia: resolve(import.meta.dirname, "historia/index.html"),
+        angielski: resolve(import.meta.dirname, "angielski/index.html"),
       },
     },
   },
