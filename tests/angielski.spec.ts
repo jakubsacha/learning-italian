@@ -113,3 +113,11 @@ test("na telefonie nic nie wystaje poza ekran", async ({ page }) => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), String(tab)).toBe(false);
   }
 });
+
+test("link do wysłania trafia do schowka, gdy nie ma systemowego udostępniania", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.evaluate(() => Object.defineProperty(navigator, "share", { value: undefined }));
+  await page.getByTestId("share").click();
+  await expect(page.getByTestId("shared")).toContainText("Skopiowano link");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/\/angielski\/index\.html$|\/angielski\/$/);
+});

@@ -77,7 +77,9 @@ przymiotniki (2.2), pytania o mnie (2.4) i moje rzeczy (2.5) — 39 haseł w `sr
 - **Słówka**: wszystkie kafelki z obrazkami; dotknięcie czyta słowo na głos.
 - **Rysunki** ubrań i rzeczy są własne (`art.ts`), bo emoji nie odróżniają płaszcza od kurtki
   ani bluzy od swetra; przymiotniki i pytania mają emoji.
-- Zapis pod kluczami `angielski.*`, nic nie miesza się z resztą.
+- Zapis pod kluczami `angielski.*`, nic nie miesza się z resztą. Postęp jest w przeglądarce,
+  więc każde dziecko na swoim urządzeniu ma własny — przycisk „📤 Wyślij” udostępnia link
+  (na telefonie systemowym „Udostępnij”, gdzie indziej kopiuje go do schowka).
 
 ## Podstrona z historią — II wojna światowa
 

@@ -9,6 +9,25 @@
   type Props = { app: English };
   let { app }: Props = $props();
 
+  let shared = $state("");
+
+  /** Link do wysłania: na telefonie systemowe „Udostępnij", gdzie indziej kopia do schowka. */
+  async function share(): Promise<void> {
+    const url = location.origin + location.pathname;
+    const data = { title: "Angielski · Unit 2", text: "Fiszki i gra ze słówkami z Unit 2 🇬🇧", url };
+    try {
+      if (navigator.share !== undefined) {
+        await navigator.share(data);
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      shared = "Skopiowano link! Wklej go koleżankom i kolegom.";
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") return;
+      shared = url;
+    }
+  }
+
   type Tab = "cards" | "game" | "list";
   let tab = $state<Tab>("cards");
   const TABS: readonly (readonly [Tab, string])[] = [
@@ -56,5 +75,8 @@
   <p class="en-foot" data-test="stat">
     Umiesz {app.cards.filter((c) => app.known.has(c.en)).length} z {app.cards.length} słówek w wybranych działach
   </p>
+  <button class="share" data-test="share" onclick={share}>📤 Wyślij koleżankom i kolegom</button>
+  {#if shared !== ""}<p class="en-foot" data-test="shared">{shared}</p>{/if}
+  <p class="en-foot small">Każdy ma swój postęp — zapisuje się na jego telefonie lub tablecie.</p>
   <footer class="en-foot">Słówka z „Wordlist” Unit 2 · lekcje 2.1, 2.2, 2.4, 2.5</footer>
 </div>
