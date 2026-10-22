@@ -75,6 +75,10 @@ przymiotniki (2.2), pytania o mnie (2.4) i moje rzeczy (2.5) — 39 haseł w `sr
   na końcu konfetti i powtórka trudnych. Klawiatura: spacja odwraca, 1 — powtórz, 2 — umiem.
 - **Gra**: obrazek i polskie słowo, cztery angielskie odpowiedzi z tego samego działu,
   seria 🔥 i gwiazdki za wynik.
+- **This/That**: wskazywanie z zeszytu — ściąga 2×2 (jedna rzecz / wiele × blisko / daleko)
+  i gra: na obrazku dziecko pokazuje rzecz tuż obok (👇) albo daleko (👉), a w zdaniu z luką
+  trzeba wstawić this, that, these albo those. Zdania to przykłady z zeszytu (z poprawioną
+  pisownią) i kilka ze słówek z Unit 2, w `src/angielski/pointing.ts`.
 - **Słówka**: wszystkie kafelki z obrazkami; dotknięcie czyta słowo na głos.
 - **Rysunki** ubrań i rzeczy są własne (`art.ts`), bo emoji nie odróżniają płaszcza od kurtki
   ani bluzy od swetra; przymiotniki i pytania mają emoji.

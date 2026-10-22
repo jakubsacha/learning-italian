@@ -1,10 +1,11 @@
-<!-- Powłoka: działy do wybrania, trzy zakładki, gwiazdki. -->
+<!-- Powłoka: działy do wybrania, cztery zakładki, gwiazdki. -->
 <script lang="ts">
   import type { English } from "../app.svelte.js";
   import { CARDS, SECTIONS } from "../words.js";
   import Flash from "./Flash.svelte";
   import Game from "./Game.svelte";
   import List from "./List.svelte";
+  import Point from "./Point.svelte";
 
   type Props = { app: English };
   let { app }: Props = $props();
@@ -28,11 +29,12 @@
     }
   }
 
-  type Tab = "cards" | "game" | "list";
+  type Tab = "cards" | "game" | "point" | "list";
   let tab = $state<Tab>("cards");
   const TABS: readonly (readonly [Tab, string])[] = [
     ["cards", "🃏 Fiszki"],
     ["game", "🎮 Gra"],
+    ["point", "👉 This/That"],
     ["list", "📖 Słówka"],
   ];
 </script>
@@ -43,6 +45,8 @@
     <span class="stars-count" title="Zebrane gwiazdki" data-test="stars">⭐ {app.stars}</span>
   </header>
 
+  <!-- Działy dotyczą słówek; wskazywanie ma własne zdania. -->
+  {#if tab !== "point"}
   <div class="chips-head">
     <span>Co ćwiczymy?</span>
     <button class="chip-all" aria-pressed={app.sections.size === SECTIONS.length} onclick={() => app.selectAll()}>
@@ -56,6 +60,7 @@
       </button>
     {/each}
   </div>
+  {/if}
 
   <div class="en-tabs" role="tablist">
     {#each TABS as [id, label] (id)}
@@ -68,6 +73,8 @@
   </section>
   {#if tab === "game"}
     <section class="en-panel" data-test="panel-game"><Game {app} /></section>
+  {:else if tab === "point"}
+    <section class="en-panel" data-test="panel-point"><Point {app} /></section>
   {:else if tab === "list"}
     <section class="en-panel" data-test="panel-list"><List {app} /></section>
   {/if}

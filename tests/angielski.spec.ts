@@ -106,9 +106,34 @@ test("słówka: wszystkie kafelki z obrazkami, umiane z ptaszkiem", async ({ pag
   await expect(list.locator(`.word-tile[data-word="${first}"]`)).toHaveClass(/known/);
 });
 
+test("this/that: ściąga 2×2, obrazek blisko/daleko i odpowiedź zgodna z regułą", async ({ page }) => {
+  await page.getByRole("tab", { name: /This/ }).click();
+  const panel = page.getByTestId("panel-point");
+  await expect(panel.getByTestId("rule").locator("button")).toHaveText(["This", "That", "These", "Those"]);
+  // działy słówek nie dotyczą zdań, więc ich tu nie ma
+  await expect(page.locator(".chips")).toHaveCount(0);
+  for (let i = 1; i <= 10; i++) {
+    await expect(panel.getByTestId("point-progress")).toHaveText(`Zdanie ${i} z 10`);
+    const q = panel.getByTestId("point-question");
+    const far = (await q.getAttribute("data-far")) === "1";
+    const sentence = (await panel.getByTestId("sentence").textContent()) ?? "";
+    const many = /\bare\b|^Are\b/.test(sentence);
+    const word = many ? (far ? "those" : "these") : far ? "that" : "this";
+    await expect(panel.locator('.choice[data-ok="1"]')).toHaveText(word);
+    // pierwsze zdanie celowo źle
+    await panel.locator(i === 1 ? '.choice[data-ok="0"]' : '.choice[data-ok="1"]').first().click();
+    await expect(panel.getByTestId("point-verdict")).toContainText(`→ ${word}`);
+    await panel.getByTestId("point-next").click();
+  }
+  await expect(panel.getByTestId("point-score")).toHaveText("Dobrze: 9 z 10");
+  await expect(page.getByTestId("stars")).toHaveText("⭐ 12");
+  await panel.getByTestId("point-again").click();
+  await expect(panel.getByTestId("point-progress")).toHaveText("Zdanie 1 z 10");
+});
+
 test("na telefonie nic nie wystaje poza ekran", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 640 });
-  for (const tab of [/Fiszki/, /Gra/, /Słówka/]) {
+  for (const tab of [/Fiszki/, /Gra/, /This/, /Słówka/]) {
     await page.getByRole("tab", { name: tab }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), String(tab)).toBe(false);
   }
