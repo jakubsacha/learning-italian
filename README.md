@@ -79,6 +79,11 @@ przymiotniki (2.2), pytania o mnie (2.4) i moje rzeczy (2.5) — 39 haseł w `sr
   i gra: na obrazku dziecko pokazuje rzecz tuż obok (👇) albo daleko (👉), a w zdaniu z luką
   trzeba wstawić this, that, these albo those. Zdania to przykłady z zeszytu (z poprawioną
   pisownią) i kilka ze słówek z Unit 2, w `src/angielski/pointing.ts`.
+- **Pytania**: pytania z „be” przez inwersję (`src/angielski/questions.ts`), trzy gry:
+  🧱 *Ułóż* — zdanie „You are happy.” zamienia się w pytanie z klocków, a jeden klocek to zły
+  czasownik na pułapkę; 💬 *Odpowiedz* — krótka odpowiedź do pytania i ✅/❌, z pułapkami
+  „Yes, I'm.” i złym zaimkiem; 🕵️ *Kto to?* — zgadywanka z tabelki z ćwiczenia 9
+  (Don, Carl, Mark, Jim): pytania „Is he British?” odsiewają podejrzanych.
 - **Słówka**: wszystkie kafelki z obrazkami; dotknięcie czyta słowo na głos.
 - **Rysunki** ubrań i rzeczy są własne (`art.ts`), bo emoji nie odróżniają płaszcza od kurtki
   ani bluzy od swetra; przymiotniki i pytania mają emoji.

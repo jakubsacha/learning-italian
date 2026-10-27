@@ -131,9 +131,69 @@ test("this/that: ściąga 2×2, obrazek blisko/daleko i odpowiedź zgodna z regu
   await expect(panel.getByTestId("point-progress")).toHaveText("Zdanie 1 z 10");
 });
 
+test("pytania: klocki układają pytanie z czasownikiem na początku", async ({ page }) => {
+  await page.getByRole("tab", { name: /Pytania/ }).click();
+  const panel = page.getByTestId("panel-ask");
+  await expect(page.locator(".chips")).toHaveCount(0);
+  // pierwsze źle: podmiot przed czasownikiem
+  for (const role of ["subject", "verb", "rest"]) await panel.locator(`.tile-btn[data-role=${role}]`).click();
+  await expect(panel.getByTestId("q-verdict")).toContainText("Prawie");
+  await panel.getByTestId("q-next").click();
+  for (let i = 2; i <= 8; i++) {
+    await expect(panel.getByTestId("q-progress")).toHaveText(`${i} z 8`);
+    for (const role of ["verb", "subject", "rest"]) await panel.locator(`.tile-btn[data-role=${role}]`).click();
+    await expect(panel.getByTestId("slot")).toHaveText(/^(Am|Is|Are) .+\?$/);
+    await expect(panel.getByTestId("q-verdict")).toContainText("Brawo");
+    await panel.getByTestId("q-next").click();
+  }
+  await expect(panel.getByTestId("q-score")).toHaveText("Dobrze: 7 z 8");
+  await expect(page.getByTestId("stars")).toHaveText("⭐ 9");
+});
+
+test("pytania: krótka odpowiedź zgodna z ✅/❌, bez skrótu przy „Yes”", async ({ page }) => {
+  await page.getByRole("tab", { name: /Pytania/ }).click();
+  const panel = page.getByTestId("panel-ask");
+  await panel.getByTestId("q-answer").click();
+  for (let i = 1; i <= 8; i++) {
+    const yes = (await panel.getByTestId("truth").textContent())?.includes("tak") ?? false;
+    const ok = panel.locator('.choice[data-ok="1"]');
+    await expect(ok).toHaveText(yes ? /^Yes, \w+ (am|is|are)\.$/ : /^No, .+(n't|'m not)\.$/);
+    await ok.click();
+    await panel.getByTestId("q-next").click();
+  }
+  await expect(panel.getByTestId("q-score")).toHaveText("Dobrze: 8 z 8");
+});
+
+test("pytania: „Kto to?” — odpowiedzi z tabelki odsiewają podejrzanych", async ({ page }) => {
+  await page.getByRole("tab", { name: /Pytania/ }).click();
+  const panel = page.getByTestId("panel-ask");
+  await panel.getByTestId("q-guess").click();
+  const table: Record<string, string[]> = {
+    Don: ["teenager", "superhero", "Polish"],
+    Carl: ["British"],
+    Mark: ["teenager", "British"],
+    Jim: ["superhero", "Polish"],
+  };
+  await panel.locator("[data-trait=British]").click();
+  await panel.locator("[data-trait=teenager]").click();
+  const log = await panel.getByTestId("guess-log").locator("li span").allTextContents();
+  const british = log[0]?.startsWith("Yes") ?? false;
+  const teen = log[1]?.startsWith("Yes") ?? false;
+  const who = Object.keys(table).filter(
+    (n) => table[n]?.includes("British") === british && table[n]?.includes("teenager") === teen,
+  );
+  expect(who).toHaveLength(1);
+  for (const n of Object.keys(table)) {
+    await expect(panel.locator(`.suspect[data-name=${n}]`)).toHaveClass(who.includes(n) ? /^(?!.*\bout\b)/ : /\bout\b/);
+  }
+  await panel.locator(`.suspect[data-name=${who[0]}]`).click();
+  await expect(panel.getByTestId("guess-verdict")).toContainText(`Brawo! To ${who[0]}`);
+  await expect(page.getByTestId("stars")).toHaveText("⭐ 3");
+});
+
 test("na telefonie nic nie wystaje poza ekran", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 640 });
-  for (const tab of [/Fiszki/, /Gra/, /This/, /Słówka/]) {
+  for (const tab of [/Fiszki/, /Gra/, /This/, /Pytania/, /Słówka/]) {
     await page.getByRole("tab", { name: tab }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), String(tab)).toBe(false);
   }
