@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { CARDS, SECTIONS, inSections } from "./words";
+import { CARDS, FURNITURE, SECTIONS, activeIn, cardsOf, inSections, roomSentence, sectionsOf } from "./words";
 import { ART } from "./art";
 import { again, gameRound, options, starsFor } from "./deck";
-import { ALL, KEYS, readKnown, readSections, readStars } from "./storage";
+import { ALL, KEYS, readKnown, readSections, readStars, readUnit } from "./storage";
 import { memoryStore } from "../storage/stores";
 import { firstRng } from "../domain/fixtures";
 
 describe("słówka z Unit 2", () => {
   it("cztery działy z niebieskich ramek, w liczbie jak w książce", () => {
     const count = (id: string) => CARDS.filter((c) => c.section === id).length;
-    expect(SECTIONS.map((s) => s.lesson)).toEqual(["2.1", "2.2", "2.4", "2.5"]);
+    expect(sectionsOf(2).map((s) => s.lesson)).toEqual(["2.1", "2.2", "2.4", "2.5"]);
     expect([count("ubrania"), count("przymiotniki"), count("pytania"), count("rzeczy")]).toEqual([16, 8, 9, 6]);
   });
 
@@ -24,6 +24,41 @@ describe("słówka z Unit 2", () => {
   it("filtr zostawia tylko wybrane działy", () => {
     const only = inSections(CARDS, new Set(["rzeczy"] as const));
     expect(only.map((c) => c.en)).toEqual(["backpack", "headphones", "keys", "mountain bike", "smartphone", "tablet"]);
+  });
+});
+
+describe("Unit 3 — tylko pokoje i meble z zeszytu", () => {
+  it("dokładnie te słówka, pogrupowane jak w zeszycie", () => {
+    const words = (id: string) => CARDS.filter((c) => c.section === id).map((c) => c.en);
+    expect(words("sypialnia")).toEqual(["bedroom", "bed", "desk", "chair", "wardrobe"]);
+    expect(words("salon")).toEqual(["living room", "TV", "sofa", "armchair"]);
+    expect(words("lazienka")).toEqual(["bathroom", "toilet", "bath", "shower"]);
+    expect(cardsOf(3)).toHaveLength(13);
+    expect(cardsOf(2)).toHaveLength(39);
+  });
+
+  it("każdy unit ma swoje działy; brak wyboru w unicie znaczy wszystkie jego działy", () => {
+    expect(SECTIONS).toHaveLength(7);
+    expect([...activeIn(3, new Set(["ubrania"] as const))]).toEqual(["sypialnia", "salon", "lazienka"]);
+    expect([...activeIn(3, new Set(["ubrania", "salon"] as const))]).toEqual(["salon"]);
+    expect([...activeIn(2, new Set(["salon"] as const))]).toEqual(["ubrania", "przymiotniki", "pytania", "rzeczy"]);
+  });
+
+  it("gra w pokoje: dziesięć mebli i zdanie z odpowiedzią", () => {
+    expect(FURNITURE.map((c) => c.en)).toEqual(["bed", "desk", "chair", "wardrobe", "TV", "sofa", "armchair", "toilet", "bath", "shower"]);
+    const tv = FURNITURE.find((c) => c.en === "TV");
+    const bath = FURNITURE.find((c) => c.en === "bath");
+    if (tv === undefined || bath === undefined) throw new Error("brak mebli");
+    expect(roomSentence(tv)).toEqual({ en: "The TV is in the living room.", pl: "Telewizor jest w salonie." });
+    expect(roomSentence(bath)).toEqual({ en: "The bath is in the bathroom.", pl: "Wanna jest w łazience." });
+  });
+
+  it("odpowiedzi w grze z Unitu 3 są z tego samego pokoju albo przynajmniej z Unitu 3", () => {
+    for (const card of cardsOf(3)) {
+      const opts = options(card, cardsOf(3), firstRng);
+      expect(opts).toHaveLength(4);
+      for (const o of opts) expect(cardsOf(3)).toContain(o);
+    }
   });
 });
 
@@ -75,6 +110,15 @@ describe("zapis", () => {
     expect([...readSections(store)]).toEqual(["rzeczy"]);
     expect([...readKnown(store)]).toEqual(["keys"]);
     expect(readStars(store)).toBe(12);
+  });
+
+  it("unit: zapisany albo najnowszy", () => {
+    const store = memoryStore();
+    expect(readUnit(store)).toBe(3);
+    store.write(KEYS.unit, 2);
+    expect(readUnit(store)).toBe(2);
+    store.write(KEYS.unit, 9);
+    expect(readUnit(store)).toBe(3);
   });
 
   it("bez zapisu — wszystkie działy, nic nie umiane, zero gwiazdek", () => {

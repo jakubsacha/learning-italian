@@ -8,8 +8,8 @@
   let { app }: Props = $props();
 </script>
 
-{#each SECTIONS.filter((s) => app.sections.has(s.id)) as s (s.id)}
-  <h3 class="list-head">{s.icon} {s.lesson} {s.label}</h3>
+{#each SECTIONS.filter((s) => app.active.has(s.id)) as s (s.id)}
+  <h3 class="list-head">{s.icon} {s.unit === 2 ? `${s.lesson} ` : ""}{s.label}</h3>
   <div class="tiles-grid" class:wide={s.id === "pytania"}>
     {#each app.cards.filter((c) => c.section === s.id) as c (c.en)}
       <button class="word-tile" class:known={app.known.has(c.en)} onclick={() => app.say(c.en)} data-word={c.en}>

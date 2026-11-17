@@ -5,7 +5,6 @@
 <script lang="ts">
   import type { English } from "../app.svelte.js";
   import type { Card } from "../words.js";
-  import { CARDS } from "../words.js";
   import { gameRound, options, starsFor } from "../deck.js";
   import { systemRng } from "../../domain/random.js";
   import Picture from "./Picture.svelte";
@@ -30,8 +29,8 @@
 
   function deal(): void {
     const card = round[index];
-    // Odpowiedzi z całego materiału, gdy w wybranych działach jest za mało słówek.
-    choices = card === undefined ? [] : options(card, app.cards.length >= 4 ? app.cards : CARDS, systemRng);
+    // Odpowiedzi z całego unitu, gdy w wybranych działach jest za mało słówek.
+    choices = card === undefined ? [] : options(card, app.cards.length >= 4 ? app.cards : app.unitCards, systemRng);
     picked = null;
   }
 

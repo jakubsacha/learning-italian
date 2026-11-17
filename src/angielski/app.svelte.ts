@@ -5,40 +5,56 @@
 
 import type { KeyValueStore } from "../ports/storage.js";
 import type { Speech } from "../ports/speech.js";
-import { CARDS, inSections, type Card, type SectionId } from "./words.js";
-import { ALL, KEYS, readKnown, readSections, readStars } from "./storage.js";
+import { CARDS, activeIn, cardsOf, inSections, sectionsOf, type Card, type SectionId, type Unit } from "./words.js";
+import { ALL, KEYS, LATEST_UNIT, readKnown, readSections, readStars, readUnit } from "./storage.js";
 
 export class English {
   readonly #store: KeyValueStore;
   readonly speech: Speech;
 
+  unit = $state<Unit>(LATEST_UNIT);
+  /** Zaznaczone działy ze wszystkich unitów; liczą się te z bieżącego. */
   sections = $state<ReadonlySet<SectionId>>(ALL);
   known = $state<ReadonlySet<string>>(new Set());
   stars = $state(0);
 
+  /** Działy bieżącego unitu, z których bierzemy karty. */
+  readonly active: ReadonlySet<SectionId> = $derived(activeIn(this.unit, this.sections));
   /** Karty z zaznaczonych działów, w kolejności książki. */
-  readonly cards: readonly Card[] = $derived(inSections(CARDS, this.sections));
+  readonly cards: readonly Card[] = $derived(inSections(CARDS, this.active));
+  /** Wszystkie karty bieżącego unitu — np. na złe odpowiedzi w grze. */
+  readonly unitCards: readonly Card[] = $derived(cardsOf(this.unit));
 
   constructor(deps: { store: KeyValueStore; speech: Speech }) {
     this.#store = deps.store;
     this.speech = deps.speech;
+    this.unit = readUnit(deps.store);
     this.sections = readSections(deps.store);
     this.known = readKnown(deps.store);
     this.stars = readStars(deps.store);
   }
 
-  /** Włącza albo wyłącza dział. Ostatniego nie da się wyłączyć — pusta talia nic nie uczy. */
+  setUnit(unit: Unit): void {
+    this.unit = unit;
+    this.#store.write(KEYS.unit, unit);
+  }
+
+  /**
+   * Włącza albo wyłącza dział bieżącego unitu. Ostatniego nie da się wyłączyć —
+   * pusta talia nic nie uczy. Wybór w innym unicie zostaje nietknięty.
+   */
   toggleSection(id: SectionId): void {
-    const next = new Set(this.sections);
-    if (next.has(id)) {
-      if (next.size === 1) return;
+    const next = new Set([...this.sections, ...this.active]);
+    if (this.active.has(id)) {
+      if (this.active.size === 1) return;
       next.delete(id);
     } else next.add(id);
     this.#setSections(next);
   }
 
+  /** Wszystkie działy bieżącego unitu. */
   selectAll(): void {
-    this.#setSections(ALL);
+    this.#setSections(new Set([...this.sections, ...sectionsOf(this.unit).map((s) => s.id)]));
   }
 
   #setSections(next: ReadonlySet<SectionId>): void {

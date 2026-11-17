@@ -65,6 +65,29 @@ body {
   box-shadow: 0 3px 0 var(--sky-dark);
 }
 
+/* Unit */
+.units {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.units button {
+  padding: 8px;
+  border-radius: 14px;
+  font-weight: 800;
+  color: #fff;
+  border: 2px solid rgb(255 255 255 / 60%);
+}
+
+.units button[aria-pressed="true"] {
+  background: var(--sun);
+  border-color: var(--sun);
+  color: var(--ink);
+  box-shadow: 0 3px 0 #d9a400;
+}
+
 /* Działy */
 .chips-head {
   display: flex;
@@ -113,6 +136,23 @@ body {
 
 .chip small {
   opacity: 0.8;
+}
+
+.chips.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.chips.three .chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.85rem;
+  padding: 6px 2px;
+  line-height: 1.2;
+}
+
+.chips.three .chip small {
+  display: none;
 }
 
 @media (max-width: 359px) {
@@ -166,6 +206,14 @@ body {
   grid-column: span 3;
 }
 
+.en-tabs.four {
+  grid-template-columns: 1fr 1fr;
+}
+
+.en-tabs.four button {
+  grid-column: auto;
+}
+
 @media (max-width: 379px) {
   .en-tabs button {
     font-size: 0.85rem;
@@ -191,6 +239,11 @@ body {
   border-radius: 99px;
   padding: 10px 18px;
   box-shadow: 0 4px 0 var(--sky-dark);
+}
+
+.share.print {
+  width: fit-content;
+  text-decoration: none;
 }
 
 .en-foot.small {
@@ -749,6 +802,47 @@ body {
 
 .point-verdict small {
   color: var(--muted);
+}
+
+/* Pokoje */
+.rooms {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.room-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 5px 0 #c9d6de;
+}
+
+.room-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.room-btn.ok {
+  background: var(--ok);
+  color: #fff;
+  opacity: 1;
+  box-shadow: 0 5px 0 #2e7031;
+}
+
+.room-btn.no {
+  background: var(--no);
+  color: #fff;
+  opacity: 1;
+  box-shadow: 0 5px 0 #a82424;
+  animation: shake 0.4s;
 }
 
 /* Pytania */

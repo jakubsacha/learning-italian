@@ -85,6 +85,13 @@ przymiotniki (2.2), pytania o mnie (2.4) i moje rzeczy (2.5) — 39 haseł w `sr
   „Yes, I'm.” i złym zaimkiem; 🕵️ *Kto to?* — zgadywanka z tabelki z ćwiczenia 9
   (Don, Carl, Mark, Jim): pytania „Is he British?” odsiewają podejrzanych.
 - **Słówka**: wszystkie kafelki z obrazkami; dotknięcie czyta słowo na głos.
+- **Unit 2 / Unit 3** przełącza materiał. Unit 3 to tylko pokoje i meble z zeszytu
+  (bedroom: bed, desk, chair, wardrobe; living room: TV, sofa, armchair; bathroom: toilet,
+  bath, shower) i gra 🏠 *Pokoje* — mebel trzeba odesłać do właściwego pokoju. Gramatyka
+  (This/That, Pytania) zostaje przy Unicie 2. Bez zapisu aplikacja startuje od najnowszego unitu.
+- **Karta pracy do druku** dla Unitu 3: `public/angielski/unit3-dom.pdf` (słowniczek obrazkowy
+  i ćwiczenia z kluczem), generowana z tych samych rysunków i słówek:
+  `CHROMIUM_PATH=… node scripts/print-unit3.mjs`.
 - **Rysunki** ubrań i rzeczy są własne (`art.ts`), bo emoji nie odróżniają płaszcza od kurtki
   ani bluzy od swetra; przymiotniki i pytania mają emoji.
 - Zapis pod kluczami `angielski.*`, nic nie miesza się z resztą. Postęp jest w przeglądarce,

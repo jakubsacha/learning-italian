@@ -17,6 +17,8 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/angielski/index.html");
   await page.evaluate(() => {
     for (const k of Object.keys(localStorage)) if (k.startsWith("angielski.")) localStorage.removeItem(k);
+    // Większość testów dotyczy Unitu 2; Unit 3 ma swoje testy niżej.
+    localStorage.setItem("angielski.unit", "2");
   });
   await page.reload({ waitUntil: "networkidle" });
 });
@@ -191,9 +193,64 @@ test("pytania: „Kto to?” — odpowiedzi z tabelki odsiewają podejrzanych", 
   await expect(page.getByTestId("stars")).toHaveText("⭐ 3");
 });
 
+test("Unit 3: bez zapisu startuje od niego, tylko 13 słówek z zeszytu i trzy pokoje", async ({ page }) => {
+  await page.evaluate(() => localStorage.removeItem("angielski.unit"));
+  await page.reload({ waitUntil: "networkidle" });
+  await expect(page.locator('[data-unit="3"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(cards(page).getByTestId("count")).toHaveText("0 / 13");
+  await expect(page.getByRole("tab")).toHaveText(["🃏 Fiszki", "🎮 Gra", "🏠 Pokoje", "📖 Słówka"]);
+  await page.locator('[data-section="lazienka"]').click();
+  await expect(cards(page).getByTestId("count")).toHaveText("0 / 9");
+  await page.getByRole("tab", { name: /Słówka/ }).click();
+  await expect(page.getByTestId("panel-list").locator(".word-tile")).toHaveCount(9);
+  // przejście do Unitu 2 nie psuje jego wyboru działów
+  await page.locator('[data-unit="2"]').click();
+  await expect(page.getByTestId("panel-list").locator(".word-tile")).toHaveCount(39);
+  await page.locator('[data-unit="3"]').click();
+  await expect(page.getByTestId("panel-list").locator(".word-tile")).toHaveCount(9);
+  await page.reload({ waitUntil: "networkidle" });
+  await expect(cards(page).getByTestId("count")).toHaveText("0 / 9");
+});
+
+test("Unit 3: link do karty pracy prowadzi do PDF-a", async ({ page }) => {
+  await page.locator('[data-unit="3"]').click();
+  const href = await page.getByTestId("print").getAttribute("href");
+  const res = await page.request.get(new URL(href ?? "", page.url()).toString());
+  expect(res.status()).toBe(200);
+  expect((await res.body()).subarray(0, 5).toString()).toBe("%PDF-");
+  await page.locator('[data-unit="2"]').click();
+  await expect(page.getByTestId("print")).toHaveCount(0);
+});
+
+test("Unit 3: gra w pokoje — mebel do właściwego pokoju, zdanie z odpowiedzią", async ({ page }) => {
+  await page.locator('[data-unit="3"]').click();
+  await page.getByRole("tab", { name: /Pokoje/ }).click();
+  const panel = page.getByTestId("panel-rooms");
+  const where: Record<string, string> = {
+    bed: "sypialnia", desk: "sypialnia", chair: "sypialnia", wardrobe: "sypialnia",
+    TV: "salon", sofa: "salon", armchair: "salon",
+    toilet: "lazienka", bath: "lazienka", shower: "lazienka",
+  };
+  for (let i = 1; i <= 10; i++) {
+    await expect(panel.getByTestId("rooms-progress")).toHaveText(`${i} z 10`);
+    const thing = ((await panel.getByTestId("thing").locator(".sentence").textContent()) ?? "").trim();
+    await expect(panel.locator('.room-btn[data-ok="1"]')).toHaveAttribute("data-room", where[thing] ?? "?");
+    await panel.locator(i === 1 ? '.room-btn[data-ok="0"]' : '.room-btn[data-ok="1"]').first().click();
+    await expect(panel.getByTestId("rooms-verdict")).toContainText(`The ${thing} is in the`);
+    await panel.getByTestId("rooms-next").click();
+  }
+  await expect(panel.getByTestId("rooms-score")).toHaveText("Dobrze: 9 z 10");
+  await expect(page.getByTestId("stars")).toHaveText("⭐ 12");
+});
+
 test("na telefonie nic nie wystaje poza ekran", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 640 });
   for (const tab of [/Fiszki/, /Gra/, /This/, /Pytania/, /Słówka/]) {
+    await page.getByRole("tab", { name: tab }).click();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), String(tab)).toBe(false);
+  }
+  await page.locator('[data-unit="3"]').click();
+  for (const tab of [/Fiszki/, /Gra/, /Pokoje/, /Słówka/]) {
     await page.getByRole("tab", { name: tab }).click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), String(tab)).toBe(false);
   }

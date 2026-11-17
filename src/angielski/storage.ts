@@ -1,13 +1,22 @@
 /** Zapis podstrony z angielskim: własne klucze `angielski.*`, odczyt odporny na śmieci. */
 
 import type { KeyValueStore } from "../ports/storage.js";
-import { CARDS, SECTIONS, type SectionId } from "./words.js";
+import { CARDS, SECTIONS, UNITS, type SectionId, type Unit } from "./words.js";
 
 export const KEYS = {
   sections: "angielski.sections",
   known: "angielski.known",
   stars: "angielski.stars",
+  unit: "angielski.unit",
 } as const;
+
+/** Bez zapisu startujemy od najnowszego unitu — tego, który właśnie jest w szkole. */
+export const LATEST_UNIT: Unit = 3;
+
+export function readUnit(store: KeyValueStore): Unit {
+  const raw = store.read(KEYS.unit);
+  return UNITS.find((u) => u === raw) ?? LATEST_UNIT;
+}
 
 export const ALL: ReadonlySet<SectionId> = new Set(SECTIONS.map((s) => s.id));
 

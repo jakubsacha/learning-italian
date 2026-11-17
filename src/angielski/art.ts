@@ -6,7 +6,7 @@
 
 const O = 'stroke="#23384d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
 
-export const ART: Readonly<Record<string, string>> = {
+const ART_BASE = {
   boots: `
     <path ${O} fill="#a0612f" d="M18 14H38V64Q52 66 55 78V86H18Z"/>
     <path ${O} fill="#b9773f" d="M46 14H66V64Q80 66 83 78V86H46Z"/>
@@ -115,4 +115,83 @@ export const ART: Readonly<Record<string, string>> = {
     <rect fill="#81d4fa" x="17" y="25" width="66" height="50" rx="2"/>
     <g fill="#fff" opacity=".85"><rect x="22" y="30" width="11" height="11" rx="3"/><rect x="38" y="30" width="11" height="11" rx="3"/><rect x="54" y="30" width="11" height="11" rx="3"/><rect x="22" y="46" width="11" height="11" rx="3"/><rect x="38" y="46" width="11" height="11" rx="3"/></g>
     <circle fill="#90a4ae" cx="87.5" cy="50" r="2.5"/>`,
+
+  bed: `
+    <path ${O} fill="#8d6e63" d="M8 36H18V84H8ZM82 50H92V84H82Z"/>
+    <path ${O} fill="#42a5f5" d="M16 56H86V76H16Z"/>
+    <path ${O} fill="#fff" d="M18 46Q18 40 26 40H40Q46 40 46 46V56H18Z"/>
+    <path ${O} fill="#1e88e5" d="M44 54Q60 48 84 54V62H44Z"/>
+    <path ${O} fill="none" d="M8 84H92"/>`,
+  desk: `
+    <path ${O} fill="#a1887f" d="M6 40H94V48H6Z"/>
+    <path ${O} fill="#8d6e63" d="M12 48H20V88H12ZM58 48H90V88H58Z"/>
+    <path ${O} fill="none" d="M58 62H90M58 75H90"/>
+    <g fill="#23384d"><circle cx="74" cy="56" r="2"/><circle cx="74" cy="69" r="2"/><circle cx="74" cy="82" r="2"/></g>
+    <path ${O} fill="#ffd54f" d="M26 30H42L38 40H30Z"/><path ${O} fill="none" d="M34 30V18L44 14"/>`,
+  chair: `
+    <path ${O} fill="#ff8a65" d="M30 12H70V52H30Z"/>
+    <path ${O} fill="none" d="M38 20V44M50 20V44M62 20V44"/>
+    <path ${O} fill="#ff7043" d="M24 52H76V60H24Z"/>
+    <path ${O} fill="#8d6e63" d="M28 60H35V92H28ZM65 60H72V92H65Z"/>`,
+  wardrobe: `
+    <path ${O} fill="#bcaaa4" d="M18 8H82V86H18Z"/>
+    <path ${O} fill="none" d="M50 8V86"/>
+    <path ${O} fill="#8d6e63" d="M22 86H30V94H22ZM70 86H78V94H70Z"/>
+    <path ${O} fill="#ffca28" d="M42 40H46V56H42ZM54 40H58V56H54Z"/>`,
+  tv: `
+    <rect ${O} fill="#263238" x="8" y="18" width="84" height="56" rx="6"/>
+    <rect fill="#4fc3f7" x="14" y="24" width="72" height="44" rx="3"/>
+    <path fill="#81c784" d="M14 60L34 44L48 56L62 40L86 62V68H14Z"/>
+    <circle fill="#fff59d" cx="72" cy="34" r="5"/>
+    <path ${O} fill="none" d="M40 74L34 88M60 74L66 88M28 88H72"/>`,
+  sofa: `
+    <path ${O} fill="#ef5350" d="M20 30Q20 24 26 24H74Q80 24 80 30V58H20Z"/>
+    <path ${O} fill="#e53935" d="M6 46Q6 40 12 40H22V76H6ZM78 40H88Q94 40 94 46V76H78Z"/>
+    <path ${O} fill="#ef9a9a" d="M22 56H50V70H22ZM50 56H78V70H50Z"/>
+    <path ${O} fill="#e53935" d="M6 70H94V78H6Z"/>
+    <path ${O} fill="#6d4c41" d="M10 78H16V86H10ZM84 78H90V86H84Z"/>`,
+  armchair: `
+    <path ${O} fill="#66bb6a" d="M28 18Q28 12 36 12H64Q72 12 72 18V58H28Z"/>
+    <path ${O} fill="#43a047" d="M14 44Q14 38 20 38H30V78H14ZM70 38H80Q86 38 86 44V78H70Z"/>
+    <path ${O} fill="#a5d6a7" d="M30 56H70V70H30Z"/>
+    <path ${O} fill="#43a047" d="M14 70H86V80H14Z"/>
+    <path ${O} fill="#6d4c41" d="M18 80H24V90H18ZM76 80H82V90H76Z"/>`,
+  toilet: `
+    <path ${O} fill="#e3f2fd" d="M22 10H58V40H22Z"/>
+    <path ${O} fill="#90a4ae" d="M50 18H58V22H50Z"/>
+    <path ${O} fill="#fff" d="M14 44H80Q80 66 58 70L60 90H34L36 70Q14 66 14 44Z"/>
+    <path ${O} fill="#e3f2fd" d="M12 40H82V48H12Z"/>`,
+  bath: `
+    <path fill="#b3e5fc" d="M12 50H88V58H12Z"/>
+    <path ${O} fill="#fff" d="M6 46H94V54Q94 78 70 78H30Q6 78 6 54Z"/>
+    <path ${O} fill="#4fc3f7" d="M10 52H90Q90 62 84 66H16Q10 62 10 52Z"/>
+    <path ${O} fill="none" d="M20 20Q20 12 28 12Q36 12 36 20V46"/>
+    <path ${O} fill="#ffca28" d="M24 78L20 90M76 78L80 90"/>
+    <g fill="#fff"><circle cx="30" cy="40" r="5"/><circle cx="42" cy="34" r="4"/><circle cx="62" cy="38" r="6"/><circle cx="74" cy="30" r="4"/></g>`,
+  shower: `
+    <path ${O} fill="none" d="M20 94V16Q20 8 30 8H58V20"/>
+    <path ${O} fill="#90a4ae" d="M44 20H72L66 30H50Z"/>
+    <g stroke="#29b6f6" stroke-width="3" stroke-linecap="round"><path d="M52 36L48 52M58 36V54M64 36L68 52M55 58L53 70M61 60L63 72M50 76L48 86M58 78V90M66 76L68 86"/></g>
+    <path ${O} fill="#e0f7fa" d="M30 90H90V96H30Z"/>`,
+} satisfies Record<string, string>;
+
+/** Pokój w przekroju: ściana, podłoga, ewentualnie kafelki. */
+const room = (wall: string, tiles = false): string => `
+  <path ${O} fill="${wall}" d="M6 10H94V90H6Z"/>
+  <path fill="#d7b98e" d="M7.5 76H92.5V88.5H7.5Z"/>
+  ${tiles ? '<path fill="none" stroke="#b3e5fc" stroke-width="1.5" d="M8 30H92M8 50H92M30 12V75M54 12V75M78 12V75"/>' : ""}
+  <path ${O} fill="none" d="M6 76H94"/>`;
+
+export const ART: Readonly<Record<string, string>> = {
+  ...ART_BASE,
+
+  bedroom: `${room("#fff3e0")}<rect ${O} fill="#81d4fa" x="62" y="20" width="22" height="20"/>
+    <g transform="translate(10 40) scale(.6)">${ART_BASE.bed}</g>
+    <g transform="translate(16 12) scale(.35)">${ART_BASE.wardrobe}</g>`,
+  livingroom: `${room("#f1f8e9")}<g transform="translate(30 14) scale(.4)">${ART_BASE.tv}</g>
+    <g transform="translate(14 48) scale(.5)">${ART_BASE.sofa}</g>
+    <g transform="translate(58 50) scale(.4)">${ART_BASE.armchair}</g>`,
+  bathroom: `${room("#e1f5fe", true)}<g transform="translate(8 46) scale(.55)">${ART_BASE.bath}</g>
+    <g transform="translate(58 36) scale(.4)">${ART_BASE.shower}</g>
+    <g transform="translate(60 58) scale(.32)">${ART_BASE.toilet}</g>`,
 };
